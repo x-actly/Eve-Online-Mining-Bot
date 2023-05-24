@@ -1,7 +1,5 @@
+import keyboard, time, datetime, os, random, win32api, win32con, win32gui
 import pyautogui
-import random
-import time
-
 
 # random time intervall for whole mining functions
 random_time = random.uniform(3, 4)
@@ -16,10 +14,11 @@ def undock(x, y):
 
     random_time = random.uniform(1,2)
     random_sleep_small = random.uniform(12,15)
-    #button_pos = [888, 596]
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     # console
-    print("undocking...")
+    print("")
+    print(f"[{timestamp}] - undocking...")
     # undock
     pyautogui.moveTo(x,y, duration=random_time)
     pyautogui.mouseDown(button='left')
@@ -29,35 +28,59 @@ def undock(x, y):
 
 def set_hardener_online():
 
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
     # console
-    print("starting hardener...")
+    print(f"[{timestamp}] - starting hardener...")
     # set hardener online
     pyautogui.press('f3')
     pyautogui.press('f4')
 
-def warp_to_mining_pos(x, y):
+def warp_to_pos_dropdown(x, y,rm_x, rm_y):
 
-    random_time = random.uniform(6,7)
-    random_sleep_medium = random.uniform(65, 70)
-    #mining_pos = [1739, 230]
+    random_time = random.uniform(2,3)
+    random_sleep_medium = random.uniform(70, 75)
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     # console
-    print("warping to mining position...")
+    print(f"[{timestamp}] - warping to position...")
+    # warping to belt
+    time.sleep(10)
+    pyautogui.moveTo(x,y, 2)
+    pyautogui.click(button='right')
+    time.sleep(random_time)
+    pyautogui.moveRel(rm_x, rm_y)
+    time.sleep(random_time)
+    pyautogui.click(button='left')
+    time.sleep(random_sleep_medium)
+
+def warp_to_pos_circle_menu(x, y):
+
+    random_time = random.uniform(6,7)
+    random_sleep_medium = random.uniform(70, 75)
+    y_offset = random.randint(-51,-49)
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    # console
+    print(f"[{timestamp}] - warping to mining position...")
     # warp to belt
-    time.sleep(random_time)
-    pyautogui.moveTo(x, y)
-    pyautogui.mouseDown()
-    time.sleep(random_time)
-    pyautogui.moveRel(-50,-50)
-    pyautogui.mouseUp()
+    for i in range(1):
+        time.sleep(random_time)
+        pyautogui.moveTo(x, y)
+        pyautogui.mouseDown()
+        time.sleep(random_time)
+        pyautogui.moveRel(-50, y_offset, 1)
+        pyautogui.mouseUp()
+    
     time.sleep(random_sleep_medium)
 
 def drone_out(x,y):
 
     random_time = random.uniform(1,2)
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     # console
-    print("launching drones...")
+    print(f"[{timestamp}] - launching drones...")
     # drone out, random click in space
     pyautogui.click(x, y, button='left', duration=random_time)
     pyautogui.press('9')
@@ -66,9 +89,83 @@ def drone_out(x,y):
     time.sleep(5)
     pyautogui.press('9')
 
+def drone_in():
+
+    random_sleep_small = random.uniform(12, 15)
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    # console
+    print(f"[{timestamp}] - drones returning to bay...")
+    # drone in
+    pyautogui.press('0')
+    # drone time back to ship
+    time.sleep(random_sleep_small)
+
+def docking_dropdown(x, y, rel_x, rel_y):
+
+    random_time = random.uniform(2,3)
+    random_sleep_medium = random.uniform(15, 20)
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    # console
+    print(f"[{timestamp}] - docking...")
+    # docking
+    time.sleep(2)
+    pyautogui.moveTo(x,y, 2)
+    pyautogui.click(button='right')
+    time.sleep(random_time)
+    pyautogui.moveRel(rel_x, rel_y)
+    time.sleep(random_time)
+    pyautogui.click(button='left')
+    time.sleep(random_sleep_medium)
+
+def docking_circle_menu(x, y):
+
+    random_time = random.uniform(6,7)
+    random_sleep_medium = random.uniform(65, 70)
+    y_offset = random.randint(-81, -79)
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    # console
+    print(f"[{timestamp}] - docking...")
+    # docking
+    for i in range(1):
+        time.sleep(random_time)
+        pyautogui.moveTo(x, y)
+        pyautogui.mouseDown()
+        time.sleep(random_time)
+        pyautogui.moveRel(0, y_offset, 1)
+        pyautogui.mouseUp()
+
+    time.sleep(random_sleep_medium)
+
+
+
+def clear_cargo(x, y):
+
+    random_time = random.uniform(3, 4)
+    random_sleep_small = random.uniform(12, 15)
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    # console
+    print(f"[{timestamp}] - clearing cargo...")
+    # clear cargo
+    pyautogui.click(x, y, button='left', duration=random_time)
+    pyautogui.mouseDown(button='left')
+    pyautogui.dragRel(-175, -165, duration=random_time)
+    pyautogui.mouseUp(button='left')
+    pyautogui.mouseDown(button='left')
+    pyautogui.dragRel(0, -250, duration=random_time)
+    pyautogui.mouseUp(button='left')
+    time.sleep(random_sleep_small)
+
+# Mining Script
+########################################################
+
 def mining_behaviour(tx1, ty1, tx2, ty2, mr_start, mr_end, ml_start, ml_end, rm_x, rm_y):
 
     random_time = random.uniform(3, 4)
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # start time to counter looptime
     start_time = time.time()
 
@@ -83,7 +180,7 @@ def mining_behaviour(tx1, ty1, tx2, ty2, mr_start, mr_end, ml_start, ml_end, rm_
     # reset mouse - x = rm_x, y = rm_y
 
     # console
-    print("mining...")
+    print(f"[{timestamp}] - mining...")
 
     while True:
 
@@ -145,179 +242,93 @@ def mining_behaviour(tx1, ty1, tx2, ty2, mr_start, mr_end, ml_start, ml_end, rm_
 
         # reset every 170 seconds (depends on mining barge)
         time.sleep(mining_reset)
+        print(f"[{timestamp}] - reset mining script...")
 
         elapsed_time = time.time() - start_time
         if elapsed_time >= mining_loop:
             break
 
-def drone_in():
-
-    random_sleep_small = random.uniform(12, 15)
-    
-    # console
-    print("drones returning to bay...")
-    # drone in
-    pyautogui.press('0')
-    # drone time back to ship
-    time.sleep(random_sleep_small)
-
-def back_to_station(x, y):
-
-    random_time = random.uniform(1,2)
-    random_sleep_medium = random.uniform(70, 75)
-    #station_pos = [1730, 180]
-
-    # console
-    print("warping to station...")
-    # back to station
-    pyautogui.moveTo(x, y)
-    pyautogui.mouseDown()
-    time.sleep(random_time)
-    pyautogui.moveRel(-50,-50)
-    pyautogui.mouseUp()
-    time.sleep(random_sleep_medium)
-
-def docking(x, y):
-
-    random_time = random.uniform(6,7)
-    random_sleep_medium = random.uniform(65, 70)
-    #station_pos = [1600, 651]
-    
-    # console
-    print("docking...")
-    # docking
-    pyautogui.moveTo(x, y)
-    pyautogui.mouseDown()
-    time.sleep(random_time)
-    pyautogui.moveRel(0,-80)
-    pyautogui.mouseUp()
-    time.sleep(random_sleep_medium)
-
-def clear_cargo(x, y):
-
-    random_time = random.uniform(3, 4)
-    random_sleep_small = random.uniform(12, 15)
-
-    # console
-    print("clearing cargo...")
-    # clear cargo
-    pyautogui.click(x, y, button='left', duration=random_time)
-    pyautogui.mouseDown(button='left')
-    pyautogui.dragRel(-175, -165, duration=random_time)
-    pyautogui.mouseUp(button='left')
-    pyautogui.mouseDown(button='left')
-    pyautogui.dragRel(0, -250, duration=random_time)
-    pyautogui.mouseUp(button='left')
-    time.sleep(random_sleep_small)
-
+# Draw Function
 ########################################################
 
-# old - first version - backup
-def fleet_mining_example():
+def draw_point(x, y, r,g,b):
 
-    # abdocken
-    pyautogui.click(x=950, y=600, button='left', duration=random_time)
-    time.sleep(random_sleep_small)
+    # Color
+    red = win32api.RGB(r, g, b)
+        
+    # Get Desktop-Window
+    desktop_window = win32gui.GetDesktopWindow()
 
-    # set hardener online
-    pyautogui.press('f3')
-    pyautogui.press('f4')
+    # Set Device Context for Desktop-Window
+    desktop_dc = win32gui.GetWindowDC(desktop_window)
 
-    # Fleet Position anwarpen
-    pyautogui.click(x=959, y=351, button='right', duration=random_time)
-    pyautogui.click(x=1066, y=377, button='left', duration=random_time)
-    time.sleep(random_sleep_medium)
+    # Set Pixel Color
+    for i in range(x-3, x+3):
+        for j in range(y-3, y+3):
+            win32gui.SetPixel(desktop_dc, i, j, red)
+        
+    # Release Devicecontext
+    win32gui.ReleaseDC(desktop_window, desktop_dc)
 
-    # asteroid 1 auswählen
-    pyautogui.click(x=1635, y=648, button='right', duration=random_time)
-    pyautogui.click(x=1718, y=775, button='left', duration=random_time)
-
-    # asteroid 2 auswählen
-    pyautogui.click(x=1636, y=680, button='right', duration=random_time)
-    pyautogui.click(x=1722, y=773, button='left', duration=random_time)
-    time.sleep(random_sleep_small)
-
-    # drone out
-    time.sleep(3)
-    pyautogui.press('9')
-    time.sleep(3)
-
-    # Ziel 1 auswählen, aktivieren
-    pyautogui.click(x=600, y=100, button='left', duration=random_time)
-    pyautogui.keyDown('f1')
-    time.sleep(random_time)
-    pyautogui.keyUp('f1')
-
-    # Ziel 2 auswählen, aktivieren
-    pyautogui.click(x=730, y=100, button='left', duration=random_time)
-    pyautogui.keyDown('f2')
-    time.sleep(random_time)
-    pyautogui.keyUp('f2')
-
-    # belt time in sec.
-    time.sleep(1500)
-
-    # drone in
-    pyautogui.press('0')
-
-    # drone time back to ship
-    time.sleep(random_sleep_small)
-
-    # back to station
-    pyautogui.click(x=1636, y=175, button='right', duration=random_time)
-    pyautogui.click(x=1706, y=197, button='left', duration=random_time)
-    time.sleep(random_sleep_medium)
-
-    # docking
-    pyautogui.click(x=1600, y=651, button='right', duration=random_time)
-    pyautogui.click(x=1667, y=575, button='left', duration=random_time)
-    time.sleep(random_sleep_small)
-
-    # clear cargo
-    pyautogui.click(x=1490, y=970, button='left', duration=random_time)
-    pyautogui.mouseDown(button='left')
-    pyautogui.dragTo(1147, 836, duration=2.0)
-    pyautogui.mouseUp(button='left')
-    pyautogui.mouseDown(button='left')
-    pyautogui.dragTo(1179, 560, duration=2.0)
-    pyautogui.mouseUp(button='left')
-    time.sleep(random_sleep_small)
-
-# current - example for mining sequence - backup
-def solo_mining_example():
-    
-    undock(774, 846)
-    set_hardener_online()
-    warp_to_mining_pos(1042, 179)
-    drone_out(475, 1059)
-    mining_behaviour(979, 1068, 979, 1093, 250, 260, 2500, 2600, 872, 987)
-    drone_in()
-    back_to_station(1045,156)
-    docking(1050, 156)
-    clear_cargo(1239, 892)
-# current - 1080p Laptop - backup
-def mining_script_laptop():
-
-    undock(750, 391)
-    set_hardener_online()
-    warp_to_mining_pos(190, 277)
-    drone_out(1300, 630)
-    mining_behaviour(1678, 837, 1679, 865, 250, 260, 2500, 2600, 1257, 723)
-    drone_in()
-    back_to_station(258, 251)
-    docking(1678, 837)
-    clear_cargo(1894, 643)
-# current - 1440p half screen - backup
-def mining_script_pc():
-
-    undock(756, 843)
-    set_hardener_online()
-    warp_to_mining_pos(1071, 175)
-    drone_out(477, 856)
-    mining_behaviour(1053, 1069, 1052, 1092, 250, 260, 2400, 2500, 475, 747)
-    drone_in()
-    back_to_station(1088, 156)
-    docking(1051, 1069)
-    clear_cargo(1229, 896)
-
+# Owl Signature
 ########################################################
+
+def owl_signature():
+
+    owl = ["                            ",
+           "⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣀⣄⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀",
+           "⠀⠀⠀⠀⠀⠀⠐⣶⣾⣿⣿⣿⣿⣿⣶⡆⠀⠀⠀⠀⠀⠀",
+           "⠀⠀⠀⠀⠀⠀⢰⡏⢤⡎⣿⣿⢡⣶⢹⣧⠀⠀⠀⠀⠀⠀",
+           "⠀⠀⠀⠀⠀⠀⢸⣿⣶⣶⣇⣸⣷⣶⣾⣿⠀⠀⠀⠀⠀⠀",
+           "⠀⠀⠀⠀⠀⠀⢨⣿⣿⣿⢟⣿⣿⣿⣿⣿⣧⡀⠀⠀⠀⠀",
+           "⠀⠀⠀⠀⠀⠀⢸⣿⣿⡏⣿⣿⣿⣿⣿⣿⣿⣿⡄⠀⠀⠀",
+           "⠀⠀⠀⠀⠀⠀⠘⣿⣿⣿⣜⠿⣿⣿⣿⣿⣿⣿⣿⡄⠀⠀",
+           "⠀⠀⠀⠀⠀⠀⠀⠐⣷⣿⡿⣷⣮⣙⠿⣿⣿⣿⣿⣿⡄⠀",
+           "        ⠀⠫⡯⢿⣿⣿⣿⣶⣯⣿⣻⣿⣿⠀ ",
+           "           ⠙⢻⣿⣿⠿⠿⠿⢻⣿⠙⠇ ",
+           "           ⣠⡶⠿⣟⠀⠀⠀⠀ ⠻⡀   ",
+           "         ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿ ",
+           "         ⣿⣿⣿   OWL  ⣿⣿⣿   ",
+           "         ⣿⣿⣿ MINING ⣿⣿⣿  ",
+           "         ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿  ",
+           "                                "]
+    delay = 0.5
+    acceleration = 0.025
+
+    for i in range(len(owl)):
+        print(owl[i])
+        time.sleep(delay)
+        delay -= acceleration
+
+# Explanation
+########################################################
+
+def explanation():
+
+    print(" ")
+    print(" Check Interaction Coordinates!")
+    print("#################################")
+    print("# Orange = Mining Positions     #")
+    print("# Yellow = Undock Position      #")
+    print("# White = Drone Reset Position  #")
+    print("# Blue = Warping to Station     #")
+    print("# Green = Docking               #")
+    print("# Pink = Clear Cargo            #")
+    print("# Red = Targeting Positions     #")
+    print("# Violett = Mining Mouse Reset  #")
+    print("#################################")
+    print("")
+    print("Press escape to continue..")
+
+#######################################################
+
+def check_abort(xw,yw, relxw,relyw, xd, yd, relxd, relyd):
+    
+    if keyboard.is_pressed('q'):
+        drone_in()
+        warp_to_pos_dropdown(xw, yw, relxw, relyw)
+        docking_dropdown(xd, yd, relxd, relyd)
+
+
+
+#######################################################
