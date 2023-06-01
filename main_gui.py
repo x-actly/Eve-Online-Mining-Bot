@@ -2,6 +2,7 @@ import tkinter as tk
 import threading
 import time
 import ctypes
+import random
 from ctypes import windll
 import functions_evebot as fe
 from PIL import ImageTk, Image
@@ -44,6 +45,7 @@ def repeat_function(minutes, undock_coo_value, drone_mouse_reset_coo_value, mini
         fe.set_hardener_online()
 
         for item in mining_coo_values:
+            item = random.choice(mining_coo_values)
             fe.warp_to_pos_circle_menu(item[0], item[1])
             break
 
@@ -69,7 +71,7 @@ stop_flag = False
 
 # Create Tkinter window
 root = tk.Tk()
-root.title("Mining Bot 0.1c Owl-Edition")
+root.title("Mining Bot 0.1.1c Owl-Edition")
 root.geometry("480x560")  # Set windows size
 
 # Make window not resizable
