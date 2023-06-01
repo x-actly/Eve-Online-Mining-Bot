@@ -1,4 +1,4 @@
-import keyboard, time, datetime, os, random, win32api, win32con, win32gui
+import keyboard, time, datetime, random, win32api, win32gui
 import pyautogui
 
 # random time intervall for whole mining functions

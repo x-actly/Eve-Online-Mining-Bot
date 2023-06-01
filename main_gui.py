@@ -69,7 +69,7 @@ stop_flag = False
 
 # Create Tkinter window
 root = tk.Tk()
-root.title("Mining Bot 0.1b Owl-Edition")
+root.title("Mining Bot 0.1c Owl-Edition")
 root.geometry("480x560")  # Set windows size
 
 # Make window not resizable
