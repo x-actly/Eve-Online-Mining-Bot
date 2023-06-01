@@ -165,7 +165,7 @@ def clear_cargo(x, y):
 def mining_behaviour(tx1, ty1, tx2, ty2, mr_start, mr_end, ml_start, ml_end, rm_x, rm_y):
 
     random_time = random.uniform(3, 4)
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
     # start time to counter looptime
     start_time = time.time()
 
@@ -179,9 +179,7 @@ def mining_behaviour(tx1, ty1, tx2, ty2, mr_start, mr_end, ml_start, ml_end, rm_
     # target 2 positions - x = tx2, y = ty2
     # reset mouse - x = rm_x, y = rm_y
 
-    # console
-    print(f"[{timestamp}] - mining...")
-
+    
     while True:
 
         # reset target 1
@@ -220,6 +218,10 @@ def mining_behaviour(tx1, ty1, tx2, ty2, mr_start, mr_end, ml_start, ml_end, rm_
 
         time.sleep(2)
 
+        # console
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        print(f"[{timestamp}] - mining...")
+
         # target 1
         pyautogui.moveTo(tx1, ty1)
         pyautogui.keyDown('ctrl')
@@ -242,6 +244,7 @@ def mining_behaviour(tx1, ty1, tx2, ty2, mr_start, mr_end, ml_start, ml_end, rm_
 
         # reset every 170 seconds (depends on mining barge)
         time.sleep(mining_reset)
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         print(f"[{timestamp}] - reset mining script...")
 
         elapsed_time = time.time() - start_time
