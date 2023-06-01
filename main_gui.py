@@ -233,7 +233,7 @@ root.geometry("400x500")  # Setzen der Fenstergröße
 root.resizable(False, False)
 
 # Laden des Speicher-Symbols
-save_icon = Image.open("save_icon.png")  # Pfade und Dateinamen anpassen
+save_icon = Image.open("config/icons/save_icon.png")  # Pfade und Dateinamen anpassen
 save_icon = save_icon.resize((16, 16))  # Größe anpassen
 save_icon = ImageTk.PhotoImage(save_icon)
 
