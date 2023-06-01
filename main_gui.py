@@ -44,11 +44,9 @@ def repeat_function(minutes, undock_coo_value, drone_mouse_reset_coo_value, mini
         fe.undock(undock_coo_value[0], undock_coo_value[1])
         fe.set_hardener_online()
 
-        for item in mining_coo_values:
-            item = random.choice(mining_coo_values)
-            fe.warp_to_pos_circle_menu(item[0], item[1])
-            break
-
+        item = random.choice(mining_coo_values)
+        fe.warp_to_pos_circle_menu(item[0], item[1])
+    
         fe.drone_out(drone_mouse_reset_coo_value[0], drone_mouse_reset_coo_value[1])
         fe.mining_behaviour(target_one_coo_values[0], target_one_coo_values[1], target_two_coo_values[0], target_two_coo_values[1], mining_target_reset[0][0], mining_target_reset[0][1], mining_loop_reset_value, mining_loop_reset_value, mining_mouse_reset_coo_values[0], mining_mouse_reset_coo_values[1])
         fe.drone_in()
@@ -71,7 +69,7 @@ stop_flag = False
 
 # Create Tkinter window
 root = tk.Tk()
-root.title("Mining Bot 0.1.1c Owl-Edition")
+root.title("Mining Bot 0.1.2c Owl-Edition")
 root.geometry("480x560")  # Set windows size
 
 # Make window not resizable
