@@ -4,7 +4,7 @@ import time
 import ctypes
 import random
 from ctypes import windll
-import functions_evebot as fe
+import functions as fe
 from PIL import ImageTk, Image
 
 
