@@ -1,4 +1,4 @@
-import keyboard, time, datetime, random, win32api, win32gui
+import keyboard, time, datetime, random
 import pyautogui
 
 # random time intervall for whole mining functions
@@ -251,27 +251,27 @@ def mining_behaviour(tx1, ty1, tx2, ty2, mr_start, mr_end, ml_start, ml_end, rm_
         if elapsed_time >= mining_loop:
             break
 
-# Draw Function
-########################################################
+# # Draw Function
+# ########################################################
 
-def draw_point(x, y, r,g,b):
+# def draw_point(x, y, r,g,b):
 
-    # Color
-    red = win32api.RGB(r, g, b)
+#     # Color
+#     red = win32api.RGB(r, g, b)
         
-    # Get Desktop-Window
-    desktop_window = win32gui.GetDesktopWindow()
+#     # Get Desktop-Window
+#     desktop_window = win32gui.GetDesktopWindow()
 
-    # Set Device Context for Desktop-Window
-    desktop_dc = win32gui.GetWindowDC(desktop_window)
+#     # Set Device Context for Desktop-Window
+#     desktop_dc = win32gui.GetWindowDC(desktop_window)
 
-    # Set Pixel Color
-    for i in range(x-3, x+3):
-        for j in range(y-3, y+3):
-            win32gui.SetPixel(desktop_dc, i, j, red)
+#     # Set Pixel Color
+#     for i in range(x-3, x+3):
+#         for j in range(y-3, y+3):
+#             win32gui.SetPixel(desktop_dc, i, j, red)
         
-    # Release Devicecontext
-    win32gui.ReleaseDC(desktop_window, desktop_dc)
+#     # Release Devicecontext
+#     win32gui.ReleaseDC(desktop_window, desktop_dc)
 
 # Owl Signature
 ########################################################
