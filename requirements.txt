@@ -1,8 +1,5 @@
 keyboard
 datetime
-win32api
-win32gui
-win32con
 pyautogui
 tkinter
 threading
