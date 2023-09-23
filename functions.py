@@ -83,11 +83,13 @@ def drone_out(x,y):
     print(f"[{timestamp}] - launching drones...")
     # drone out, random click in space
     pyautogui.click(x, y, button='left', duration=random_time)
-    pyautogui.press('9')
-    time.sleep(1)
     # drone out
     time.sleep(5)
-    pyautogui.press('9')
+    pyautogui.keyDown('shift')
+    pyautogui.press('f')
+    time.sleep(1)
+    # Umschalt loslassen
+    pyautogui.keyUp('shift')
 
 def drone_in():
 
@@ -97,7 +99,10 @@ def drone_in():
     # console
     print(f"[{timestamp}] - drones returning to bay...")
     # drone in
-    pyautogui.press('0')
+    pyautogui.keyDown('shift')
+    pyautogui.press('r')
+    time.sleep(1)
+    pyautogui.keyUp('shift')
     # drone time back to ship
     time.sleep(random_sleep_small)
 
