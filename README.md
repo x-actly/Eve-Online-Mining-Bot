@@ -52,11 +52,7 @@ python main.py
 The GUI application continuously displays the current mouse position on the screen. This can be helpful for accurately determining the coordinates for the positions mentioned above.
 
 ## Cargo Loading Time Calculation
-The "Cargo Loading Time" refers to the time required to deplete the cargo volume in your mining ship using your mining laser rate. The calculation is as follows:
-```
-Cargo Loading Time (seconds) = Cargo Volume (m³) / (Number of mining lasers * Mining rate per second (m³/s))
-```
-For example:
+The "Cargo Loading Time" refers to the time required to deplete the cargo volume in your mining ship using your mining laser rate.
 
 Assuming you are using a Venture with a cargo volume of 5000 m³ and two mining lasers, each with a mining rate of 1.5 m³ per second. The calculation would be as follows:
 ```
