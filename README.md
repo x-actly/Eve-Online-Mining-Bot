@@ -1,73 +1,69 @@
 # Mining Bot Alpha Owl-Edition
 
-Der Mining Bot Alpha Owl-Edition ist ein Python-Programm, das entwickelt wurde, um das Mining in EVE Online zu automatisieren. Dieser Bot verwendet das Tkinter-Framework für die Benutzeroberfläche und erfordert einige externe Python-Module, die in der `requirements.txt`-Datei aufgeführt sind.
+The Mining Bot Alpha Owl-Edition is a Python program developed to automate mining in EVE Online. This bot utilizes the Tkinter framework for its user interface and requires several external Python modules listed in the `requirements.txt` file.
 
 ## Features
 
-- Automatisiertes Mining in EVE Online
-- Benutzerfreundliche GUI für die Konfiguration
-- Einfache Steuerung von Start und Stopp des Bots
-- Anzeige der aktuellen Mausposition auf dem Bildschirm
+- Automated mining in EVE Online
+- User-friendly GUI for configuration
+- Easy control of bot start and stop
+- Display of the current mouse position on the screen
 
-## Anforderungen
+## Requirements
 
-Um den Mining Bot Alpha Owl-Edition auszuführen, müssen Sie die erforderlichen Python-Module installieren. Verwenden Sie dazu den folgenden Befehl:
+To run the Mining Bot Alpha Owl-Edition, you must install the necessary Python modules. Use the following command:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## Verwendung
+## Usage
 
-1. Stellen Sie sicher, dass Sie die erforderlichen Module gemäß den Anforderungen installiert haben.
+1. Ensure that you have installed the required modules as per the requirements.
 
-2. Starten Sie das Programm, indem Sie die main.py-Datei ausführen.
-   ```bash
-   python main.py
-   ```
-
-3. Konfigurieren Sie die verschiedenen Einstellungen in der Benutzeroberfläche:
-
-   - Mining Time: Geben Sie die gewünschte Dauer des Mining-Vorgangs in Minuten an.
-   - Belt Time (Sekunden): Tragen Sie die berechnete "Belt Time" (ohne Nachkommastellen) gemäß dem Cargovolumen und der Abbaurate ein (siehe unten für die Berechnungsformel).
-   - Undock-Position: Setzen Sie die Maus Koordinate des Undock Buttons auf der Station
-   - Docking-Position: Setzen sie die Maus Koordinate der Station in der Overview, diese muss ganz oben stehen, wenn das Schiff wieder auf dem Grid der Station ist.
-   - Clear-Cargo-Position: Geben Sie die Maus Position zum Entladen des Cargos an. Dieser zieht den Inhalt des Mining Hold in das darüber liegende Fenster, wo sich dein Stations Inventar befindet.
-   - Target-One-Position: Setzen Sie die erste Maus Koordinate auf die Asteroiden in der Overview.
-   - Target-Two-Position: Definieren Sie die zweite Koordinate in der Overview.
-   - Target-Reset-Position: Geben Sie die Position für das Zurücksetzen der Miningziele an (Position im Space, wo sich kein Fenster, oder sonstiges befindet).
-   - Drone-Reset-Position: Definieren Sie die Position zum Zurücksetzen der Drohnen ((Position im Space, wo sich kein Fenster, oder sonstiges befindet).
-   - Home Bookmark: Setzen Sie die Koordinaten für das Stations Bookmark.
-   - Belt Bookmarks: Tragen Sie die Koordinaten für Ihre Belt Bookmarks ein (jeweils eine Zeile pro Bookmark).
-    
-4. Für alle Positionsfelder gibt es ein kleines Diskettensymbol. Klicken Sie darauf, um die eingegebenen Koordinaten zu speichern, damit diese auch Session-übergreifend bestehen bleiben. 
-
-5. Klicken Sie auf die "Start"-Schaltfläche, um den Mining-Bot zu starten.
-
-6. Um den Bot zu stoppen, klicken Sie auf die "Stop"-Schaltfläche.
-
-## Anzeige der Mausposition
-
-Die GUI-Anwendung zeigt kontinuierlich die aktuelle Position der Maus auf dem Bildschirm an. Dies kann hilfreich sein, um die Koordinaten für die oben genannten Positionen genau zu bestimmen.
-
-## Berechnung der Belt Time
-
-Die "Belt Time" bezieht sich auf die Zeit, die benötigt wird, um das Cargovolumen in Ihrem Mining-Schiff unter Verwendung Ihrer Mininglaserrate abzubauen. Die Berechnung erfolgt wie folgt:
+2. Initiate the program by executing the main.py file.
 ```
-Belt Time (Sekunden) = Cargovolumen (m³) / (Anzahl der Mininglaser * Abbaurate pro Sekunde (m³/s))
+python main.py
 ```
-Beispiel:
+3. Configure various settings in the user interface:
 
-Angenommen, Sie verwenden eine Venture mit einem Cargovolumen von 5000 m³ und zwei Mininglasern, die jeweils mit einer Abbaurate von 1,5 m³ pro Sekunde arbeiten. Die Berechnung würde wie folgt aussehen:
+   - Mining Time: Specify the desired duration of the mining operation in minutes.
+   - Belt Time (seconds): Enter the calculated "Belt Time" (without decimal places) based on cargo volume and mining rate (see below for the calculation formula).
+   - Undock Position: Set the mouse coordinates for the Undock button on the station.
+   - Docking Position: Set the mouse coordinates of the station in the Overview; it should be at the top when the ship returns to the station's grid.
+   - Clear Cargo Position: Specify the mouse position for unloading cargo. This transfers the contents of the Mining Hold to the window above, where your station's inventory is located.
+   - Target-One Position: Set the first mouse coordinate to the asteroids in the Overview.
+   - Target-Two Position: Define the second coordinate in the Overview.
+   - Target-Reset Position: Specify the position for resetting mining targets (a space location with no windows or elements).
+   - Drone-Reset Position: Define the position for resetting drones (a space location with no windows or elements).
+   - Home Bookmark: Set the coordinates for the station's bookmark.
+   - Belt Bookmarks: Enter the coordinates for your Belt Bookmarks (one line per bookmark).
+
+4. Each position field has a small floppy disk icon. Click on it to save the entered coordinates so that they persist across sessions.
+   
+5. Click the "Start" button to initiate the mining bot.
+   
+6. To stop the bot, click the "Stop" button.
+
+## Display of Mouse Position
+The GUI application continuously displays the current mouse position on the screen. This can be helpful for accurately determining the coordinates for the positions mentioned above.
+
+## Belt Time Calculation
+The "Belt Time" refers to the time required to deplete the cargo volume in your mining ship using your mining laser rate. The calculation is as follows:
 ```
-Belt Time = 5000 m³ / (2 * 1,5 m³/s) = 1666 Sekunden
+Belt Time = 5000 m³ / (2 * 1.5 m³/s) = 1666 seconds
 ```
-In diesem Fall dauert es etwa 1666 Sekunden, um das gesamte Cargovolumen abzubauen. Fügen Sie die berechnete "Belt Time" in Sekunden (ohne Nachkommastellen) in das entsprechende Feld in der GUI ein, um den Mining-Bot gemäß Ihrer Konfiguration auszuführen.
+For example:
 
-## Anmerkungen
-Dies ist ein Open-Source-Projekt und wird ohne jegliche Garantien bereitgestellt. Verwenden Sie es auf eigenes Risiko.
+Assuming you are using a Venture with a cargo volume of 5000 m³ and two mining lasers, each with a mining rate of 1.5 m³ per second. The calculation would be as follows:
+```
+Belt Time = 5000 m³ / (2 * 1.5 m³/s) = 1666 seconds
+```
+In this case, it would take approximately 1666 seconds to deplete the entire cargo volume. Enter the calculated "Belt Time" in seconds (without decimal places) into the corresponding field in the GUI to execute the mining bot according to your configuration.
 
-Bitte stellen Sie sicher, dass Sie EVE Online und seine Nutzungsbedingungen und Richtlinien einhalten. Die Verwendung von Bots oder Automatisierung kann gegen die Nutzungsbedingungen des Spiels verstoßen.
+## Notes
+This is an open-source project provided without any guarantees. Use it at your own risk.
 
+Please ensure that you comply with EVE Online's terms of use and policies. The use of bots or automation may violate the game's terms of service.
 
 
