@@ -54,13 +54,13 @@ The GUI application continuously displays the current mouse position on the scre
 ## Cargo Loading Time Calculation
 The "Cargo Loading Time" refers to the time required to deplete the cargo volume in your mining ship using your mining laser rate. The calculation is as follows:
 ```
-Belt Time (seconds) = Cargo Volume (m³) / (Number of mining lasers * Mining rate per second (m³/s))
+Cargo Loading Time (seconds) = Cargo Volume (m³) / (Number of mining lasers * Mining rate per second (m³/s))
 ```
 For example:
 
 Assuming you are using a Venture with a cargo volume of 5000 m³ and two mining lasers, each with a mining rate of 1.5 m³ per second. The calculation would be as follows:
 ```
-Belt Time = 5000 m³ / (2 * 1.5 m³/s) = 1666 seconds
+Cargo Loading Time = 5000 m³ / (2 * 1.5 m³/s) = 1666 seconds
 ```
 In this case, it would take approximately 1666 seconds to deplete the entire cargo volume. Enter the calculated "Belt Time" in seconds (without decimal places) into the corresponding field in the GUI to execute the mining bot according to your configuration.
 
