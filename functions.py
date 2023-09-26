@@ -155,7 +155,7 @@ def clear_cargo(x, y):
     # console
     print(f"[{timestamp}] - clearing cargo...")
     # clear cargo
-    pyautogui.click(x, y, button='left', duration=random_time)
+    pyautogui.click(x + 175, y + 165, button='left', duration=random_time)
     pyautogui.mouseDown(button='left')
     pyautogui.dragRel(-175, -165, duration=random_time)
     pyautogui.mouseUp(button='left')
