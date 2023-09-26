@@ -51,7 +51,7 @@ python main.py
 ## Display of Mouse Position
 The GUI application continuously displays the current mouse position on the screen. This can be helpful for accurately determining the coordinates for the positions mentioned above.
 
-## Belt Time Calculation
+## Cargo Loading Time Calculation
 The "Belt Time" refers to the time required to deplete the cargo volume in your mining ship using your mining laser rate. The calculation is as follows:
 ```
 Belt Time (seconds) = Cargo Volume (m³) / (Number of mining lasers * Mining rate per second (m³/s))
