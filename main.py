@@ -1,4 +1,5 @@
 import tkinter as tk
+import tkinter.font as tkFont
 import threading
 import time
 import ctypes
@@ -10,7 +11,8 @@ from PIL import ImageTk, Image
 
 
 # hard coded values
-mining_target_reset = [(250, 260)]
+#mining_target_reset = [(250, 260)]
+mining_target_reset = [(600, 620)]
 
 
 # Mining functions
@@ -68,7 +70,7 @@ stop_flag = False
 
 # Create Tkinter window
 root = tk.Tk()
-root.title("Mining Bot Alpha Owl-Edition")
+root.title("Mining Bot Owl-Edition")
 root.geometry("480x560")  # Set windows size
 
 # Make window not resizable
@@ -91,7 +93,7 @@ button_frame.pack(pady=10)
 #########################################################
 
 # Create input field for bot duration in minutes
-entry_label = tk.Label(input_frame, text="Set bot duration in minutes:")
+entry_label = tk.Label(input_frame, text="Set mining duration in minutes:")
 entry_label.grid(row=0, column=0, sticky="w")
 entry = tk.Entry(input_frame)
 entry.grid(row=0, column=1, padx=5, pady=4, sticky="w")
@@ -113,23 +115,15 @@ def save_mining_loop_value():
     with open(MINING_LOOP_VALUE_FILE, "w") as file:
         file.write(mining_loop_reset_entry.get())
 
-# function to save coordinates
-def save_button_clicked_mining_loop_reset():
-    save_mining_loop_value()
-    print("Value saved!")
 
 # Create a text field for the mining loop reset values
-mining_loop_reset_label = tk.Label(input_frame, text="Set belt time in seconds:")
+mining_loop_reset_label = tk.Label(input_frame, text="Set cargo loading time:")
 mining_loop_reset_label.grid(row=1, column=0, sticky="w")
 mining_loop_reset_entry = tk.Entry(input_frame)
 mining_loop_reset_entry.grid(row=1, column=1, padx=5, pady=4, sticky="w")
 
 # Loading the saved coordinates at program startup
 mining_loop_reset_entry.insert(tk.END, load_mining_loop_value())
-
-# Create save button
-save_button = tk.Button(input_frame, image=save_icon, compound="left", command=save_button_clicked_mining_loop_reset)
-save_button.grid(row=1, column=2, padx=5, pady=4, sticky="w")
 
 # Undock
 #########################################################
@@ -148,10 +142,7 @@ def save_undock_coo():
     with open(UNDOCK_COO_FILE, "w") as file:
         file.write(undock_coo_entry.get())
 
-# function to save coordinates
-def save_button_clicked_undock():
-    save_undock_coo()
-    print("Value saved!")
+
 
 # create input field for undock coordinates    
 undock_coo_label = tk.Label(input_frame, text="Undock-Button Position:")
@@ -162,9 +153,6 @@ undock_coo_entry.grid(row=2, column=1, padx=5, pady=4, sticky="w")
 # Loading the saved coordinates at startup
 undock_coo_entry.insert(tk.END, load_undock_coo())
 
-# Create save button
-save_button = tk.Button(input_frame, image=save_icon, compound="left", command=save_button_clicked_undock)
-save_button.grid(row=2, column=2, padx=5, pady=4, sticky="w")
 
 # Docking Position
 ##########################################################
@@ -183,23 +171,14 @@ def save_docking_coo():
     with open(DOCKING_FILE, "w") as file:
         file.write(docking_coo_entry.get())
 
-# Function to save coordinates
-def save_button_clicked_docking():
-    save_docking_coo()
-    print("Value saved!")
-
 # Create input field for docking position
 docking_coo_label = tk.Label(input_frame, text="Station-Overview Position:")
-docking_coo_label.grid(row=3, column=0, sticky="w")
+docking_coo_label.grid(row=4, column=0, sticky="w")
 docking_coo_entry = tk.Entry(input_frame)
-docking_coo_entry.grid(row=3, column=1, padx=5, pady=4, sticky="w")
+docking_coo_entry.grid(row=4, column=1, padx=5, pady=4, sticky="w")
 
 # Loading the saved coordinates at program startup 
 docking_coo_entry.insert(tk.END, load_docking_coo())
-
-# Create save button
-save_button = tk.Button(input_frame, image=save_icon, compound="left", command=save_button_clicked_docking)
-save_button.grid(row=3, column=2, padx=5, pady=4, sticky="w")
 
 # Clear Cargo Position
 #########################################################
@@ -218,43 +197,34 @@ def save_clear_cargo_coo():
     with open(CLEAR_CARGO_FILE, "w") as file:
         file.write(clear_cargo_coo_entry.get())
 
-# Function to save coordinates
-def save_button_clicked_clear_cargo():
-    save_clear_cargo_coo()
-    print("Value saved!")
-
 # Create input field for clear-cargo position
 clear_cargo_coo_label = tk.Label(input_frame, text="Clear-Cargo Position:")
-clear_cargo_coo_label.grid(row=4, column=0, sticky="w")
+clear_cargo_coo_label.grid(row=3, column=0, sticky="w")
 clear_cargo_coo_entry = tk.Entry(input_frame)
-clear_cargo_coo_entry.grid(row=4, column=1, padx=5, pady=4, sticky="w")
+clear_cargo_coo_entry.grid(row=3, column=1, padx=5, pady=4, sticky="w")
 
 # Loading the saved coordinates at program startup
 clear_cargo_coo_entry.insert(tk.END, load_clear_cargo_coo())
-
-# Create save button
-save_button = tk.Button(input_frame, image=save_icon, compound="left", command=save_button_clicked_clear_cargo)
-save_button.grid(row=4, column=2, padx=5, pady=4, sticky="w")
 
 # check if the coordinate is set correctly
 
 def check_function():
     # Deaktiviere den Button, um erneute Klicks zu verhindern
-    test_button.config(state=tk.DISABLED)
+    check_button.config(state=tk.DISABLED)
 
     def execute_function():
         clear_cargo_coo_values = [int(x.strip()) for x in clear_cargo_coo_entry.get().split(",")]
         fe.clear_cargo(clear_cargo_coo_values[0], clear_cargo_coo_values[1])
 
         # Aktiviere den Button nach Abschluss der Funktion
-        root.after(1, lambda: test_button.config(state=tk.NORMAL))
+        root.after(1, lambda: check_button.config(state=tk.NORMAL))
 
     # Führe die Funktion in einem separaten Thread aus
     thread = threading.Thread(target=execute_function)
     thread.start()
 
-test_button = tk.Button(input_frame, image=save_icon, compound="left", command=check_function)
-test_button.grid(row=4, column=3, padx=5, pady=4, sticky="w")
+check_button = tk.Button(input_frame, text="Test", compound="left", command=check_function)
+check_button.grid(row=3, column=2, padx=5, pady=4, sticky="w")
 
 # Target-One-Position
 ########################################################
@@ -273,11 +243,6 @@ def save_target_one_coo():
     with open(TARGET_ONE_COO_FILE, "w") as file:
         file.write(target_one_coo_entry.get())
 
-# Function to save coordinates
-def save_button_clicked_target_one():
-    save_target_one_coo()
-    print("Value saved!")
-
 # Create input field for target-one position
 target_one_coo_label = tk.Label(input_frame, text="Target-One Overview Position:")
 target_one_coo_label.grid(row=5, column=0, sticky="w")
@@ -286,10 +251,6 @@ target_one_coo_entry.grid(row=5, column=1, padx=5, pady=4, sticky="w")
 
 # Loading the saved coordinates at program startup
 target_one_coo_entry.insert(tk.END, load_target_one_coo())
-
-# Create a save button
-save_button = tk.Button(input_frame, image=save_icon, compound="left", command=save_button_clicked_target_one)
-save_button.grid(row=5, column=2, padx=5, pady=4, sticky="w")
 
 # Target-Two-Position
 #######################################################
@@ -308,11 +269,6 @@ def save_target_two_coo():
     with open(TARGET_TWO_COO_FILE, "w") as file:
         file.write(target_two_coo_entry.get())
 
-# Function to save coordinates
-def save_button_clicked_target_two():
-    save_target_two_coo()
-    print("Value saved!")
-
 # Create input field for target-two position
 target_two_coo_label = tk.Label(input_frame, text="Target-Two Overview Position:")
 target_two_coo_label.grid(row=6, column=0, sticky="w")
@@ -322,9 +278,6 @@ target_two_coo_entry.grid(row=6, column=1, padx=5, pady=4, sticky="w")
 # Loading the saved coordinates at program startup
 target_two_coo_entry.insert(tk.END, load_target_two_coo())
 
-# Create save button
-save_button = tk.Button(input_frame, image=save_icon, compound="left", command=save_button_clicked_target_two)
-save_button.grid(row=6, column=2, padx=5, pady=4, sticky="w")
 
 # Target-Reset-Position
 #######################################################
@@ -343,13 +296,8 @@ def save_mining_mouse_reset_coo():
     with open(MINING_MOUSE_RESET_FILE, "w") as file:
         file.write(mining_mouse_reset_coo_entry.get())
 
-# Function to save coordinates
-def save_button_clicked_mining_mouse_reset():
-    save_mining_mouse_reset_coo()
-    print("Value saved!")
-
 # Create input field for mining mouse reset
-mining_mouse_reset_coo_label = tk.Label(input_frame, text="Primary Mouse Reset Position:")
+mining_mouse_reset_coo_label = tk.Label(input_frame, text="Mouse Reset Primary Position:")
 mining_mouse_reset_coo_label.grid(row=7, column=0, sticky="w")
 mining_mouse_reset_coo_entry = tk.Entry(input_frame)
 mining_mouse_reset_coo_entry.grid(row=7, column=1, padx=5, pady=4, sticky="w")
@@ -357,9 +305,6 @@ mining_mouse_reset_coo_entry.grid(row=7, column=1, padx=5, pady=4, sticky="w")
 # Loading the saved coordinates at program startup
 mining_mouse_reset_coo_entry.insert(tk.END, load_mining_mouse_reset_coo())
 
-# Create save button
-save_button = tk.Button(input_frame, image=save_icon, compound="left", command=save_button_clicked_mining_mouse_reset)
-save_button.grid(row=7, column=2, padx=5, pady=4, sticky="w")
 
 # Drone-Reset-Position
 ##########################################################
@@ -378,13 +323,8 @@ def save_drone_mouse_reset_coo():
     with open(DRONE_MOUSE_RESET_COO_FILE, "w") as file:
         file.write(drone_mouse_reset_coo_entry.get())
 
-# Function to save coordinates
-def save_button_clicked_drone_reset():
-    save_drone_mouse_reset_coo()
-    print("Value saved!")
-
 # Create input field for drone mouse reset position
-drone_mouse_reset_coo_label = tk.Label(input_frame, text="Secondary Mouse Reset Position:")
+drone_mouse_reset_coo_label = tk.Label(input_frame, text="Mouse Reset Secondary Position:")
 drone_mouse_reset_coo_label.grid(row=8, column=0, sticky="w")
 drone_mouse_reset_coo_entry = tk.Entry(input_frame)
 drone_mouse_reset_coo_entry.grid(row=8, column=1, padx=5, pady=4, sticky="w")
@@ -392,9 +332,6 @@ drone_mouse_reset_coo_entry.grid(row=8, column=1, padx=5, pady=4, sticky="w")
 # Loading the saved coordinates at startup
 drone_mouse_reset_coo_entry.insert(tk.END, load_drone_mouse_reset_coo())
 
-# Create save button
-save_button = tk.Button(input_frame, image=save_icon, compound="left", command=save_button_clicked_drone_reset)
-save_button.grid(row=8, column=2, padx=5, pady=4, sticky="w")
 
 # Home Position
 ##########################################################
@@ -413,11 +350,6 @@ def save_warp_to_coo():
     with open(WARP_TO_COO_FILE, "w") as file:
         file.write(warp_to_coo_entry.get())
 
-# Function to save coordinates
-def save_button_clicked_warp_to_coo():
-    save_warp_to_coo()
-    print("Value saved!")
-
 # Create input field for warp-to position
 warp_to_coo_label = tk.Label(input_frame, text="Home Bookmark:")
 warp_to_coo_label.grid(row=9, column=0, sticky="w")
@@ -427,9 +359,6 @@ warp_to_coo_entry.grid(row=9, column=1, padx=5, pady=4, sticky="w")
 # Loading the saved coordinates at startup
 warp_to_coo_entry.insert(tk.END, load_warp_to_coo())
 
-# Create save button
-save_button = tk.Button(input_frame, image=save_icon, compound="left", command=save_button_clicked_warp_to_coo)
-save_button.grid(row=9, column=2, padx=5, pady=4, sticky="w")
 
 # Belt Bookmarks
 #########################################################
@@ -448,10 +377,7 @@ def save_mining_coo():
     with open(MINING_COO_FILE, "w") as file:
         file.write(mining_coo_entry.get('1.0', 'end'))
 
-# Function to save coordinates
-def save_button_clicked_mining():
-    save_mining_coo()
-    print("Value saved!")
+
 
 # Create input field for mining position
 mining_coo_label = tk.Label(input_frame, text="Belt Bookmarks:")
@@ -462,9 +388,6 @@ mining_coo_entry.grid(row=10, column=1, padx=5, pady=4, sticky="w")
 # Loading the saved coordinates at program startup
 mining_coo_entry.insert(tk.END, load_mining_coo())
 
-# Create save button
-save_button = tk.Button(input_frame, image=save_icon, compound="left", command=save_button_clicked_mining)
-save_button.grid(row=10, column=2, padx=5, pady=4, sticky="w")
 
 #########################################################
 
@@ -475,6 +398,24 @@ start_button.grid(row=0, column=0, padx=(0, 10), ipadx=5)
 # Create stop button
 stop_button = tk.Button(button_frame, text="Stop", command=stop_function)
 stop_button.grid(row=0, column=1, padx=(10, 0), ipadx=5)
+
+# Create global save button
+
+def global_save_button():
+    save_mining_loop_value()
+    save_undock_coo()
+    save_clear_cargo_coo()
+    save_docking_coo()
+    save_target_one_coo()
+    save_target_two_coo()
+    save_mining_mouse_reset_coo()
+    save_drone_mouse_reset_coo()
+    save_warp_to_coo()
+    save_mining_coo()
+    print("values saved!")
+
+global_save_button = tk.Button(button_frame, text="Save", command=global_save_button)
+global_save_button.grid(row=0, column=2, padx=(20, 0), ipadx=5)
 
 ########################################################
 
@@ -494,14 +435,19 @@ class POINT(ctypes.Structure):
 mouse_position_label = tk.Label(root, text="")
 mouse_position_label.pack(pady=10)
 
+bold_font = tkFont.Font(weight="bold")
+
 # Function to update the mouse position
 def update_mouse_position():
     x, y = get_mouse_position()
-    mouse_position_label.config(text=f"Mouse-Position: {x}, {y}")
+    mouse_position_label.config(text=f"Mouse-Position: {x}, {y}", fg="red", font=bold_font)
     mouse_position_label.after(100, update_mouse_position)
 
 # Start update mouse position
 update_mouse_position()
+
+# icon_bitmap
+root.iconbitmap('')
 
 # Start Tkinter Window
 root.mainloop()

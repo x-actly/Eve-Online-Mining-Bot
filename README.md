@@ -27,19 +27,19 @@ python main.py
 ```
 3. Configure various settings in the user interface:
 
-   - Mining Time: Specify the desired duration of the mining operation in minutes.
-   - Belt Time (seconds): Enter the calculated "Belt Time" (without decimal places) based on cargo volume and mining rate (see below for the calculation formula).
+   - mining duration: Specify the desired duration of the mining operation in minutes.
+   - cargo loading time in seconds: Enter the calculated "loading time" (without decimal places) based on cargo volume and mining rate (see below for the calculation formula).
    - Undock Position: Set the mouse coordinates for the Undock button on the station.
-   - Docking Position: Set the mouse coordinates of the station in the Overview; it should be at the top when the ship returns to the station's grid.
-   - Clear Cargo Position: Specify the mouse position for unloading cargo. This transfers the contents of the Mining Hold to the window above, where your station's inventory is located.
-   - Target-One Position: Set the first mouse coordinate to the asteroids in the Overview.
-   - Target-Two Position: Define the second coordinate in the Overview.
-   - Target-Reset Position: Specify the position for resetting mining targets (a space location with no windows or elements).
-   - Drone-Reset Position: Define the position for resetting drones (a space location with no windows or elements).
-   - Home Bookmark: Set the coordinates for the station's bookmark.
+   - Clear Cargo Position: Specify the mouse position for unloading cargo. This transfers the ore to the inventory window above.
+   - Station-Overview Position: Set the mouse coordinates of the station in the Overview; it should be at the top when the ship returns to the station's grid.
+   - Target-One Overview Position: Set the first mouse coordinate to the asteroids in the Overview.
+   - Target-Two Overview Position Position: Define the second coordinate in the Overview.
+   - Mouse-Reset Primary Position: Specify the position for resetting mining targets (an empty space location with no windows, elements or brackets).
+   - Mouse-Reset Secondary Position: Define the position for resetting drones (an empty space location with no windows, elements or brackets).
+   - Home Bookmark: Set the coordinates for the Station Bookmark.
    - Belt Bookmarks: Enter the coordinates for your Belt Bookmarks (one line per bookmark).
 
-4. Each position field has a small floppy disk icon. Click on it to save the entered coordinates so that they persist across sessions.
+4.  Click the "Save" button to hold the entered coordinates so that they persist across sessions.
    
 5. Click the "Start" button to initiate the mining bot.
    
