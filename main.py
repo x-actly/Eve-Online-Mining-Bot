@@ -11,8 +11,8 @@ from PIL import ImageTk, Image
 
 
 # hard coded values
-#mining_target_reset = [(250, 260)]
-mining_target_reset = [(600, 620)]
+mining_target_reset = [(250, 260)]
+
 
 
 # Mining functions
