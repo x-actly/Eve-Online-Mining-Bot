@@ -2,7 +2,7 @@
 
 The Mining Bot Alpha Owl-Edition is a Python program developed to automate mining in EVE Online. This bot utilizes the pyautogui framework to simulate user inputs. 
 
-[![Video auf YouTube](https://img.youtube.com/vi/IhreVideoID/maxresdefault.jpg)]([https://www.youtube.com/watch?v=IhreVideoID](https://www.youtube.com/watch?v=5wEN07A2q3Q&ab_channel=shittyPants))
+[![Video auf YouTube](https://img.youtube.com/vi/5wEN07A2q3Q/maxresdefault.jpg)](https://www.youtube.com/watch?v=5wEN07A2q3Q)
 
 
 ## Features
