@@ -54,7 +54,6 @@ def repeat_function(minutes, undock_coo_value, drone_mouse_reset_coo_value, mini
         fe.docking_circle_menu(docking_coo_values[0], docking_coo_values[1])
         fe.clear_cargo(clear_cargo_coo_values[0], clear_cargo_coo_values[1])
 
-
 def stop_function():
     global stop_flag
     print("The mining script ends with this run!")
@@ -236,6 +235,26 @@ clear_cargo_coo_entry.insert(tk.END, load_clear_cargo_coo())
 # Create save button
 save_button = tk.Button(input_frame, image=save_icon, compound="left", command=save_button_clicked_clear_cargo)
 save_button.grid(row=4, column=2, padx=5, pady=4, sticky="w")
+
+# check if the coordinate is set correctly
+
+def check_function():
+    # Deaktiviere den Button, um erneute Klicks zu verhindern
+    test_button.config(state=tk.DISABLED)
+
+    def execute_function():
+        clear_cargo_coo_values = [int(x.strip()) for x in clear_cargo_coo_entry.get().split(",")]
+        fe.clear_cargo(clear_cargo_coo_values[0], clear_cargo_coo_values[1])
+
+        # Aktiviere den Button nach Abschluss der Funktion
+        root.after(1, lambda: test_button.config(state=tk.NORMAL))
+
+    # Führe die Funktion in einem separaten Thread aus
+    thread = threading.Thread(target=execute_function)
+    thread.start()
+
+test_button = tk.Button(input_frame, image=save_icon, compound="left", command=check_function)
+test_button.grid(row=4, column=3, padx=5, pady=4, sticky="w")
 
 # Target-One-Position
 ########################################################

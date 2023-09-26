@@ -162,7 +162,7 @@ def clear_cargo(x, y):
     pyautogui.mouseDown(button='left')
     pyautogui.dragRel(0, -250, duration=random_time)
     pyautogui.mouseUp(button='left')
-    time.sleep(random_sleep_small)
+    time.sleep(random_time)
 
 # Mining Script
 ########################################################
