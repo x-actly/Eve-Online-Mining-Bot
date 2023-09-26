@@ -92,7 +92,7 @@ button_frame.pack(pady=10)
 #########################################################
 
 # Create input field for bot duration in minutes
-entry_label = tk.Label(input_frame, text="Set mining time in minutes:")
+entry_label = tk.Label(input_frame, text="Set bot duration in minutes:")
 entry_label.grid(row=0, column=0, sticky="w")
 entry = tk.Entry(input_frame)
 entry.grid(row=0, column=1, padx=5, pady=4, sticky="w")
@@ -155,7 +155,7 @@ def save_button_clicked_undock():
     print("Value saved!")
 
 # create input field for undock coordinates    
-undock_coo_label = tk.Label(input_frame, text="Undock-Position:")
+undock_coo_label = tk.Label(input_frame, text="Undock-Button Position:")
 undock_coo_label.grid(row=2, column=0, sticky="w")
 undock_coo_entry = tk.Entry(input_frame)
 undock_coo_entry.grid(row=2, column=1, padx=5, pady=4, sticky="w")
@@ -190,7 +190,7 @@ def save_button_clicked_docking():
     print("Value saved!")
 
 # Create input field for docking position
-docking_coo_label = tk.Label(input_frame, text="Docking-Position:")
+docking_coo_label = tk.Label(input_frame, text="Station-Overview Position:")
 docking_coo_label.grid(row=3, column=0, sticky="w")
 docking_coo_entry = tk.Entry(input_frame)
 docking_coo_entry.grid(row=3, column=1, padx=5, pady=4, sticky="w")
@@ -225,7 +225,7 @@ def save_button_clicked_clear_cargo():
     print("Value saved!")
 
 # Create input field for clear-cargo position
-clear_cargo_coo_label = tk.Label(input_frame, text="Clear-Cargo-Position:")
+clear_cargo_coo_label = tk.Label(input_frame, text="Clear-Cargo Position:")
 clear_cargo_coo_label.grid(row=4, column=0, sticky="w")
 clear_cargo_coo_entry = tk.Entry(input_frame)
 clear_cargo_coo_entry.grid(row=4, column=1, padx=5, pady=4, sticky="w")
@@ -260,7 +260,7 @@ def save_button_clicked_target_one():
     print("Value saved!")
 
 # Create input field for target-one position
-target_one_coo_label = tk.Label(input_frame, text="Target-One-Position:")
+target_one_coo_label = tk.Label(input_frame, text="Target-One Overview Position:")
 target_one_coo_label.grid(row=5, column=0, sticky="w")
 target_one_coo_entry = tk.Entry(input_frame)
 target_one_coo_entry.grid(row=5, column=1, padx=5, pady=4, sticky="w")
@@ -295,7 +295,7 @@ def save_button_clicked_target_two():
     print("Value saved!")
 
 # Create input field for target-two position
-target_two_coo_label = tk.Label(input_frame, text="Target-Two-Position:")
+target_two_coo_label = tk.Label(input_frame, text="Target-Two Overview Position:")
 target_two_coo_label.grid(row=6, column=0, sticky="w")
 target_two_coo_entry = tk.Entry(input_frame)
 target_two_coo_entry.grid(row=6, column=1, padx=5, pady=4, sticky="w")
@@ -330,7 +330,7 @@ def save_button_clicked_mining_mouse_reset():
     print("Value saved!")
 
 # Create input field for mining mouse reset
-mining_mouse_reset_coo_label = tk.Label(input_frame, text="Target Reset-Position:")
+mining_mouse_reset_coo_label = tk.Label(input_frame, text="Primary Mouse Reset Position:")
 mining_mouse_reset_coo_label.grid(row=7, column=0, sticky="w")
 mining_mouse_reset_coo_entry = tk.Entry(input_frame)
 mining_mouse_reset_coo_entry.grid(row=7, column=1, padx=5, pady=4, sticky="w")
@@ -365,7 +365,7 @@ def save_button_clicked_drone_reset():
     print("Value saved!")
 
 # Create input field for drone mouse reset position
-drone_mouse_reset_coo_label = tk.Label(input_frame, text="Drone Reset-Position:")
+drone_mouse_reset_coo_label = tk.Label(input_frame, text="Secondary Mouse Reset Position:")
 drone_mouse_reset_coo_label.grid(row=8, column=0, sticky="w")
 drone_mouse_reset_coo_entry = tk.Entry(input_frame)
 drone_mouse_reset_coo_entry.grid(row=8, column=1, padx=5, pady=4, sticky="w")
