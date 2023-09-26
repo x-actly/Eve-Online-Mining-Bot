@@ -117,7 +117,7 @@ def save_mining_loop_value():
 
 
 # Create a text field for the mining loop reset values
-mining_loop_reset_label = tk.Label(input_frame, text="Set cargo loading time:")
+mining_loop_reset_label = tk.Label(input_frame, text="Set cargo loading time in seconds:")
 mining_loop_reset_label.grid(row=1, column=0, sticky="w")
 mining_loop_reset_entry = tk.Entry(input_frame)
 mining_loop_reset_entry.grid(row=1, column=1, padx=5, pady=4, sticky="w")
