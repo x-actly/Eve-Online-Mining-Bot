@@ -51,7 +51,7 @@ The GUI application continuously displays the current mouse position on the scre
 ## Belt Time Calculation
 The "Belt Time" refers to the time required to deplete the cargo volume in your mining ship using your mining laser rate. The calculation is as follows:
 ```
-Belt Time = 5000 m³ / (2 * 1.5 m³/s) = 1666 seconds
+Belt Time (seconds) = Cargo Volume (m³) / (Number of mining lasers * Mining rate per second (m³/s))
 ```
 For example:
 
