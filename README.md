@@ -1,6 +1,6 @@
-# Mining Bot Alpha Owl-Edition
+# Eve Online Mining Bot
 
-The Mining Bot Alpha Owl-Edition is a Python program developed to automate mining in EVE Online. This bot utilizes the Tkinter framework for its user interface and requires several external Python modules listed in the `requirements.txt` file.
+The Mining Bot Alpha Owl-Edition is a Python program developed to automate mining in EVE Online. This bot utilizes the pyautogui framework to simulate user inputs. It requires several external Python modules listed in the `requirements.txt` file.
 
 ## Features
 
@@ -11,7 +11,7 @@ The Mining Bot Alpha Owl-Edition is a Python program developed to automate minin
 
 ## Requirements
 
-To run the Mining Bot Alpha Owl-Edition, you must install the necessary Python modules. Use the following command:
+To run the Eve Online Mining Bot, you must install the necessary Python modules. Use the following command:
 
 ```bash
 pip install -r requirements.txt
