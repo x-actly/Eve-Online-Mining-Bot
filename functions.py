@@ -62,7 +62,7 @@ def warp_to_pos_circle_menu(x, y):
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
     # console
-    print(f"[{timestamp}] - warping to mining position...")
+    print(f"[{timestamp}] - warping to position...")
     # warp to belt
     for i in range(1):
         time.sleep(random_time)
