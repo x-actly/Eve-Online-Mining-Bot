@@ -2,7 +2,7 @@
 
 The Mining Bot Alpha Owl-Edition is a Python program developed to automate mining in EVE Online. This bot utilizes the pyautogui framework to simulate user inputs. 
 
-[![Video auf YouTube](https://img.youtube.com/vi/5wEN07A2q3Q/maxresdefault.jpg)](https://www.youtube.com/watch?v=5wEN07A2q3Q)
+[![Video auf YouTube](https://img.youtube.com/vi/XE-pzICgATo/maxresdefault.jpg)](https://www.youtube.com/watch?v=XE-pzICgATo)
 
 
 ## Features
@@ -31,14 +31,14 @@ python main.py
 3. Configure various settings in the user interface:
 
    - mining duration: Specify the desired duration of the mining operation in minutes.
-   - cargo loading time in seconds: Enter the calculated "loading time" (without decimal places) based on cargo volume and mining rate (see below for the calculation formula).
    - Undock Position: Set the mouse coordinates for the Undock button on the station.
    - Clear Cargo Position: Specify the mouse position for unloading cargo. This transfers the ore to the inventory window above.
+   - Mining Hold: Set volume from your mining cargo.
+   - Mining Yield: Set mining rate of your mining laser.
    - Station-Overview Position: Set the mouse coordinates of the station in the Overview; it should be at the top when the ship returns to the station's grid.
    - Target-One Overview Position: Set the first mouse coordinate to the asteroids in the Overview.
    - Target-Two Overview Position Position: Define the second coordinate in the Overview.
    - Mouse-Reset Primary Position: Specify the position for resetting mining targets (an empty space location with no windows, elements or brackets).
-   - Mouse-Reset Secondary Position: Define the position for resetting drones (an empty space location with no windows, elements or brackets).
    - Home Bookmark: Set the coordinates for the Station Bookmark.
    - Belt Bookmarks: Enter the coordinates for your Belt Bookmarks (one line per bookmark).
 
@@ -51,14 +51,14 @@ python main.py
 ## Display of Mouse Position
 The GUI application continuously displays the current mouse position on the screen. This can be helpful for accurately determining the coordinates for the positions mentioned above.
 
-## Cargo Loading Time Calculation
-The "Cargo Loading Time" refers to the time required to deplete the cargo volume in your mining ship using your mining laser rate.
+## Mining Hold Loading Calculation
+The "Mining Hold Loading Calculation" refers to the time required to deplete the cargo volume in your mining ship using your mining laser rate (Mining Yield).
 
-Assuming you are using a Venture with a cargo volume of 5000 m³ and two mining lasers, each with a mining rate of 1.5 m³ per second. The calculation would be as follows:
+Assuming you are using a Venture with a cargo volume of 5000 m³ and two mining lasers, each with a mining yield of 1.5 m³ per second. The calculation would be as follows:
 ```
-Cargo Loading Time = 5000 m³ / (2 * 1.5 m³/s) = 1666 seconds
+Mining Hold Loading Time = 5000 m³ / (2 * 1.5 m³/s) = 1666 seconds
 ```
-In this case, it would take approximately 1666 seconds to deplete the entire cargo volume. Enter the calculated "Belt Time" in seconds (without decimal places) into the corresponding field in the GUI to execute the mining bot according to your configuration.
+In this case, it would take approximately 1666 seconds to deplete the entire cargo volume. Set the mining hold and yield and the script automatically calculate the loading time for you.
 
 ## Notes
 This is an open-source project provided without any guarantees. Use it at your own risk.
