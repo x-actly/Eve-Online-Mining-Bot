@@ -45,10 +45,16 @@ python main.py
    - Belt Bookmarks: Enter the coordinates for your Belt Bookmarks (one line per bookmark).
 
 4. Click the "Save" button to hold the entered coordinates so that they persist across sessions.
+
+5. Set Mining Laser to High Power Slot 1-2
+
+6. Set Shield Hardener to High Power Slot 3
+
+7. Make sure you set shortcuts on default
    
-5. If you are ready, dock up and click the "Start" button to initiate the mining bot.
+8. If you are ready, dock up and click the "Start" button to initiate the mining bot.
    
-6. Click the stop button if you want to end the bot prematurely. It will complete the current mining cycle and then stop flying into the belt. 
+9. Click the stop button if you want to end the bot prematurely. It will complete the current mining cycle and then stop flying into the belt. 
 
 ## Display of Mouse Position
 The GUI application continuously displays the current mouse position on the screen. This can be helpful for accurately determining the coordinates for the positions mentioned above.
