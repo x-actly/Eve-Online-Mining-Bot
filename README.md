@@ -14,7 +14,9 @@ The Mining Bot Alpha Owl-Edition is a Python program developed to automate minin
 
 ## Requirements
 
-To run the Eve Online Mining Bot, you must install the necessary Python modules. Use the following command:
+To run this bot, you must install python first! You can find several Tutorials on youtube.com.
+
+If Python is working on your machine correctly, you must install the necessary Python modules. Use the following command:
 
 ```bash
 pip install -r requirements.txt
@@ -32,9 +34,9 @@ python main.py
 
    - mining duration: Specify the desired duration of the mining operation in minutes.
    - Undock Position: Set the mouse coordinates for the Undock button on the station.
-   - Clear Cargo Position: Specify the mouse position for unloading cargo. This transfers the ore to the inventory window above.
+   - Clear Cargo Position: Specify the mouse position for unloading cargo. This transfers the ore to the inventory window above. Use Test Button to make it work correctly. 
    - Mining Hold: Set volume from your mining cargo.
-   - Mining Yield: Set mining rate of your mining laser.
+   - Mining Yield: Set mining rate of your mining laser. Check the Calculation below. 
    - Station-Overview Position: Set the mouse coordinates of the station in the Overview; it should be at the top when the ship returns to the station's grid.
    - Target-One Overview Position: Set the first mouse coordinate to the asteroids in the Overview.
    - Target-Two Overview Position Position: Define the second coordinate in the Overview.
@@ -42,11 +44,11 @@ python main.py
    - Home Bookmark: Set the coordinates for the Station Bookmark.
    - Belt Bookmarks: Enter the coordinates for your Belt Bookmarks (one line per bookmark).
 
-4.  Click the "Save" button to hold the entered coordinates so that they persist across sessions.
+4. Click the "Save" button to hold the entered coordinates so that they persist across sessions.
    
-5. Click the "Start" button to initiate the mining bot.
+5. If you are ready, dock up and click the "Start" button to initiate the mining bot.
    
-6. To stop the bot, click the "Stop" button.
+6. Click the stop button if you want to end the bot prematurely. It will complete the current mining cycle and then stop flying into the belt. 
 
 ## Display of Mouse Position
 The GUI application continuously displays the current mouse position on the screen. This can be helpful for accurately determining the coordinates for the positions mentioned above.
