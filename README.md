@@ -46,11 +46,11 @@ python main.py
 
 4. Click the "Save" button to hold the entered coordinates so that they persist across sessions.
 
-5. Set Mining Laser to High Power Slot 1-2
+5. Set Mining Laser to High Power Slot 1-2.
 
-6. Set Shield Hardener to High Power Slot 3
+6. Set Shield Hardener to High Power Slot 3.
 
-7. Make sure you set shortcuts on default
+7. Make sure you set shortcuts on default.
    
 8. If you are ready, dock up and click the "Start" button to initiate the mining bot.
    
