@@ -80,10 +80,10 @@ stop_flag = False
 # Create Tkinter window
 root = tk.Tk()
 root.title("Mining Bot Owl-Edition")
-root.geometry("480x560")  # Set windows size
+root.geometry("480x600")  # Set windows size
 
 # Make window not resizable
-root.resizable(False, False)
+root.resizable(False, True)
 
 # Load save icon
 save_icon = Image.open("config/icons/save_icon.png")  # Pfade und Dateinamen anpassen
