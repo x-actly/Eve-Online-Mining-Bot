@@ -36,7 +36,7 @@ def start_function():
     target_two_coo_values = [int(x.strip()) for x in config['POSITIONS']['target_two_coo'].split(",")]
     mouse_reset_coo_value = [int(x.strip()) for x in config['POSITIONS']['mouse_reset_coo'].split(",")]
     mining_hold_value = int(config['SETTINGS']['mining_hold'])
-    mining_yield_value = int(config['SETTINGS']['mining_yield'])
+    mining_yield_value = float(config['SETTINGS']['mining_yield'].replace(',', '.'))
     thread = threading.Thread(target=repeat_function, args=(minutes, undock_coo_value, mining_coo_values, warp_to_coo_values, docking_coo_values, clear_cargo_coo_values, target_one_coo_values, target_two_coo_values, mouse_reset_coo_value, mining_hold_value, mining_yield_value))
     thread.start()
 
@@ -300,6 +300,13 @@ update_mouse_position()
 root.iconbitmap('')
 
 root.bind("<Control-i>", insert_mouse_position)
+
+# Create a label to display the countdown timer
+timer_label = tk.Label(root, text="", font=("Arial", 12))
+timer_label.pack(pady=10)
+
+# Start updating the countdown timer
+fe.update_timer(timer_label)
 
 # Start Tkinter Window
 root.mainloop()

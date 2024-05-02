@@ -218,6 +218,7 @@ def mining_behaviour(tx1, ty1, tx2, ty2, mr_start, mr_end, ml_start, ml_end, rm_
         pyautogui.press('f2')
 
         # reset every 170 seconds (depends on mining barge)
+        set_next_reset(mining_reset)
         sleep_and_log(mining_reset)
         log("reset mining script...")
 
@@ -225,6 +226,31 @@ def mining_behaviour(tx1, ty1, tx2, ty2, mr_start, mr_end, ml_start, ml_end, rm_
         if elapsed_time >= mining_loop:
             log("Done mining")
             break
+
+# Create a global variable to store the next reset time
+next_reset_time = 0
+
+# Function to update the countdown timer
+def update_timer(label):
+    global next_reset_time
+
+    # Calculate remaining time until the next reset
+    remaining_time = max(0, next_reset_time - time.time())
+
+    # Format remaining time as minutes and seconds
+    minutes = int(remaining_time // 60)
+    seconds = int(remaining_time % 60)
+
+    # Update the label text with the remaining time
+    label.config(text=f"Next Reset in: {minutes:02d}:{seconds:02d}")
+
+    # Schedule the update function to run again after 1 second
+    label.after(1000, update_timer, label)
+
+# Function to set the next reset time
+def set_next_reset(time_interval):
+    global next_reset_time
+    next_reset_time = time.time() + time_interval
 
 def sleep_and_log(seconds):
     log(f"sleeping {seconds} seconds")
