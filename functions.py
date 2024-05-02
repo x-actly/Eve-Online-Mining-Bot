@@ -218,7 +218,7 @@ def mining_behaviour(tx1, ty1, tx2, ty2, mr_start, mr_end, ml_start, ml_end, rm_
         pyautogui.press('f2')
 
         # reset every 170 seconds (depends on mining barge)
-        set_next_reset(mining_reset)
+        set_next_reset(mining_reset, NEXT_RESET_IN)
         sleep_and_log(mining_reset)
         log("reset mining script...")
 
@@ -227,30 +227,46 @@ def mining_behaviour(tx1, ty1, tx2, ty2, mr_start, mr_end, ml_start, ml_end, rm_
             log("Done mining")
             break
 
-# Create a global variable to store the next reset time
-next_reset_time = 0
+# Constants for timers 
+TIME_LEFT = "Time left"
+NEXT_RESET_IN = "Next reset in"
+
+# Dictionary to store next reset time for each counter
+timers = {
+    TIME_LEFT: 0,
+    NEXT_RESET_IN: 0
+}
 
 # Function to update the countdown timer
-def update_timer(label):
-    global next_reset_time
-
+def update_timer(label, counter):
     # Calculate remaining time until the next reset
-    remaining_time = max(0, next_reset_time - time.time())
+    remaining_time = max(0, timers[counter] - time.time())
 
-    # Format remaining time as minutes and seconds
+    # Calculate days, hours, minutes, and seconds
+    days = int(remaining_time // (60 * 60 * 24))
+    remaining_time %= (60 * 60 * 24)
+    hours = int(remaining_time // (60 * 60))
+    remaining_time %= (60 * 60)
     minutes = int(remaining_time // 60)
     seconds = int(remaining_time % 60)
 
+    # Format the remaining time
+    remaining_str = ""
+    if days > 0:
+        remaining_str += f"{days}d "
+    if hours > 0:
+        remaining_str += f"{hours}h "
+    remaining_str += f"{minutes:02d}m {seconds:02d}s"
+
     # Update the label text with the remaining time
-    label.config(text=f"Next Reset in: {minutes:02d}:{seconds:02d}")
+    label.config(text=f"{counter}: {remaining_str}")
 
     # Schedule the update function to run again after 1 second
-    label.after(1000, update_timer, label)
+    label.after(1000, update_timer, label, counter)
 
-# Function to set the next reset time
-def set_next_reset(time_interval):
-    global next_reset_time
-    next_reset_time = time.time() + time_interval
+# Function to set the next reset time for a specific counter
+def set_next_reset(time_interval, counter):
+    timers[counter] = time.time() + time_interval
 
 def sleep_and_log(seconds):
     log(f"sleeping {seconds} seconds")

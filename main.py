@@ -42,6 +42,7 @@ def start_function():
 
 def repeat_function(minutes, undock_coo_value, mining_coo_values, warp_to_coo_values, docking_coo_values, clear_cargo_coo_values, target_one_coo_values, target_two_coo_values, mouse_reset_coo_value, mining_hold_value, mining_yield_value):
     fe.log(f"The mining script will run {minutes} minutes!")
+    fe.set_next_reset(minutes * 60, fe.TIME_LEFT)
     end_time = time.time() + (minutes * 60)
 
     # cargo loading phrase
@@ -283,14 +284,14 @@ class POINT(ctypes.Structure):
 
 # Create a label to display the mouse position
 mouse_position_label = tk.Label(root, text="")
-mouse_position_label.pack(pady=20)
+mouse_position_label.pack(pady=10)
 
 bold_font = tkFont.Font(weight="bold")
 
 # Function to update the mouse position
 def update_mouse_position():
     x, y = get_mouse_position()
-    mouse_position_label.config(text=f"Mouse-Position: {x}, {y}", fg="red", font=bold_font)
+    mouse_position_label.config(text=f"Mouse-Position: {x}, {y}", font=("Arial", 12))
     mouse_position_label.after(100, update_mouse_position)
 
 # Start update mouse position
@@ -301,12 +302,17 @@ root.iconbitmap('')
 
 root.bind("<Control-i>", insert_mouse_position)
 
+total_time_label = tk.Label(root, text="", font=("Arial", 12))
+total_time_label.pack(pady=10)
+
+fe.update_timer(total_time_label, fe.TIME_LEFT)
+
 # Create a label to display the countdown timer
-timer_label = tk.Label(root, text="", font=("Arial", 12))
-timer_label.pack(pady=10)
+next_reset_label = tk.Label(root, text="", font=("Arial", 12))
+next_reset_label.pack(pady=10)
 
 # Start updating the countdown timer
-fe.update_timer(timer_label)
+fe.update_timer(next_reset_label, fe.NEXT_RESET_IN)
 
 # Start Tkinter Window
 root.mainloop()
