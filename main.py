@@ -259,6 +259,14 @@ global_save_button.grid(row=0, column=2, padx=(20, 0), pady=10, ipadx=5)
 
 ########################################################
 
+def insert_mouse_position(event):
+    x, y = get_mouse_position()
+    if isinstance(event.widget, tk.Text):
+        event.widget.insert(tk.END, f"\n{x}, {y}")
+    elif isinstance(event.widget, tk.Entry):
+        event.widget.delete(0, tk.END)
+        event.widget.insert(tk.END, f"{x}, {y}")
+
 # Function to get mouse position
 
 def get_mouse_position():
@@ -290,6 +298,8 @@ update_mouse_position()
 
 # icon_bitmap
 root.iconbitmap('')
+
+root.bind("<Control-i>", insert_mouse_position)
 
 # Start Tkinter Window
 root.mainloop()
