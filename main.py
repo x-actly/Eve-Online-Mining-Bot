@@ -41,7 +41,7 @@ def start_function():
     thread.start()
 
 def repeat_function(minutes, undock_coo_value, mining_coo_values, warp_to_coo_values, docking_coo_values, clear_cargo_coo_values, target_one_coo_values, target_two_coo_values, mouse_reset_coo_value, mining_hold_value, mining_yield_value):
-    print(f"The mining script will run {minutes} minutes!")
+    fe.log(f"The mining script will run {minutes} minutes!")
     end_time = time.time() + (minutes * 60)
 
     # cargo loading phrase
@@ -51,7 +51,7 @@ def repeat_function(minutes, undock_coo_value, mining_coo_values, warp_to_coo_va
 
     while not stop_flag and time.time() < end_time:
 
-        print(f"The mining cargo is filled in about {cargo_loading_time_print} minutes!")
+        fe.log(f"The mining cargo is filled in about {cargo_loading_time_print} minutes!")
 
         time.sleep(5)
 
