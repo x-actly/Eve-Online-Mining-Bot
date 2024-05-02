@@ -14,24 +14,17 @@ def undock(x, y):
 
     random_time = random.uniform(1,2)
     random_sleep_small = random.uniform(12,15)
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-    # console
-    print("")
-    print(f"[{timestamp}] - undocking...")
+    log("undocking...")
     # undock
     pyautogui.moveTo(x,y, duration=random_time)
     pyautogui.mouseDown(button='left')
-    time.sleep(random_time)
+    sleep_and_log(random_time)
     pyautogui.mouseUp(button='left')
-    time.sleep(random_sleep_small)
+    sleep_and_log(random_sleep_small)
 
 def set_hardener_online():
 
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-    # console
-    print(f"[{timestamp}] - starting hardener...")
+    log("starting hardener...")
     # set hardener online
     pyautogui.press('f3')
     pyautogui.press('f4')
@@ -40,120 +33,98 @@ def warp_to_pos_dropdown(x, y,rm_x, rm_y):
 
     random_time = random.uniform(2,3)
     random_sleep_medium = random.uniform(70, 75)
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-    # console
-    print(f"[{timestamp}] - warping to position...")
+    log("warping to position...")
     # warping to belt
-    time.sleep(10)
+    sleep_and_log(10)
     pyautogui.moveTo(x,y, 2)
     pyautogui.click(button='right')
-    time.sleep(random_time)
+    sleep_and_log(random_time)
     pyautogui.moveRel(rm_x, rm_y)
-    time.sleep(random_time)
+    sleep_and_log(random_time)
     pyautogui.click(button='left')
-    time.sleep(random_sleep_medium)
+    sleep_and_log(random_sleep_medium)
 
 def warp_to_pos_circle_menu(x, y):
 
     random_time = random.uniform(6,7)
     random_sleep_medium = random.uniform(70, 75)
     y_offset = random.randint(-51,-49)
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    
-    # console
-    print(f"[{timestamp}] - warping to position...")
+    log("warping to position...")
     # warp to belt
     for i in range(1):
-        time.sleep(random_time)
+        sleep_and_log(random_time)
         pyautogui.moveTo(x, y)
         pyautogui.mouseDown()
-        time.sleep(random_time)
+        sleep_and_log(random_time)
         pyautogui.moveRel(-50, y_offset, 1)
         pyautogui.mouseUp()
     
-    time.sleep(random_sleep_medium)
+    sleep_and_log(random_sleep_medium)
 
 def drone_out(x,y):
 
     random_time = random.uniform(1,2)
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-    # console
-    print(f"[{timestamp}] - launching drones...")
+    log("launching drones...")
     # drone out, random click in space
     pyautogui.click(x, y, button='left', duration=random_time)
     # drone out
-    time.sleep(5)
+    sleep_and_log(5)
     pyautogui.keyDown('shift')
     pyautogui.press('f')
-    time.sleep(1)
+    sleep_and_log(1)
     # Umschalt loslassen
     pyautogui.keyUp('shift')
 
 def drone_in():
 
     random_sleep_small = random.uniform(12, 15)
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    
-    # console
-    print(f"[{timestamp}] - drones returning to bay...")
+    log("drones returning to bay...")
     # drone in
     pyautogui.keyDown('shift')
     pyautogui.press('r')
-    time.sleep(1)
+    sleep_and_log(1)
     pyautogui.keyUp('shift')
     # drone time back to ship
-    time.sleep(random_sleep_small)
+    sleep_and_log(random_sleep_small)
 
 def docking_dropdown(x, y, rel_x, rel_y):
 
     random_time = random.uniform(2,3)
     random_sleep_medium = random.uniform(15, 20)
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-    # console
-    print(f"[{timestamp}] - docking...")
+    log("docking...")
     # docking
-    time.sleep(2)
+    sleep_and_log(2)
     pyautogui.moveTo(x,y, 2)
     pyautogui.click(button='right')
-    time.sleep(random_time)
+    sleep_and_log(random_time)
     pyautogui.moveRel(rel_x, rel_y)
-    time.sleep(random_time)
+    sleep_and_log(random_time)
     pyautogui.click(button='left')
-    time.sleep(random_sleep_medium)
+    sleep_and_log(random_sleep_medium)
 
 def docking_circle_menu(x, y):
 
     random_time = random.uniform(6,7)
     random_sleep_medium = random.uniform(65, 70)
     y_offset = random.randint(-81, -79)
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    
-    # console
-    print(f"[{timestamp}] - docking...")
+    log("docking...")
     # docking
     for i in range(1):
-        time.sleep(random_time)
+        sleep_and_log(random_time)
         pyautogui.moveTo(x, y)
         pyautogui.mouseDown()
-        time.sleep(random_time)
+        sleep_and_log(random_time)
         pyautogui.moveRel(0, y_offset, 1)
         pyautogui.mouseUp()
 
-    time.sleep(random_sleep_medium)
+    sleep_and_log(random_sleep_medium)
 
 
 
 def clear_cargo(x, y):
 
     random_time = random.uniform(3, 4)
-    random_sleep_small = random.uniform(12, 15)
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-    # console
-    print(f"[{timestamp}] - clearing cargo...")
+    log("clearing cargo...")
     # clear cargo
     pyautogui.click(x + 175, y + 165, button='left', duration=random_time)
     pyautogui.mouseDown(button='left')
@@ -162,7 +133,7 @@ def clear_cargo(x, y):
     pyautogui.mouseDown(button='left')
     pyautogui.dragRel(0, -250, duration=random_time)
     pyautogui.mouseUp(button='left')
-    time.sleep(random_time)
+    sleep_and_log(random_time)
 
 # Mining Script
 ########################################################
@@ -195,7 +166,7 @@ def mining_behaviour(tx1, ty1, tx2, ty2, mr_start, mr_end, ml_start, ml_end, rm_
         pyautogui.keyUp('ctrl')
         pyautogui.keyUp('shift')
 
-        time.sleep(3)
+        sleep_and_log(3)
 
         # reset target 2
         pyautogui.moveTo(tx2, ty2)
@@ -207,55 +178,62 @@ def mining_behaviour(tx1, ty1, tx2, ty2, mr_start, mr_end, ml_start, ml_end, rm_
 
         # reset mininglaser 1
         pyautogui.keyDown('f1')
-        time.sleep(random_time)
+        sleep_and_log(random_time)
         pyautogui.keyUp('f1')
 
-        time.sleep(3)
+        sleep_and_log(3)
 
         # reset mininglaser 2
         pyautogui.keyDown('f2')
-        time.sleep(random_time)
+        sleep_and_log(random_time)
         pyautogui.keyUp('f2')
 
         # reset mouse assigned mining laser random in space
         pyautogui.moveTo(rm_x, rm_y)
         pyautogui.click(button='right')
 
-        time.sleep(2)
+        sleep_and_log(2)
 
         # console
-        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        print(f"[{timestamp}] - mining...")
+        log("mining...")
 
         # target 1
         pyautogui.moveTo(tx1, ty1)
         pyautogui.keyDown('ctrl')
         pyautogui.click(button='left')
         pyautogui.keyUp('ctrl')
-        time.sleep(3)
+        sleep_and_log(3)
         pyautogui.press('f1')
 
-        time.sleep(5)
+        sleep_and_log(5)
 
         # target 2
         pyautogui.moveTo(tx2,ty2)
         pyautogui.keyDown('ctrl')
         pyautogui.click(button='left')
         pyautogui.keyUp('ctrl')
-        time.sleep(3)
+        sleep_and_log(3)
         # second left click to focus the second target
         pyautogui.click(button='left')
         pyautogui.press('f2')
 
         # reset every 170 seconds (depends on mining barge)
-        time.sleep(mining_reset)
-        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        print(f"[{timestamp}] - reset mining script...")
+        sleep_and_log(mining_reset)
+        log("reset mining script...")
 
         elapsed_time = time.time() - start_time
         if elapsed_time >= mining_loop:
+            log("Done mining")
             break
 
+def sleep_and_log(seconds):
+    log(f"sleeping {seconds} seconds")
+    time.sleep(seconds)
+
+def log(msg):
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    print(f"[{timestamp}] - {msg}")
+ 
 # # Draw Function
 # ########################################################
 
@@ -305,7 +283,7 @@ def owl_signature():
 
     for i in range(len(owl)):
         print(owl[i])
-        time.sleep(delay)
+        sleep_and_log(delay)
         delay -= acceleration
 
 # Explanation
