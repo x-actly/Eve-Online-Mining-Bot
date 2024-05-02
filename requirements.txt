@@ -1,6 +1,4 @@
 keyboard
 datetime
 pyautogui
-threading
-ctypes
 Pillow

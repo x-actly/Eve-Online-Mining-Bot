@@ -1,0 +1,18 @@
+[SETTINGS]
+mining_duration = 60
+mining_hold = 5000
+mining_yield = 3
+
+[POSITIONS]
+undock_coo = 100, 200
+clear_cargo_coo = 300, 400
+docking_coo = 500, 600
+target_one_coo = 700, 800
+target_two_coo = 900, 1000
+mouse_reset_coo = 1100, 1200
+warp_to_coo = 1300, 1400
+mining_coo = 1500, 1600
+	1700, 1800
+	1900, 2000
+	
+

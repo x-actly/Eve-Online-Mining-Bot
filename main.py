@@ -6,15 +6,19 @@ import ctypes
 import random
 from ctypes import windll
 import functions as fe
-from PIL import ImageTk, Image
+import os
+import configparser
 
+# Check if the file exists
+if not os.path.isfile('config.properties'):
+    raise FileNotFoundError("Config file 'config.properties' not found.")
 
+# Load configurations from the property file
+config = configparser.ConfigParser()
+config.read('config.properties')
 
 # hard coded values
 mining_target_reset = [(250, 260)]
-
-
-
 
 # Mining functions
 #########################################################
@@ -23,17 +27,16 @@ def start_function():
     global stop_flag
     stop_flag = False
     minutes = int(entry.get())
-    undock_coo_value = [int(x.strip()) for x in undock_coo_entry.get().split(",")]
-    mining_coo_values = mining_coo_entry.get("1.0", tk.END).strip().split("\n")
-    mining_coo_values = [(int(x.strip()), int(y.strip())) for x, y in (value.split(",") for value in mining_coo_values)]
-    warp_to_coo_values = [int(x.strip()) for x in warp_to_coo_entry.get().split(",")]
-    docking_coo_values = [int(x.strip()) for x in docking_coo_entry.get().split(",")]
-    clear_cargo_coo_values = [int(x.strip()) for x in clear_cargo_coo_entry.get().split(",")]
-    target_one_coo_values = [int(x.strip()) for x in target_one_coo_entry.get().split(",")]
-    target_two_coo_values = [int(x.strip()) for x in target_two_coo_entry.get().split(",")]
-    mouse_reset_coo_value = [int(x.strip()) for x in mouse_reset_coo_entry.get().split(",")]
-    mining_hold_value = int(mining_hold_entry.get())
-    mining_yield_value = int(mining_yield_entry.get())
+    undock_coo_value = [int(x.strip()) for x in config['POSITIONS']['undock_coo'].split(",")]
+    mining_coo_values = [(int(x.strip()), int(y.strip())) for x, y in (value.split(",") for value in config['POSITIONS']['mining_coo'].split("\n"))]
+    warp_to_coo_values = [int(x.strip()) for x in config['POSITIONS']['warp_to_coo'].split(",")]
+    docking_coo_values = [int(x.strip()) for x in config['POSITIONS']['docking_coo'].split(",")]
+    clear_cargo_coo_values = [int(x.strip()) for x in config['POSITIONS']['clear_cargo_coo'].split(",")]
+    target_one_coo_values = [int(x.strip()) for x in config['POSITIONS']['target_one_coo'].split(",")]
+    target_two_coo_values = [int(x.strip()) for x in config['POSITIONS']['target_two_coo'].split(",")]
+    mouse_reset_coo_value = [int(x.strip()) for x in config['POSITIONS']['mouse_reset_coo'].split(",")]
+    mining_hold_value = int(config['SETTINGS']['mining_hold'])
+    mining_yield_value = int(config['SETTINGS']['mining_yield'])
     thread = threading.Thread(target=repeat_function, args=(minutes, undock_coo_value, mining_coo_values, warp_to_coo_values, docking_coo_values, clear_cargo_coo_values, target_one_coo_values, target_two_coo_values, mouse_reset_coo_value, mining_hold_value, mining_yield_value))
     thread.start()
 
@@ -85,11 +88,6 @@ root.geometry("480x600")  # Set windows size
 # Make window not resizable
 root.resizable(False, True)
 
-# Load save icon
-save_icon = Image.open("config/icons/save_icon.png")  # Pfade und Dateinamen anpassen
-save_icon = save_icon.resize((16, 16))  # Größe anpassen
-save_icon = ImageTk.PhotoImage(save_icon)
-
 # Create frame for input and buttons
 input_frame = tk.Frame(root)
 input_frame.pack(pady=10)
@@ -106,60 +104,27 @@ entry_label = tk.Label(input_frame, text="Set mining duration in minutes:")
 entry_label.grid(row=0, column=0, sticky="w")
 entry = tk.Entry(input_frame)
 entry.grid(row=0, column=1, padx=5, pady=4, sticky="w")
+entry.insert(tk.END, config['SETTINGS']['mining_duration'])
 
 # Undock
 #########################################################
 
-# saving and return undock coordinates
-UNDOCK_COO_FILE = "config/undock_coo.txt"
-
-def load_undock_coo():
-    try:
-        with open(UNDOCK_COO_FILE, "r") as file:
-            return file.read().strip()
-    except FileNotFoundError:
-        return ""
-
-def save_undock_coo():
-    with open(UNDOCK_COO_FILE, "w") as file:
-        file.write(undock_coo_entry.get())
-
-
-
-# create input field for undock coordinates    
+# create input field for undock coordinates
 undock_coo_label = tk.Label(input_frame, text="Undock-Button Position:")
 undock_coo_label.grid(row=1, column=0, sticky="w")
 undock_coo_entry = tk.Entry(input_frame)
 undock_coo_entry.grid(row=1, column=1, padx=5, pady=4, sticky="w")
-
-# Loading the saved coordinates at startup
-undock_coo_entry.insert(tk.END, load_undock_coo())
+undock_coo_entry.insert(tk.END, config['POSITIONS']['undock_coo'])
 
 # Clear Cargo Position
 #########################################################
-
-# saving and return clear cargo coordinates
-CLEAR_CARGO_FILE = "config/clear_cargo_coo.txt"
-
-def load_clear_cargo_coo():
-    try:
-        with open(CLEAR_CARGO_FILE, "r") as file:
-            return file.read().strip()
-    except FileNotFoundError:
-        return ""
-
-def save_clear_cargo_coo():
-    with open(CLEAR_CARGO_FILE, "w") as file:
-        file.write(clear_cargo_coo_entry.get())
 
 # Create input field for clear-cargo position
 clear_cargo_coo_label = tk.Label(input_frame, text="Clear-Cargo Position:")
 clear_cargo_coo_label.grid(row=2, column=0, sticky="w")
 clear_cargo_coo_entry = tk.Entry(input_frame)
 clear_cargo_coo_entry.grid(row=2, column=1, padx=5, pady=4, sticky="w")
-
-# Loading the saved coordinates at program startup
-clear_cargo_coo_entry.insert(tk.END, load_clear_cargo_coo())
+clear_cargo_coo_entry.insert(tk.END, config['POSITIONS']['clear_cargo_coo'])
 
 # check if the coordinate is set correctly
 
@@ -174,7 +139,7 @@ def check_function():
         # Enable the button after the function completes.
         root.after(1, lambda: check_button.config(state=tk.NORMAL))
 
-    # run function in a seperate thread
+    # run function in a separate thread
     thread = threading.Thread(target=execute_function)
     thread.start()
 
@@ -184,217 +149,82 @@ check_button.grid(row=2, column=2, padx=5, pady=4, sticky="w")
 # Mining Hold
 #########################################################
 
-MINING_HOLD = "config/mining_hold.txt"
-
-def load_mining_hold():
-    try:
-        with open(MINING_HOLD, "r") as file:
-            return file.read().strip()
-    except FileNotFoundError:
-        return ""
-    
-def save_mining_hold():
-    with open(MINING_HOLD, "w") as file:
-        file.write(mining_hold_entry.get())
-
-# Create input field for cargo_space_volume in m3
-
+# Create input field for mining hold in m3
 mining_hold_label = tk.Label(input_frame, text="Mining Hold:")
 mining_hold_label.grid(row=3, column=0, sticky="w")
 mining_hold_entry = tk.Entry(input_frame)
 mining_hold_entry.grid(row=3, column=1, padx=5, pady=4, sticky="w")
-
-# Loading the saved value at startup
-mining_hold_entry.insert(tk.END, load_mining_hold())
+mining_hold_entry.insert(tk.END, config['SETTINGS']['mining_hold'])
 
 # Mining Yield
 #########################################################
 
-MINING_YIELD = "config/mining_yield.txt"
-
-def load_mining_yield():
-    try:
-        with open(MINING_YIELD, "r") as file:
-            return file.read().strip()
-    except FileNotFoundError:
-        return ""
-    
-def save_mining_yield():
-    with open(MINING_YIELD, "w") as file:
-        file.write(mining_yield_entry.get())
-
 # Create input field for mining yield in m3/s
-
 mining_yield_label = tk.Label(input_frame, text="Mining Yield:")
 mining_yield_label.grid(row=4, column=0, sticky="w")
 mining_yield_entry = tk.Entry(input_frame)
 mining_yield_entry.grid(row=4, column=1, padx=5, pady=4, sticky="w")
-
-# Loading the saved value at startup
-mining_yield_entry.insert(tk.END, load_mining_yield())
+mining_yield_entry.insert(tk.END, config['SETTINGS']['mining_yield'])
 
 # Docking Position
 ##########################################################
-
-# saving and return docking coordinates
-DOCKING_FILE = "config/docking_coo.txt"
-
-def load_docking_coo():
-    try:
-        with open(DOCKING_FILE, "r") as file:
-            return file.read().strip()
-    except FileNotFoundError:
-        return ""
-
-def save_docking_coo():
-    with open(DOCKING_FILE, "w") as file:
-        file.write(docking_coo_entry.get())
 
 # Create input field for docking position
 docking_coo_label = tk.Label(input_frame, text="Station-Overview Position:")
 docking_coo_label.grid(row=5, column=0, sticky="w")
 docking_coo_entry = tk.Entry(input_frame)
 docking_coo_entry.grid(row=5, column=1, padx=5, pady=4, sticky="w")
-
-# Loading the saved coordinates at program startup 
-docking_coo_entry.insert(tk.END, load_docking_coo())
-
+docking_coo_entry.insert(tk.END, config['POSITIONS']['docking_coo'])
 
 # Target-One-Position
 ########################################################
-
-# saving and return target-one-coordinates
-TARGET_ONE_COO_FILE = "config/target_one_coo.txt"
-
-def load_target_one_coo():
-    try:
-        with open(TARGET_ONE_COO_FILE, "r") as file:
-            return file.read().strip()
-    except FileNotFoundError:
-        return ""
-
-def save_target_one_coo():
-    with open(TARGET_ONE_COO_FILE, "w") as file:
-        file.write(target_one_coo_entry.get())
 
 # Create input field for target-one position
 target_one_coo_label = tk.Label(input_frame, text="Target-One Overview Position:")
 target_one_coo_label.grid(row=6, column=0, sticky="w")
 target_one_coo_entry = tk.Entry(input_frame)
 target_one_coo_entry.grid(row=6, column=1, padx=5, pady=4, sticky="w")
-
-# Loading the saved coordinates at program startup
-target_one_coo_entry.insert(tk.END, load_target_one_coo())
+target_one_coo_entry.insert(tk.END, config['POSITIONS']['target_one_coo'])
 
 # Target-Two-Position
 #######################################################
-
-# saving and return target-two coordinates
-TARGET_TWO_COO_FILE = "config/target_two_coo.txt"
-
-def load_target_two_coo():
-    try:
-        with open(TARGET_TWO_COO_FILE, "r") as file:
-            return file.read().strip()
-    except FileNotFoundError:
-        return ""
-
-def save_target_two_coo():
-    with open(TARGET_TWO_COO_FILE, "w") as file:
-        file.write(target_two_coo_entry.get())
 
 # Create input field for target-two position
 target_two_coo_label = tk.Label(input_frame, text="Target-Two Overview Position:")
 target_two_coo_label.grid(row=7, column=0, sticky="w")
 target_two_coo_entry = tk.Entry(input_frame)
 target_two_coo_entry.grid(row=7, column=1, padx=5, pady=4, sticky="w")
-
-# Loading the saved coordinates at program startup
-target_two_coo_entry.insert(tk.END, load_target_two_coo())
-
+target_two_coo_entry.insert(tk.END, config['POSITIONS']['target_two_coo'])
 
 # Target-Reset-Position
 #######################################################
-
-# saving and return mouse reset
-MOUSE_RESET_FILE = "config/mouse_reset.txt"
-
-def load_mouse_reset_coo():
-    try:
-        with open(MOUSE_RESET_FILE, "r") as file:
-            return file.read().strip()
-    except FileNotFoundError:
-        return ""
-
-def save_mouse_reset_coo():
-    with open(MOUSE_RESET_FILE, "w") as file:
-        file.write(mouse_reset_coo_entry.get())
 
 # Create input field for mouse reset
 mouse_reset_coo_label = tk.Label(input_frame, text="Mouse Reset Position:")
 mouse_reset_coo_label.grid(row=8, column=0, sticky="w")
 mouse_reset_coo_entry = tk.Entry(input_frame)
 mouse_reset_coo_entry.grid(row=8, column=1, padx=5, pady=4, sticky="w")
-
-# Loading the saved coordinates at program startup
-mouse_reset_coo_entry.insert(tk.END, load_mouse_reset_coo())
-
+mouse_reset_coo_entry.insert(tk.END, config['POSITIONS']['mouse_reset_coo'])
 
 # Home Position
 ##########################################################
-
-# saving and return warp-to coordinates
-WARP_TO_COO_FILE = "config/warp_too_coo.txt"
-
-def load_warp_to_coo():
-    try:
-        with open(WARP_TO_COO_FILE, "r") as file:
-            return file.read().strip()
-    except FileNotFoundError:
-        return ""
-
-def save_warp_to_coo():
-    with open(WARP_TO_COO_FILE, "w") as file:
-        file.write(warp_to_coo_entry.get())
 
 # Create input field for warp-to position
 warp_to_coo_label = tk.Label(input_frame, text="Home Bookmark:")
 warp_to_coo_label.grid(row=9, column=0, sticky="w")
 warp_to_coo_entry = tk.Entry(input_frame)
 warp_to_coo_entry.grid(row=9, column=1, padx=5, pady=4, sticky="w")
-
-# Loading the saved coordinates at startup
-warp_to_coo_entry.insert(tk.END, load_warp_to_coo())
-
+warp_to_coo_entry.insert(tk.END, config['POSITIONS']['warp_to_coo'])
 
 # Belt Bookmarks
 #########################################################
-
-# saving and return mining coordinates
-MINING_COO_FILE = "config/mining_coo.txt"
-
-def load_mining_coo():
-    try:
-        with open(MINING_COO_FILE, "r") as file:
-            return file.read().strip()
-    except FileNotFoundError:
-        return ""
-
-def save_mining_coo():
-    with open(MINING_COO_FILE, "w") as file:
-        file.write(mining_coo_entry.get('1.0', 'end'))
-
-
 
 # Create input field for mining position
 mining_coo_label = tk.Label(input_frame, text="Belt Bookmarks:")
 mining_coo_label.grid(row=10, column=0, sticky="w")
 mining_coo_entry = tk.Text(input_frame, width=15, height=5)
 mining_coo_entry.grid(row=10, column=1, padx=5, pady=4, sticky="w")
-
-# Loading the saved coordinates at program startup
-mining_coo_entry.insert(tk.END, load_mining_coo())
-
+mining_coo_entry.insert(tk.END, config['POSITIONS']['mining_coo'].lstrip('\n'))
 
 #########################################################
 
@@ -409,22 +239,27 @@ stop_button.grid(row=0, column=1, padx=(10, 0), pady=10, ipadx=5)
 # Create global save button
 
 def global_save_button():
-    save_undock_coo()
-    save_clear_cargo_coo()
-    save_docking_coo()
-    save_target_one_coo()
-    save_target_two_coo()
-    save_mouse_reset_coo()
-    save_warp_to_coo()
-    save_mining_coo()
-    save_mining_hold()
-    save_mining_yield()
+    config['SETTINGS']['mining_duration'] = entry.get()
+    config['POSITIONS']['undock_coo'] = undock_coo_entry.get()
+    config['POSITIONS']['clear_cargo_coo'] = clear_cargo_coo_entry.get()
+    config['SETTINGS']['mining_hold'] = mining_hold_entry.get()
+    config['SETTINGS']['mining_yield'] = mining_yield_entry.get()
+    config['POSITIONS']['docking_coo'] = docking_coo_entry.get()
+    config['POSITIONS']['target_one_coo'] = target_one_coo_entry.get()
+    config['POSITIONS']['target_two_coo'] = target_two_coo_entry.get()
+    config['POSITIONS']['mouse_reset_coo'] = mouse_reset_coo_entry.get()
+    config['POSITIONS']['warp_to_coo'] = warp_to_coo_entry.get()
+    config['POSITIONS']['mining_coo'] = mining_coo_entry.get(1.0, tk.END)
+    with open('config.properties', 'w') as configfile:
+        config.write(configfile)
     print("values saved!")
 
 global_save_button = tk.Button(button_frame, text="Save", command=global_save_button)
 global_save_button.grid(row=0, column=2, padx=(20, 0), pady=10, ipadx=5)
 
 ########################################################
+
+# Function to get mouse position
 
 def get_mouse_position():
     # Mausposition mit Hilfe der Windows-API abrufen
