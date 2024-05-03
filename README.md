@@ -32,7 +32,7 @@ python main.py
 ```
 3. Configure various settings in the user interface:
 
-   - mining duration: Specify the desired duration of the mining operation in minutes.
+   - mining runs: Specify the desired amount of mining runs you want the bot to complete. This will be a part of the calculation for how long the bot will run.
    - Undock Position: Set the mouse coordinates for the Undock button on the station.
    - Clear Cargo Position: Specify the mouse position for unloading cargo. This transfers the ore to the inventory window above. Use Test Button to make it work correctly. 
    - Mining Hold: Set volume from your mining cargo.
