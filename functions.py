@@ -22,12 +22,11 @@ def undock(x, y):
     pyautogui.mouseUp(button='left')
     sleep_and_log(random_sleep_small)
 
-def set_hardener_online():
+def set_hardener_online(key_combo):
 
     log("starting hardener...")
     # set hardener online
-    pyautogui.press('f3')
-    pyautogui.press('f4')
+    translate_key_combo(key_combo)
 
 def warp_to_pos_dropdown(x, y,rm_x, rm_y):
 
@@ -138,7 +137,7 @@ def clear_cargo(x, y):
 # Mining Script
 ########################################################
 
-def mining_behaviour(tx1, ty1, tx2, ty2, mr_start, mr_end, ml_start, ml_end, rm_x, rm_y):
+def mining_behaviour(tx1, ty1, tx2, ty2, mr_start, mr_end, ml_start, ml_end, rm_x, rm_y, unlock_all_targets_keys):
 
     random_time = random.uniform(3, 4)
     
@@ -154,27 +153,36 @@ def mining_behaviour(tx1, ty1, tx2, ty2, mr_start, mr_end, ml_start, ml_end, rm_
     # target 1 positions - x = tx1, y = ty1
     # target 2 positions - x = tx2, y = ty2
     # reset mouse - x = rm_x, y = rm_y
-
     
     while True:
+        if len(unlock_all_targets_keys) >= 1:
+            # reset mouse assigned mining laser random in space
+            pyautogui.moveTo(rm_x, rm_y)
+            pyautogui.click(button='right')
+            log(f"Using unlock all targets key: {unlock_all_targets_keys}")
+            [pyautogui.keyDown(key) for key in unlock_all_targets_keys.split('-')]
+            time.sleep(0.5)
+            [pyautogui.keyUp(key) for key in unlock_all_targets_keys.split('-')]
+            sleep_and_log(3)
+        else:
+            log("Manually unlocking targets 1 and 2")
+            # reset target 1
+            pyautogui.moveTo(tx1, ty1)
+            pyautogui.keyDown('ctrl')
+            pyautogui.keyDown('shift')
+            pyautogui.click(button='left')
+            pyautogui.keyUp('ctrl')
+            pyautogui.keyUp('shift')
 
-        # reset target 1
-        pyautogui.moveTo(tx1, ty1)
-        pyautogui.keyDown('ctrl')
-        pyautogui.keyDown('shift')
-        pyautogui.click(button='left')
-        pyautogui.keyUp('ctrl')
-        pyautogui.keyUp('shift')
+            sleep_and_log(3)
 
-        sleep_and_log(3)
-
-        # reset target 2
-        pyautogui.moveTo(tx2, ty2)
-        pyautogui.keyDown('ctrl')
-        pyautogui.keyDown('shift')
-        pyautogui.click(button='left')
-        pyautogui.keyUp('ctrl')
-        pyautogui.keyUp('shift')
+            # reset target 2
+            pyautogui.moveTo(tx2, ty2)
+            pyautogui.keyDown('ctrl')
+            pyautogui.keyDown('shift')
+            pyautogui.click(button='left')
+            pyautogui.keyUp('ctrl')
+            pyautogui.keyUp('shift')
 
         # reset mininglaser 1
         pyautogui.keyDown('f1')
@@ -217,6 +225,11 @@ def mining_behaviour(tx1, ty1, tx2, ty2, mr_start, mr_end, ml_start, ml_end, rm_
         pyautogui.click(button='left')
         pyautogui.press('f2')
 
+        # move towards target 1
+        sleep_and_log(5)
+        pyautogui.moveTo(tx1, ty1)
+        pyautogui.doubleClick(button='left')
+
         # reset every 170 seconds (depends on mining barge)
         set_next_reset(mining_reset, NEXT_RESET_IN)
         sleep_and_log(mining_reset)
@@ -230,11 +243,13 @@ def mining_behaviour(tx1, ty1, tx2, ty2, mr_start, mr_end, ml_start, ml_end, rm_
 # Constants for timers 
 TIME_LEFT = "Time left"
 NEXT_RESET_IN = "Next reset in"
+CARGO_LOAD_TIME = "Cargo loaded in"
 
 # Dictionary to store next reset time for each counter
 timers = {
     TIME_LEFT: 0,
-    NEXT_RESET_IN: 0
+    NEXT_RESET_IN: 0,
+    CARGO_LOAD_TIME: 0
 }
 
 # Function to update the countdown timer
@@ -263,6 +278,13 @@ def update_timer(label, counter):
 
     # Schedule the update function to run again after 1 second
     label.after(1000, update_timer, label, counter)
+
+def translate_key_combo(key_combo):
+    if len(key_combo) >= 1:
+        keys = key_combo.split('-')
+        with pyautogui.hold(keys[0].lower()):
+            if len(keys) > 1:
+                pyautogui.press(keys[1].lower())
 
 # Function to set the next reset time for a specific counter
 def set_next_reset(time_interval, counter):

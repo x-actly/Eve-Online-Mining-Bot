@@ -2,6 +2,8 @@
 mining_duration = 60
 mining_hold = 5000
 mining_yield = 3
+hardener_key = Alt-F2
+unlock_all_targets_key = Ctrl-Alt-T
 
 [POSITIONS]
 undock_coo = 100, 200
