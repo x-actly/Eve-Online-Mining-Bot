@@ -26,7 +26,7 @@ mining_target_reset = [(250, 260)]
 def start_function():
     global stop_flag
     stop_flag = False
-    minutes = int(entry.get())
+    mining_runs = int(entry.get())
     undock_coo_value = [int(x.strip()) for x in config['POSITIONS']['undock_coo'].split(",")]
     mining_coo_values = [(int(x.strip()), int(y.strip())) for x, y in (value.split(",") for value in config['POSITIONS']['mining_coo'].split("\n"))]
     warp_to_coo_values = [int(x.strip()) for x in config['POSITIONS']['warp_to_coo'].split(",")]
@@ -37,33 +37,32 @@ def start_function():
     mouse_reset_coo_value = [int(x.strip()) for x in config['POSITIONS']['mouse_reset_coo'].split(",")]
     mining_hold_value = int(config['SETTINGS']['mining_hold'])
     mining_yield_value = float(config['SETTINGS']['mining_yield'].replace(',', '.'))
-    thread = threading.Thread(target=repeat_function, args=(minutes, undock_coo_value, mining_coo_values, warp_to_coo_values, docking_coo_values, clear_cargo_coo_values, target_one_coo_values, target_two_coo_values, mouse_reset_coo_value, mining_hold_value, mining_yield_value))
+    cargo_loading_time =  (mining_hold_value * 0.9) / mining_yield_value
+    hardener_key = config['SETTINGS'].get('hardener_key', "F3")
+    unlock_all_targets_key = config['SETTINGS'].get('unlock_all_targets_key', "")
+    fe.log(f"The mining script will run {mining_runs} mining runs!")
+    thread = threading.Thread(target=repeat_function, args=(mining_runs, undock_coo_value, mining_coo_values, warp_to_coo_values, docking_coo_values, clear_cargo_coo_values, target_one_coo_values, target_two_coo_values, mouse_reset_coo_value, cargo_loading_time, hardener_key, unlock_all_targets_key))
     thread.start()
 
-def repeat_function(minutes, undock_coo_value, mining_coo_values, warp_to_coo_values, docking_coo_values, clear_cargo_coo_values, target_one_coo_values, target_two_coo_values, mouse_reset_coo_value, mining_hold_value, mining_yield_value):
-    fe.log(f"The mining script will run {minutes} minutes!")
-    fe.set_next_reset(minutes * 60, fe.TIME_LEFT)
-    end_time = time.time() + (minutes * 60)
-
-    # cargo loading phrase
-
-    cargo_loading_time = (mining_hold_value * 0.9) / mining_yield_value
-    cargo_loading_time_print = cargo_loading_time / 60
+def repeat_function(mining_runs, undock_coo_value, mining_coo_values, warp_to_coo_values, docking_coo_values, clear_cargo_coo_values, target_one_coo_values, target_two_coo_values, mouse_reset_coo_value, cargo_loading_time, hardener_key, unlock_all_targets_key):
+    total_run_time = mining_runs * cargo_loading_time
+    end_time = time.time() + total_run_time
+    fe.set_next_reset(total_run_time, fe.TIME_LEFT)
 
     while not stop_flag and time.time() < end_time:
+        fe.set_next_reset(cargo_loading_time, fe.CARGO_LOAD_TIME)
+        fe.log(f"The mining cargo is filled in about {cargo_loading_time / 60} minutes!")
 
-        fe.log(f"The mining cargo is filled in about {cargo_loading_time_print} minutes!")
-
-        time.sleep(5)
+        time.sleep(1)
 
         fe.undock(undock_coo_value[0], undock_coo_value[1])
-        fe.set_hardener_online()
+        fe.set_hardener_online(hardener_key)
 
         item = random.choice(mining_coo_values)
         fe.warp_to_pos_circle_menu(item[0], item[1])
     
         fe.drone_out(mouse_reset_coo_value[0], mouse_reset_coo_value[1])
-        fe.mining_behaviour(target_one_coo_values[0], target_one_coo_values[1], target_two_coo_values[0], target_two_coo_values[1], mining_target_reset[0][0], mining_target_reset[0][1], cargo_loading_time, cargo_loading_time, mouse_reset_coo_value[0], mouse_reset_coo_value[1])
+        fe.mining_behaviour(target_one_coo_values[0], target_one_coo_values[1], target_two_coo_values[0], target_two_coo_values[1], mining_target_reset[0][0], mining_target_reset[0][1], cargo_loading_time, cargo_loading_time, mouse_reset_coo_value[0], mouse_reset_coo_value[1], unlock_all_targets_key)
         fe.drone_in()
         fe.warp_to_pos_circle_menu(warp_to_coo_values[0], warp_to_coo_values[1])
         fe.docking_circle_menu(docking_coo_values[0], docking_coo_values[1])
@@ -84,7 +83,7 @@ stop_flag = False
 # Create Tkinter window
 root = tk.Tk()
 root.title("Mining Bot Owl-Edition")
-root.geometry("480x600")  # Set windows size
+root.geometry("480x630")  # Set windows size
 
 # Make window not resizable
 root.resizable(False, True)
@@ -101,11 +100,11 @@ button_frame.pack(pady=10)
 #########################################################
 
 # Create input field for bot duration in minutes
-entry_label = tk.Label(input_frame, text="Set mining duration in minutes:")
+entry_label = tk.Label(input_frame, text="Set number of mining runs:")
 entry_label.grid(row=0, column=0, sticky="w")
 entry = tk.Entry(input_frame)
 entry.grid(row=0, column=1, padx=5, pady=4, sticky="w")
-entry.insert(tk.END, config['SETTINGS']['mining_duration'])
+entry.insert(tk.END, config['SETTINGS']['mining_runs'])
 
 # Undock
 #########################################################
@@ -151,7 +150,7 @@ check_button.grid(row=2, column=2, padx=5, pady=4, sticky="w")
 #########################################################
 
 # Create input field for mining hold in m3
-mining_hold_label = tk.Label(input_frame, text="Mining Hold:")
+mining_hold_label = tk.Label(input_frame, text="Mining Hold (m3):")
 mining_hold_label.grid(row=3, column=0, sticky="w")
 mining_hold_entry = tk.Entry(input_frame)
 mining_hold_entry.grid(row=3, column=1, padx=5, pady=4, sticky="w")
@@ -161,7 +160,7 @@ mining_hold_entry.insert(tk.END, config['SETTINGS']['mining_hold'])
 #########################################################
 
 # Create input field for mining yield in m3/s
-mining_yield_label = tk.Label(input_frame, text="Mining Yield:")
+mining_yield_label = tk.Label(input_frame, text="Mining Yield (m3/s):")
 mining_yield_label.grid(row=4, column=0, sticky="w")
 mining_yield_entry = tk.Entry(input_frame)
 mining_yield_entry.grid(row=4, column=1, padx=5, pady=4, sticky="w")
@@ -240,7 +239,7 @@ stop_button.grid(row=0, column=1, padx=(10, 0), pady=10, ipadx=5)
 # Create global save button
 
 def global_save_button():
-    config['SETTINGS']['mining_duration'] = entry.get()
+    config['SETTINGS']['mining_runs'] = entry.get()
     config['POSITIONS']['undock_coo'] = undock_coo_entry.get()
     config['POSITIONS']['clear_cargo_coo'] = clear_cargo_coo_entry.get()
     config['SETTINGS']['mining_hold'] = mining_hold_entry.get()
@@ -306,6 +305,13 @@ total_time_label = tk.Label(root, text="", font=("Arial", 12))
 total_time_label.pack(pady=10)
 
 fe.update_timer(total_time_label, fe.TIME_LEFT)
+
+# Create a label to display the countdown timer
+cargo_hold_time_label = tk.Label(root, text="", font=("Arial", 12))
+cargo_hold_time_label.pack(pady=10)
+
+# Start updating the countdown timer
+fe.update_timer(cargo_hold_time_label, fe.CARGO_LOAD_TIME)
 
 # Create a label to display the countdown timer
 next_reset_label = tk.Label(root, text="", font=("Arial", 12))
