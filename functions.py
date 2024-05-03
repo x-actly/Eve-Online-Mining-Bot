@@ -1,26 +1,18 @@
 import keyboard, time, datetime, random
 import pyautogui
 
-# random time intervall for whole mining functions
-random_time = random.uniform(3, 4)
-random_sleep_small = random.uniform(12, 15)
-random_sleep_medium = random.uniform(65, 70)
-
-
-
 ########################################################
 
 def undock(x, y):
 
     random_time = random.uniform(1,2)
-    random_sleep_small = random.uniform(12,15)
     log("undocking...")
     # undock
     pyautogui.moveTo(x,y, duration=random_time)
     pyautogui.mouseDown(button='left')
     sleep_and_log(random_time)
     pyautogui.mouseUp(button='left')
-    sleep_and_log(random_sleep_small)
+    sleep_small()
 
 def set_hardener_online(key_combo):
 
@@ -31,7 +23,6 @@ def set_hardener_online(key_combo):
 def warp_to_pos_dropdown(x, y,rm_x, rm_y):
 
     random_time = random.uniform(2,3)
-    random_sleep_medium = random.uniform(70, 75)
     log("warping to position...")
     # warping to belt
     sleep_and_log(10)
@@ -41,11 +32,10 @@ def warp_to_pos_dropdown(x, y,rm_x, rm_y):
     pyautogui.moveRel(rm_x, rm_y)
     sleep_and_log(random_time)
     pyautogui.click(button='left')
-    sleep_and_log(random_sleep_medium)
+    sleep_long()
 
 def click_circle_menu(x, y, x_offset, y_offset):
     random_time = random.uniform(6, 7)
-    random_sleep_medium = random.uniform(70, 75)
     log("clicking on the circle menu...")
     for _ in range(1):
         sleep_and_log(random_time)
@@ -54,17 +44,19 @@ def click_circle_menu(x, y, x_offset, y_offset):
         sleep_and_log(random_time)
         pyautogui.moveRel(x_offset, y_offset, 1)
         pyautogui.mouseUp()
-    sleep_and_log(random_sleep_medium)
+    sleep_long()
 
-def click_top_left_circle_menu(x, y):
+def click_warp_circle_menu(x, y):
     x_offset = -50
     y_offset = random.randint(-51, -49)
     click_circle_menu(x, y, x_offset, y_offset)
 
-def click_top_center_circle_menu(x, y):
+def click_dock_circle_menu(x, y):
     x_offset = 0
     y_offset = random.randint(-51, -49)
     click_circle_menu(x, y, x_offset, y_offset)
+    # sleep longer when clicking the docking button in the circle menu
+    sleep_long()
 
 def drone_out(x,y):
 
@@ -82,7 +74,6 @@ def drone_out(x,y):
 
 def drone_in():
 
-    random_sleep_small = random.uniform(12, 15)
     log("drones returning to bay...")
     # drone in
     pyautogui.keyDown('shift')
@@ -90,22 +81,7 @@ def drone_in():
     sleep_and_log(1)
     pyautogui.keyUp('shift')
     # drone time back to ship
-    sleep_and_log(random_sleep_small)
-
-def docking_dropdown(x, y, rel_x, rel_y):
-
-    random_time = random.uniform(2,3)
-    random_sleep_medium = random.uniform(15, 20)
-    log("docking...")
-    # docking
-    sleep_and_log(2)
-    pyautogui.moveTo(x,y, 2)
-    pyautogui.click(button='right')
-    sleep_and_log(random_time)
-    pyautogui.moveRel(rel_x, rel_y)
-    sleep_and_log(random_time)
-    pyautogui.click(button='left')
-    sleep_and_log(random_sleep_medium)
+    sleep_small()
 
 def clear_cargo(x, y):
 
@@ -280,88 +256,9 @@ def sleep_and_log(seconds):
 def log(msg):
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(f"[{timestamp}] - {msg}")
- 
-# # Draw Function
-# ########################################################
 
-# def draw_point(x, y, r,g,b):
+def sleep_long():
+    sleep_and_log(random.uniform(70, 75))
 
-#     # Color
-#     red = win32api.RGB(r, g, b)
-        
-#     # Get Desktop-Window
-#     desktop_window = win32gui.GetDesktopWindow()
-
-#     # Set Device Context for Desktop-Window
-#     desktop_dc = win32gui.GetWindowDC(desktop_window)
-
-#     # Set Pixel Color
-#     for i in range(x-3, x+3):
-#         for j in range(y-3, y+3):
-#             win32gui.SetPixel(desktop_dc, i, j, red)
-        
-#     # Release Devicecontext
-#     win32gui.ReleaseDC(desktop_window, desktop_dc)
-
-# Owl Signature
-########################################################
-
-def owl_signature():
-
-    owl = ["                            ",
-           "⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣀⣄⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀",
-           "⠀⠀⠀⠀⠀⠀⠐⣶⣾⣿⣿⣿⣿⣿⣶⡆⠀⠀⠀⠀⠀⠀",
-           "⠀⠀⠀⠀⠀⠀⢰⡏⢤⡎⣿⣿⢡⣶⢹⣧⠀⠀⠀⠀⠀⠀",
-           "⠀⠀⠀⠀⠀⠀⢸⣿⣶⣶⣇⣸⣷⣶⣾⣿⠀⠀⠀⠀⠀⠀",
-           "⠀⠀⠀⠀⠀⠀⢨⣿⣿⣿⢟⣿⣿⣿⣿⣿⣧⡀⠀⠀⠀⠀",
-           "⠀⠀⠀⠀⠀⠀⢸⣿⣿⡏⣿⣿⣿⣿⣿⣿⣿⣿⡄⠀⠀⠀",
-           "⠀⠀⠀⠀⠀⠀⠘⣿⣿⣿⣜⠿⣿⣿⣿⣿⣿⣿⣿⡄⠀⠀",
-           "⠀⠀⠀⠀⠀⠀⠀⠐⣷⣿⡿⣷⣮⣙⠿⣿⣿⣿⣿⣿⡄⠀",
-           "        ⠀⠫⡯⢿⣿⣿⣿⣶⣯⣿⣻⣿⣿⠀ ",
-           "           ⠙⢻⣿⣿⠿⠿⠿⢻⣿⠙⠇ ",
-           "           ⣠⡶⠿⣟⠀⠀⠀⠀ ⠻⡀   ",
-           "         ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿ ",
-           "         ⣿⣿⣿   OWL  ⣿⣿⣿   ",
-           "         ⣿⣿⣿ MINING ⣿⣿⣿  ",
-           "         ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿  ",
-           "                                "]
-    delay = 0.5
-    acceleration = 0.025
-
-    for i in range(len(owl)):
-        print(owl[i])
-        sleep_and_log(delay)
-        delay -= acceleration
-
-# Explanation
-########################################################
-
-def explanation():
-
-    print(" ")
-    print(" Check Interaction Coordinates!")
-    print("#################################")
-    print("# Orange = Mining Positions     #")
-    print("# Yellow = Undock Position      #")
-    print("# White = Drone Reset Position  #")
-    print("# Blue = Warping to Station     #")
-    print("# Green = Docking               #")
-    print("# Pink = Clear Cargo            #")
-    print("# Red = Targeting Positions     #")
-    print("# Violett = Mining Mouse Reset  #")
-    print("#################################")
-    print("")
-    print("Press escape to continue..")
-
-#######################################################
-
-def check_abort(xw,yw, relxw,relyw, xd, yd, relxd, relyd):
-    
-    if keyboard.is_pressed('q'):
-        drone_in()
-        warp_to_pos_dropdown(xw, yw, relxw, relyw)
-        docking_dropdown(xd, yd, relxd, relyd)
-
-
-
-#######################################################
+def sleep_small():
+    sleep_and_log(random.uniform(12, 15))
