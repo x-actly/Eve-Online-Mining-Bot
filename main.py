@@ -59,12 +59,12 @@ def repeat_function(mining_runs, undock_coo_value, mining_coo_values, warp_to_co
         fe.set_hardener_online(hardener_key)
 
         item = random.choice(mining_coo_values)
-        fe.warp_to_pos_circle_menu(item[0], item[1])
+        fe.click_top_left_circle_menu(item[0], item[1])
     
         fe.drone_out(mouse_reset_coo_value[0], mouse_reset_coo_value[1])
         fe.mining_behaviour(target_one_coo_values[0], target_one_coo_values[1], target_two_coo_values[0], target_two_coo_values[1], mining_target_reset[0][0], mining_target_reset[0][1], cargo_loading_time, cargo_loading_time, mouse_reset_coo_value[0], mouse_reset_coo_value[1], unlock_all_targets_key)
         fe.drone_in()
-        fe.warp_to_pos_circle_menu(warp_to_coo_values[0], warp_to_coo_values[1])
+        fe.click_top_center_circle_menu(warp_to_coo_values[0], warp_to_coo_values[1])
         fe.docking_circle_menu(docking_coo_values[0], docking_coo_values[1])
         fe.clear_cargo(clear_cargo_coo_values[0], clear_cargo_coo_values[1])
 
