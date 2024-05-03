@@ -30,7 +30,6 @@ def start_function():
     undock_coo_value = [int(x.strip()) for x in config['POSITIONS']['undock_coo'].split(",")]
     mining_coo_values = [(int(x.strip()), int(y.strip())) for x, y in (value.split(",") for value in config['POSITIONS']['mining_coo'].split("\n"))]
     warp_to_coo_values = [int(x.strip()) for x in config['POSITIONS']['warp_to_coo'].split(",")]
-    docking_coo_values = [int(x.strip()) for x in config['POSITIONS']['docking_coo'].split(",")]
     clear_cargo_coo_values = [int(x.strip()) for x in config['POSITIONS']['clear_cargo_coo'].split(",")]
     target_one_coo_values = [int(x.strip()) for x in config['POSITIONS']['target_one_coo'].split(",")]
     target_two_coo_values = [int(x.strip()) for x in config['POSITIONS']['target_two_coo'].split(",")]
@@ -41,10 +40,10 @@ def start_function():
     hardener_key = config['SETTINGS'].get('hardener_key', "F3")
     unlock_all_targets_key = config['SETTINGS'].get('unlock_all_targets_key', "")
     fe.log(f"The mining script will run {mining_runs} mining runs!")
-    thread = threading.Thread(target=repeat_function, args=(mining_runs, undock_coo_value, mining_coo_values, warp_to_coo_values, docking_coo_values, clear_cargo_coo_values, target_one_coo_values, target_two_coo_values, mouse_reset_coo_value, cargo_loading_time, hardener_key, unlock_all_targets_key))
+    thread = threading.Thread(target=repeat_function, args=(mining_runs, undock_coo_value, mining_coo_values, warp_to_coo_values, clear_cargo_coo_values, target_one_coo_values, target_two_coo_values, mouse_reset_coo_value, cargo_loading_time, hardener_key, unlock_all_targets_key))
     thread.start()
 
-def repeat_function(mining_runs, undock_coo_value, mining_coo_values, warp_to_coo_values, docking_coo_values, clear_cargo_coo_values, target_one_coo_values, target_two_coo_values, mouse_reset_coo_value, cargo_loading_time, hardener_key, unlock_all_targets_key):
+def repeat_function(mining_runs, undock_coo_value, mining_coo_values, warp_to_coo_values, clear_cargo_coo_values, target_one_coo_values, target_two_coo_values, mouse_reset_coo_value, cargo_loading_time, hardener_key, unlock_all_targets_key):
     total_run_time = mining_runs * cargo_loading_time
     end_time = time.time() + total_run_time
     fe.set_next_reset(total_run_time, fe.TIME_LEFT)
@@ -65,7 +64,6 @@ def repeat_function(mining_runs, undock_coo_value, mining_coo_values, warp_to_co
         fe.mining_behaviour(target_one_coo_values[0], target_one_coo_values[1], target_two_coo_values[0], target_two_coo_values[1], mining_target_reset[0][0], mining_target_reset[0][1], cargo_loading_time, cargo_loading_time, mouse_reset_coo_value[0], mouse_reset_coo_value[1], unlock_all_targets_key)
         fe.drone_in()
         fe.click_top_center_circle_menu(warp_to_coo_values[0], warp_to_coo_values[1])
-        fe.docking_circle_menu(docking_coo_values[0], docking_coo_values[1])
         fe.clear_cargo(clear_cargo_coo_values[0], clear_cargo_coo_values[1])
 
 def stop_function():
@@ -166,16 +164,6 @@ mining_yield_entry = tk.Entry(input_frame)
 mining_yield_entry.grid(row=4, column=1, padx=5, pady=4, sticky="w")
 mining_yield_entry.insert(tk.END, config['SETTINGS']['mining_yield'])
 
-# Docking Position
-##########################################################
-
-# Create input field for docking position
-docking_coo_label = tk.Label(input_frame, text="Station-Overview Position:")
-docking_coo_label.grid(row=5, column=0, sticky="w")
-docking_coo_entry = tk.Entry(input_frame)
-docking_coo_entry.grid(row=5, column=1, padx=5, pady=4, sticky="w")
-docking_coo_entry.insert(tk.END, config['POSITIONS']['docking_coo'])
-
 # Target-One-Position
 ########################################################
 
@@ -244,7 +232,6 @@ def global_save_button():
     config['POSITIONS']['clear_cargo_coo'] = clear_cargo_coo_entry.get()
     config['SETTINGS']['mining_hold'] = mining_hold_entry.get()
     config['SETTINGS']['mining_yield'] = mining_yield_entry.get()
-    config['POSITIONS']['docking_coo'] = docking_coo_entry.get()
     config['POSITIONS']['target_one_coo'] = target_one_coo_entry.get()
     config['POSITIONS']['target_two_coo'] = target_two_coo_entry.get()
     config['POSITIONS']['mouse_reset_coo'] = mouse_reset_coo_entry.get()
