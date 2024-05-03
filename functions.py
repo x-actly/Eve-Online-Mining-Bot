@@ -195,7 +195,7 @@ def mining_behaviour(tx1, ty1, tx2, ty2, mr_start, mr_end, ml_start, ml_end, rm_
 
         elapsed_time = time.time() - start_time
         if elapsed_time >= mining_loop:
-            log("Done mining, ran {mining_sessions} mining sessions")
+            log(f"Done mining, ran {mining_sessions} mining sessions")
             break
             
 
