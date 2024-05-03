@@ -36,21 +36,22 @@ python main.py
    - Undock Position: Set the mouse coordinates for the Undock button on the station.
    - Clear Cargo Position: Specify the mouse position for unloading cargo. This transfers the ore to the inventory window above. Use Test Button to make it work correctly. 
    - Mining Hold: Set volume from your mining cargo.
-   - Mining Yield: Set mining rate of your mining laser. Check the Calculation below. 
-   - Station-Overview Position: Set the mouse coordinates of the station in the Overview; it should be at the top when the ship returns to the station's grid.
+   - Mining Yield: Set mining rate of your mining laser. Check the Calculation below.
    - Target-One Overview Position: Set the first mouse coordinate to the asteroids in the Overview.
    - Target-Two Overview Position Position: Define the second coordinate in the Overview.
    - Mouse-Reset Primary Position: Specify the position for resetting mining targets (an empty space location with no windows, elements or brackets).
    - Home Bookmark: Set the coordinates for the Station Bookmark.
    - Belt Bookmarks: Enter the coordinates for your Belt Bookmarks (one line per bookmark).
 
+   For all the settings above, you can click into the text field, move your mouse into the eve interface and type Ctrl-i to insert the current mouse position in the text field. For text fields the contents will be replaced, for the text area a new line will be appended.
+
 4. Click the "Save" button to hold the entered coordinates so that they persist across sessions.
 
 5. Set Mining Laser to High Power Slot 1-2.
 
-6. Set Shield Hardener to High Power Slot 3.
+6. Set Shield Hardener to High Power Slot 3, if using a venture that have three high power slots. For a retriever this will be different and you need to configure hardener_key under [SETTINGS] in properties and set it to Alt-F2, for ex if you set the hardener into the second medium power slot.
 
-7. Make sure you set shortcuts on default.
+7. Make sure you set shortcuts on default, but if you want to override "Unlock all targets" under "Combat" in "Shortcut" under "Settings", you can configure unlock_all_targets_key under [SETTINGS] in properties and this will make the bot properly unlock all asteroids with one command instead of using a lot of time to cancel selections for target one and two.
    
 8. If you are ready, dock up and click the "Start" button to initiate the mining bot.
    

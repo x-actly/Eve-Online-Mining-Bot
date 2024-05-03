@@ -1,5 +1,5 @@
 [SETTINGS]
-mining_duration = 60
+mining_runs = 5
 mining_hold = 5000
 mining_yield = 3
 hardener_key = Alt-F2
