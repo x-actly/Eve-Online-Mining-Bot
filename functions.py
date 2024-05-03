@@ -107,25 +107,6 @@ def docking_dropdown(x, y, rel_x, rel_y):
     pyautogui.click(button='left')
     sleep_and_log(random_sleep_medium)
 
-def docking_circle_menu(x, y):
-
-    random_time = random.uniform(6,7)
-    random_sleep_medium = random.uniform(65, 70)
-    y_offset = random.randint(-81, -79)
-    log("docking...")
-    # docking
-    for i in range(1):
-        sleep_and_log(random_time)
-        pyautogui.moveTo(x, y)
-        pyautogui.mouseDown()
-        sleep_and_log(random_time)
-        pyautogui.moveRel(0, y_offset, 1)
-        pyautogui.mouseUp()
-
-    sleep_and_log(random_sleep_medium)
-
-
-
 def clear_cargo(x, y):
 
     random_time = random.uniform(3, 4)
