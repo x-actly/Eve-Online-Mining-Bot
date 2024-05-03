@@ -43,22 +43,28 @@ def warp_to_pos_dropdown(x, y,rm_x, rm_y):
     pyautogui.click(button='left')
     sleep_and_log(random_sleep_medium)
 
-def warp_to_pos_circle_menu(x, y):
-
-    random_time = random.uniform(6,7)
+def click_circle_menu(x, y, x_offset, y_offset):
+    random_time = random.uniform(6, 7)
     random_sleep_medium = random.uniform(70, 75)
-    y_offset = random.randint(-51,-49)
-    log("warping to position...")
-    # warp to belt
-    for i in range(1):
+    log("clicking on the circle menu...")
+    for _ in range(1):
         sleep_and_log(random_time)
         pyautogui.moveTo(x, y)
         pyautogui.mouseDown()
         sleep_and_log(random_time)
-        pyautogui.moveRel(-50, y_offset, 1)
+        pyautogui.moveRel(x_offset, y_offset, 1)
         pyautogui.mouseUp()
-    
     sleep_and_log(random_sleep_medium)
+
+def click_top_left_circle_menu(x, y):
+    x_offset = -50
+    y_offset = random.randint(-51, -49)
+    click_circle_menu(x, y, x_offset, y_offset)
+
+def click_top_center_circle_menu(x, y):
+    x_offset = 0
+    y_offset = random.randint(-51, -49)
+    click_circle_menu(x, y, x_offset, y_offset)
 
 def drone_out(x,y):
 
@@ -150,11 +156,11 @@ def mining_behaviour(tx1, ty1, tx2, ty2, mr_start, mr_end, ml_start, ml_end, rm_
     #  periodically break while loop - ml_start = 2500, ml_end = 2600
     mining_loop = random.uniform(ml_start, ml_end)
 
-    # target 1 positions - x = tx1, y = ty1
-    # target 2 positions - x = tx2, y = ty2
-    # reset mouse - x = rm_x, y = rm_y
+    mining_sessions = 0
     
     while True:
+        mining_sessions += 1
+
         if len(unlock_all_targets_keys) >= 1:
             # reset mouse assigned mining laser random in space
             pyautogui.moveTo(rm_x, rm_y)
@@ -225,11 +231,6 @@ def mining_behaviour(tx1, ty1, tx2, ty2, mr_start, mr_end, ml_start, ml_end, rm_
         pyautogui.click(button='left')
         pyautogui.press('f2')
 
-        # move towards target 1
-        sleep_and_log(5)
-        pyautogui.moveTo(tx1, ty1)
-        pyautogui.doubleClick(button='left')
-
         # reset every 170 seconds (depends on mining barge)
         set_next_reset(mining_reset, NEXT_RESET_IN)
         sleep_and_log(mining_reset)
@@ -237,8 +238,9 @@ def mining_behaviour(tx1, ty1, tx2, ty2, mr_start, mr_end, ml_start, ml_end, rm_
 
         elapsed_time = time.time() - start_time
         if elapsed_time >= mining_loop:
-            log("Done mining")
+            log("Done mining, ran {mining_sessions} mining sessions")
             break
+            
 
 # Constants for timers 
 TIME_LEFT = "Time left"
