@@ -112,12 +112,8 @@ def mining_behaviour(tx1, ty1, tx2, ty2, mr_start, mr_end, ml_start, ml_end, rm_
 
     #  periodically break while loop - ml_start = 2500, ml_end = 2600
     mining_loop = random.uniform(ml_start, ml_end)
-
-    mining_sessions = 0
     
     while True:
-        mining_sessions += 1
-
         if len(unlock_all_targets_keys) >= 1:
             # reset mouse assigned mining laser random in space
             pyautogui.moveTo(rm_x, rm_y)
@@ -195,12 +191,12 @@ def mining_behaviour(tx1, ty1, tx2, ty2, mr_start, mr_end, ml_start, ml_end, rm_
 
         elapsed_time = time.time() - start_time
         if elapsed_time >= mining_loop:
-            log(f"Done mining, ran {mining_sessions} mining sessions")
+            log("Done mining")
             break
             
 
 # Constants for timers 
-TIME_LEFT = "Time left"
+TIME_LEFT = "Estimated time left"
 NEXT_RESET_IN = "Next reset in"
 CARGO_LOAD_TIME = "Cargo loaded in"
 
