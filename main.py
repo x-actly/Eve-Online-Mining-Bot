@@ -63,6 +63,7 @@ def repeat_function(mining_runs: int,
                     cargo_loading_time: float, 
                     hardener_key: str, 
                     unlock_all_targets_key: str):
+    disable_fields()
     actual_mining_runs = 0
     update_mining_runs(actual_mining_runs, mining_runs)
     total_run_time = mining_runs * cargo_loading_time
@@ -93,6 +94,7 @@ def repeat_function(mining_runs: int,
         update_mining_runs(actual_mining_runs, mining_runs)
     fe.set_next_reset(0, fe.TIME_LEFT)
     fe.log(f"Completed {actual_mining_runs}/{mining_runs} mining sessions")
+    enable_fields()
 
 def stop_function():
     global stop_flag
@@ -100,6 +102,49 @@ def stop_function():
     print("The mining script ends with this run!")
     stop_flag = True
 #########################################################
+
+def disable_fields():
+    # Disable input fields
+    entry.config(state=tk.DISABLED)
+    undock_coo_entry.config(state=tk.DISABLED)
+    clear_cargo_coo_entry.config(state=tk.DISABLED)
+    mining_hold_entry.config(state=tk.DISABLED)
+    mining_yield_entry.config(state=tk.DISABLED)
+    target_one_coo_entry.config(state=tk.DISABLED)
+    target_two_coo_entry.config(state=tk.DISABLED)
+    mouse_reset_coo_entry.config(state=tk.DISABLED)
+    warp_to_coo_entry.config(state=tk.DISABLED)
+    mining_coo_entry.config(state=tk.NORMAL)
+    mining_coo_entry.tag_configure("disabled", foreground="gray")
+    mining_coo_entry.config(state=tk.DISABLED)
+    mining_coo_entry.insert(tk.END, config['POSITIONS']['mining_coo'].lstrip('\n'))
+    mining_coo_entry.tag_add("disabled", "1.0", "end")
+
+    # Disable buttons
+    start_button.config(state=tk.DISABLED)
+    save_button.config(state=tk.DISABLED)
+    check_button.config(state=tk.DISABLED)
+    stop_button.config(state=tk.NORMAL)
+
+def enable_fields():
+    # Enable input fields
+    entry.config(state=tk.NORMAL)
+    undock_coo_entry.config(state=tk.NORMAL)
+    clear_cargo_coo_entry.config(state=tk.NORMAL)
+    mining_hold_entry.config(state=tk.NORMAL)
+    mining_yield_entry.config(state=tk.NORMAL)
+    target_one_coo_entry.config(state=tk.NORMAL)
+    target_two_coo_entry.config(state=tk.NORMAL)
+    mouse_reset_coo_entry.config(state=tk.NORMAL)
+    warp_to_coo_entry.config(state=tk.NORMAL)
+    mining_coo_entry.config(state=tk.NORMAL)
+    mining_coo_entry.tag_remove("disabled", "1.0", "end")
+    
+    # Enable buttons
+    start_button.config(state=tk.NORMAL)
+    save_button.config(state=tk.NORMAL)
+    check_button.config(state=tk.NORMAL)
+    stop_button.config(state=tk.DISABLED)
 
 stop_flag = False
 
@@ -252,10 +297,11 @@ start_button.grid(row=0, column=0, padx=(0, 10), pady=10, ipadx=5)
 # Create stop button
 stop_button = tk.Button(button_frame, text="Stop", command=stop_function)
 stop_button.grid(row=0, column=1, padx=(10, 0), pady=10, ipadx=5)
+stop_button.config(state=tk.DISABLED)
 
 # Create global save button
 
-def global_save_button():
+def save_properties():
     config['SETTINGS']['mining_runs'] = entry.get()
     config['POSITIONS']['undock_coo'] = undock_coo_entry.get()
     config['POSITIONS']['clear_cargo_coo'] = clear_cargo_coo_entry.get()
@@ -270,8 +316,8 @@ def global_save_button():
         config.write(configfile)
     print("values saved!")
 
-global_save_button = tk.Button(button_frame, text="Save", command=global_save_button)
-global_save_button.grid(row=0, column=2, padx=(20, 0), pady=10, ipadx=5)
+save_button = tk.Button(button_frame, text="Save", command=save_properties)
+save_button.grid(row=0, column=2, padx=(20, 0), pady=10, ipadx=5)
 
 ########################################################
 
