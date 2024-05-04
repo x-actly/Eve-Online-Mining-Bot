@@ -1,4 +1,5 @@
-import keyboard, time, datetime, random
+from tkinter import Label
+import time, datetime, random
 import pyautogui
 
 ########################################################
@@ -100,7 +101,12 @@ def clear_cargo(x, y):
 # Mining Script
 ########################################################
 
-def mining_behaviour(tx1, ty1, tx2, ty2, mr_start, mr_end, ml_start, ml_end, rm_x, rm_y, unlock_all_targets_keys):
+def mining_behaviour(tx1: int, ty1: int, 
+                     tx2: int, ty2: int, 
+                     mr_start: int, mr_end: int, 
+                     ml_start: float, ml_end: float, 
+                     rm_x: int, rm_y: int, 
+                     unlock_all_targets_keys: str):
 
     random_time = random.uniform(3, 4)
     
@@ -114,7 +120,7 @@ def mining_behaviour(tx1, ty1, tx2, ty2, mr_start, mr_end, ml_start, ml_end, rm_
     mining_loop = random.uniform(ml_start, ml_end)
     
     while True:
-        if len(unlock_all_targets_keys) >= 1:
+        if unlock_all_targets_keys:
             # reset mouse assigned mining laser random in space
             pyautogui.moveTo(rm_x, rm_y)
             pyautogui.click(button='right')
@@ -208,7 +214,7 @@ timers = {
 }
 
 # Function to update the countdown timer
-def update_timer(label, counter):
+def update_timer(label: Label, counter: str):
     # Calculate remaining time until the next reset
     remaining_time = max(0, timers[counter] - time.time())
 
@@ -234,22 +240,22 @@ def update_timer(label, counter):
     # Schedule the update function to run again after 1 second
     label.after(1000, update_timer, label, counter)
 
-def translate_key_combo(key_combo):
-    if len(key_combo) >= 1:
+def translate_key_combo(key_combo: str):
+    if key_combo:
         keys = key_combo.split('-')
         with pyautogui.hold(keys[0].lower()):
             if len(keys) > 1:
                 pyautogui.press(keys[1].lower())
 
 # Function to set the next reset time for a specific counter
-def set_next_reset(time_interval, counter):
+def set_next_reset(time_interval: float, counter: str):
     timers[counter] = time.time() + time_interval
 
-def sleep_and_log(seconds):
+def sleep_and_log(seconds: float):
     log(f"sleeping {seconds} seconds")
     time.sleep(seconds)
 
-def log(msg):
+def log(msg: str):
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(f"[{timestamp}] - {msg}")
 
