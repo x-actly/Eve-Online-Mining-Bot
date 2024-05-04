@@ -297,6 +297,7 @@ start_button.grid(row=0, column=0, padx=(0, 10), pady=10, ipadx=5)
 # Create stop button
 stop_button = tk.Button(button_frame, text="Stop", command=stop_function)
 stop_button.grid(row=0, column=1, padx=(10, 0), pady=10, ipadx=5)
+stop_button.config(state=tk.DISABLED)
 
 # Create global save button
 
