@@ -17,9 +17,6 @@ if not os.path.isfile('config.properties'):
 config = configparser.ConfigParser()
 config.read('config.properties')
 
-# hard coded values
-mining_target_reset = [(250, 260)]
-
 # Mining functions
 #########################################################
 
@@ -33,17 +30,39 @@ def start_function():
     clear_cargo_coo_values = [int(x.strip()) for x in config['POSITIONS']['clear_cargo_coo'].split(",")]
     target_one_coo_values = [int(x.strip()) for x in config['POSITIONS']['target_one_coo'].split(",")]
     target_two_coo_values = [int(x.strip()) for x in config['POSITIONS']['target_two_coo'].split(",")]
-    mouse_reset_coo_value = [int(x.strip()) for x in config['POSITIONS']['mouse_reset_coo'].split(",")]
+    mouse_reset_coo_values = [int(x.strip()) for x in config['POSITIONS']['mouse_reset_coo'].split(",")]
     mining_hold_value = int(config['SETTINGS']['mining_hold'])
     mining_yield_value = float(config['SETTINGS']['mining_yield'].replace(',', '.'))
     cargo_loading_time =  mining_hold_value / mining_yield_value
     hardener_key = config['SETTINGS'].get('hardener_key', "F3")
     unlock_all_targets_key = config['SETTINGS'].get('unlock_all_targets_key', "")
     fe.log(f"The mining script will run {mining_runs} mining runs!")
-    thread = threading.Thread(target=repeat_function, args=(mining_runs, undock_coo_value, mining_coo_values, warp_to_coo_values, clear_cargo_coo_values, target_one_coo_values, target_two_coo_values, mouse_reset_coo_value, cargo_loading_time, hardener_key, unlock_all_targets_key))
+    thread = threading.Thread(target=lambda: repeat_function(
+        mining_runs = mining_runs, 
+        undock_coo_value = undock_coo_value, 
+        mining_coo_values =  mining_coo_values, 
+        warp_to_coo_values = warp_to_coo_values, 
+        clear_cargo_coo_values = clear_cargo_coo_values, 
+        target_one_coo_values = target_one_coo_values, 
+        target_two_coo_values = target_two_coo_values, 
+        mouse_reset_coo_values = mouse_reset_coo_values, 
+        cargo_loading_time = cargo_loading_time, 
+        hardener_key = hardener_key, 
+        unlock_all_targets_key = unlock_all_targets_key
+    ))
     thread.start()
 
-def repeat_function(mining_runs, undock_coo_value, mining_coo_values, warp_to_coo_values, clear_cargo_coo_values, target_one_coo_values, target_two_coo_values, mouse_reset_coo_value, cargo_loading_time, hardener_key, unlock_all_targets_key):
+def repeat_function(mining_runs: int, 
+                    undock_coo_value: list[int], 
+                    mining_coo_values: list[int], 
+                    warp_to_coo_values: list[int], 
+                    clear_cargo_coo_values: list[int],
+                    target_one_coo_values: list[int], 
+                    target_two_coo_values: list[int], 
+                    mouse_reset_coo_values: list[int], 
+                    cargo_loading_time: float, 
+                    hardener_key: str, 
+                    unlock_all_targets_key: str):
     actual_mining_runs = 0
     update_mining_runs(actual_mining_runs, mining_runs)
     total_run_time = mining_runs * cargo_loading_time
@@ -57,8 +76,16 @@ def repeat_function(mining_runs, undock_coo_value, mining_coo_values, warp_to_co
         fe.set_hardener_online(hardener_key)
         item = random.choice(mining_coo_values)
         fe.click_warp_circle_menu(item[0], item[1])
-        fe.drone_out(mouse_reset_coo_value[0], mouse_reset_coo_value[1])
-        fe.mining_behaviour(target_one_coo_values[0], target_one_coo_values[1], target_two_coo_values[0], target_two_coo_values[1], mining_target_reset[0][0], mining_target_reset[0][1], cargo_loading_time, cargo_loading_time, mouse_reset_coo_value[0], mouse_reset_coo_value[1], unlock_all_targets_key)
+        fe.drone_out(mouse_reset_coo_values[0], mouse_reset_coo_values[1])
+        fe.mining_behaviour(
+            tx1 = target_one_coo_values[0], ty1 = target_one_coo_values[1], 
+            tx2 = target_two_coo_values[0], ty2 = target_two_coo_values[1], 
+            # maybe remove these and inline into mining_behaviour?
+            mr_start = 250, mr_end = 260, 
+            ml_start = cargo_loading_time, ml_end = cargo_loading_time,
+            rm_x = mouse_reset_coo_values[0], rm_y = mouse_reset_coo_values[1],
+            unlock_all_targets_keys = unlock_all_targets_key
+        )
         fe.drone_in()
         fe.click_dock_circle_menu(warp_to_coo_values[0], warp_to_coo_values[1])
         fe.clear_cargo(clear_cargo_coo_values[0], clear_cargo_coo_values[1])
@@ -296,7 +323,7 @@ total_time_label.pack(pady=10)
 fe.update_timer(total_time_label, fe.TIME_LEFT)
 
 # label for completed/remaining mining runs
-def update_mining_runs(actual,wanted):
+def update_mining_runs(actual: int, wanted: int):
     mining_runs_result.config(text=f"Completed runs: {actual}/{wanted}")
 mining_runs_result = tk.Label(root, text="", font=("Arial", 12))
 mining_runs_result.pack(pady=10)
