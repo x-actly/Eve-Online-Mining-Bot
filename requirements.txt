@@ -2,3 +2,4 @@ keyboard
 datetime
 pyautogui
 Pillow
+pygetwindow
