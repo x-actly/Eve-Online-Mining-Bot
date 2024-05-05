@@ -1,91 +1,77 @@
 from tkinter import Label
 import time, datetime, random
 import pyautogui
+from typing import Callable
 
+
+# Constants
 ########################################################
 
-def undock(x, y):
+long_sleep_base = 70
+short_sleep_base = 12
 
-    random_time = random.uniform(1,2)
+# Functions
+########################################################
+
+def undock(x: int, y: int):
     log("undocking...")
     # undock
-    pyautogui.moveTo(x,y, duration=random_time)
+    time = random.uniform(1,2)
+    pyautogui.moveTo(x,y, duration=time)
     pyautogui.mouseDown(button='left')
-    sleep_and_log(random_time)
+    sleep_and_log(time)
     pyautogui.mouseUp(button='left')
     sleep_small()
 
-def set_hardener_online(key_combo):
-
+def set_hardener_online(key_combo: str):
     log("starting hardener...")
     # set hardener online
     translate_key_combo(key_combo)
 
-def warp_to_pos_dropdown(x, y,rm_x, rm_y):
-
-    random_time = random.uniform(2,3)
-    log("warping to position...")
-    # warping to belt
-    sleep_and_log(10)
-    pyautogui.moveTo(x,y, 2)
-    pyautogui.click(button='right')
-    sleep_and_log(random_time)
-    pyautogui.moveRel(rm_x, rm_y)
-    sleep_and_log(random_time)
-    pyautogui.click(button='left')
-    sleep_long()
-
-def click_circle_menu(x, y, x_offset, y_offset):
-    random_time = random.uniform(6, 7)
+def click_circle_menu(x: int, y: int, x_offset: int, y_offset: int):
     log("clicking on the circle menu...")
-    for _ in range(1):
-        sleep_and_log(random_time)
-        pyautogui.moveTo(x, y)
-        pyautogui.mouseDown()
-        sleep_and_log(random_time)
-        pyautogui.moveRel(x_offset, y_offset, 1)
-        pyautogui.mouseUp()
+    pyautogui.moveTo(x, y)
+    pyautogui.mouseDown()
+    sleep_and_log(0.5)
+    pyautogui.moveRel(x_offset, y_offset, 1)
+    pyautogui.mouseUp()
     sleep_long()
 
-def click_warp_circle_menu(x, y):
+def click_warp_circle_menu(x: int, y: int):
     x_offset = -50
     y_offset = random.randint(-51, -49)
     click_circle_menu(x, y, x_offset, y_offset)
 
-def click_dock_circle_menu(x, y):
+def click_dock_circle_menu(x: int, y: int):
     x_offset = 0
     y_offset = random.randint(-51, -49)
     click_circle_menu(x, y, x_offset, y_offset)
     # sleep longer when clicking the docking button in the circle menu
-    sleep_long()
+    sleep_and_log(30)
 
-def drone_out(x,y):
-
-    random_time = random.uniform(1,2)
+def drone_out(x: int, y: int):
     log("launching drones...")
     # drone out, random click in space
-    pyautogui.click(x, y, button='left', duration=random_time)
+    pyautogui.click(x, y, button='left', duration=random.uniform(1,2))
     # drone out
-    sleep_and_log(5)
+    sleep_and_log(3)
     pyautogui.keyDown('shift')
     pyautogui.press('f')
-    sleep_and_log(1)
+    sleep_and_log(0.5)
     # Umschalt loslassen
     pyautogui.keyUp('shift')
 
 def drone_in():
-
     log("drones returning to bay...")
     # drone in
     pyautogui.keyDown('shift')
     pyautogui.press('r')
-    sleep_and_log(1)
+    sleep_and_log(0.5)
     pyautogui.keyUp('shift')
     # drone time back to ship
     sleep_small()
 
-def clear_cargo(x, y):
-
+def clear_cargo(x: int, y: int):
     random_time = random.uniform(3, 4)
     log("clearing cargo...")
     # clear cargo
@@ -106,10 +92,9 @@ def mining_behaviour(tx1: int, ty1: int,
                      mr_start: int, mr_end: int, 
                      ml_start: float, ml_end: float, 
                      rm_x: int, rm_y: int, 
-                     unlock_all_targets_keys: str):
-
-    random_time = random.uniform(3, 4)
-    
+                     unlock_all_targets_keys: str,
+                     focus_eve_window: Callable):
+     
     # start time to counter looptime
     start_time = time.time()
 
@@ -120,6 +105,7 @@ def mining_behaviour(tx1: int, ty1: int,
     mining_loop = random.uniform(ml_start, ml_end)
     
     while True:
+        focus_eve_window()
         if unlock_all_targets_keys:
             # reset mouse assigned mining laser random in space
             pyautogui.moveTo(rm_x, rm_y)
@@ -128,7 +114,7 @@ def mining_behaviour(tx1: int, ty1: int,
             [pyautogui.keyDown(key) for key in unlock_all_targets_keys.split('-')]
             time.sleep(0.5)
             [pyautogui.keyUp(key) for key in unlock_all_targets_keys.split('-')]
-            sleep_and_log(3)
+            sleep_and_log(0.5)
         else:
             log("Manually unlocking targets 1 and 2")
             # reset target 1
@@ -139,7 +125,7 @@ def mining_behaviour(tx1: int, ty1: int,
             pyautogui.keyUp('ctrl')
             pyautogui.keyUp('shift')
 
-            sleep_and_log(3)
+            sleep_and_log(0.5)
 
             # reset target 2
             pyautogui.moveTo(tx2, ty2)
@@ -151,21 +137,21 @@ def mining_behaviour(tx1: int, ty1: int,
 
         # reset mininglaser 1
         pyautogui.keyDown('f1')
-        sleep_and_log(random_time)
+        sleep_and_log(0.5)
         pyautogui.keyUp('f1')
 
-        sleep_and_log(3)
+        sleep_and_log(1)
 
         # reset mininglaser 2
         pyautogui.keyDown('f2')
-        sleep_and_log(random_time)
+        sleep_and_log(0.5)
         pyautogui.keyUp('f2')
 
         # reset mouse assigned mining laser random in space
         pyautogui.moveTo(rm_x, rm_y)
         pyautogui.click(button='right')
 
-        sleep_and_log(2)
+        sleep_and_log(0.5)
 
         # console
         log("mining...")
@@ -176,9 +162,10 @@ def mining_behaviour(tx1: int, ty1: int,
         pyautogui.click(button='left')
         pyautogui.keyUp('ctrl')
         sleep_and_log(3)
+        focus_eve_window()
         pyautogui.press('f1')
 
-        sleep_and_log(5)
+        sleep_and_log(0.5)
 
         # target 2
         pyautogui.moveTo(tx2,ty2)
@@ -186,6 +173,7 @@ def mining_behaviour(tx1: int, ty1: int,
         pyautogui.click(button='left')
         pyautogui.keyUp('ctrl')
         sleep_and_log(3)
+        focus_eve_window()
         # second left click to focus the second target
         pyautogui.click(button='left')
         pyautogui.press('f2')
@@ -260,7 +248,7 @@ def log(msg: str):
     print(f"[{timestamp}] - {msg}")
 
 def sleep_long():
-    sleep_and_log(random.uniform(70, 75))
+    sleep_and_log(random.uniform(long_sleep_base, long_sleep_base + 5))
 
 def sleep_small():
-    sleep_and_log(random.uniform(12, 15))
+    sleep_and_log(random.uniform(short_sleep_base, short_sleep_base + 3))
