@@ -3,3 +3,4 @@ datetime
 pyautogui
 Pillow
 pygetwindow
+loguru

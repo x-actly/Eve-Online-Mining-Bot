@@ -10,6 +10,20 @@ import os
 import configparser
 import pygetwindow as gw
 import re
+from loguru import logger
+
+log_level = "TRACE"
+log_format = "[{time}] [{level}] {name}:{function}:{line} - {message}"
+logger.add(
+    "client.log",
+    level=log_level,
+    format=log_format,
+    colorize=False,
+    backtrace=True,
+    diagnose=True,
+    rotation="1 day",
+    retention="31 days",
+)
 
 # Check if the file exists
 if not os.path.isfile("config.properties"):
@@ -67,15 +81,15 @@ def start_function():
     mining_yield_value = float(config["SETTINGS"]["mining_yield"].replace(",", "."))
     # add 2 seconds to mining_reset_timer to ensure sure we wait long enough for the lasers to complete its mining cycle
     mining_reset_timer = 2 + int(config["SETTINGS"].get("mining_reset_timer", "120"))
-    fe.log(f"Using miner reset timer of {mining_reset_timer} seconds.")
+    logger.info("Using miner reset timer of {} seconds.", mining_reset_timer)
     cargo_loading_time = mining_hold_value / mining_yield_value
     if cargo_loading_time < fe.long_sleep_base:
-        fe.log(
+        logger.error(
             "MINING HOLD OR YIELD IS LIKELY MISCONFIGURED, BECAUSE THE TOTAL TIME TO COMPLETE CARGO LOADING IS LESS THAN THE TIME TO WARP OUT TO BELT."
         )
     hardener_key = config["SETTINGS"].get("hardener_key", "F3")
     unlock_all_targets_key = config["SETTINGS"].get("unlock_all_targets_key", "")
-    fe.log(f"The mining script will run {mining_runs} mining runs!")
+    logger.info(f"The mining script will run {mining_runs} mining runs!")
     thread = threading.Thread(
         target=lambda: repeat_function(
             mining_runs=mining_runs,
@@ -116,11 +130,11 @@ def repeat_function(
         cargo_loading_time + (cargo_loading_time_adjustment if mining_runs > 1 else 0)
     )
     fe.set_next_reset(estimated_run_time, fe.TIME_LEFT)
-    fe.log(f"Estimate for completion is {estimated_run_time / 60} minutes!")
+    logger.info(f"Estimate for completion is {estimated_run_time / 60} minutes!")
     while not stop_flag and actual_mining_runs < mining_runs:
         selected_eve_window.activate()
         fe.set_next_reset(cargo_loading_time, fe.CARGO_LOAD_TIME)
-        fe.log(
+        logger.info(
             f"The mining cargo is filled in about {cargo_loading_time / 60} minutes!"
         )
         time.sleep(1)
@@ -154,14 +168,14 @@ def repeat_function(
         actual_mining_runs += 1
         update_mining_runs(actual_mining_runs, mining_runs)
     fe.set_next_reset(0, fe.TIME_LEFT)
-    fe.log(f"Completed {actual_mining_runs}/{mining_runs} mining sessions")
+    logger.info(f"Completed {actual_mining_runs}/{mining_runs} mining sessions")
     enable_fields()
 
 
 def stop_function():
     global stop_flag
     fe.set_next_reset(0, fe.TIME_LEFT)
-    fe.log("The mining script ends with this run!")
+    logger.warning("The mining script ends with this run!")
     stop_flag = True
 
 
@@ -271,7 +285,7 @@ if window_titles:
     eve_window.set(window_titles[0])
     if eve_windows:
         selected_eve_window = eve_windows[0]
-        fe.log(f"Selected the first EVE window")
+        logger.info(f"Selected the first EVE window")
 else:
     eve_window.set("No EVE windows")
 
@@ -450,7 +464,7 @@ def save_properties():
     config["POSITIONS"]["mining_coo"] = mining_coo_entry.get(1.0, tk.END).strip()
     with open("config.properties", "w") as configfile:
         config.write(configfile)
-    fe.log("values saved!")
+    logger.info("values saved!")
 
 
 save_button = tk.Button(button_frame, text="Save", command=save_properties)

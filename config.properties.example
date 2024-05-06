@@ -2,13 +2,16 @@
 mining_runs = 5
 mining_hold = 5000
 mining_yield = 3
-hardener_key = Alt-F2
-unlock_all_targets_key = Ctrl-Alt-T
+# this the default reset timer
+mining_reset_timer = 120
+# this the default hardener key
+hardener_key = F3
+# uncomment this if you have this configured
+#unlock_all_targets_key = Ctrl-Alt-T
 
 [POSITIONS]
 undock_coo = 100, 200
 clear_cargo_coo = 300, 400
-docking_coo = 500, 600
 target_one_coo = 700, 800
 target_two_coo = 900, 1000
 mouse_reset_coo = 1100, 1200

@@ -1,8 +1,8 @@
 from tkinter import Label
-import time, datetime, random
+import time, random
 import pyautogui
 from typing import Callable
-
+from loguru import logger
 
 # Constants
 ########################################################
@@ -15,7 +15,7 @@ short_sleep_base = 12
 
 
 def undock(x: int, y: int):
-    log("undocking...")
+    logger.info("undocking...")
     # undock
     time = random.uniform(1, 2)
     pyautogui.moveTo(x, y, duration=time)
@@ -26,13 +26,13 @@ def undock(x: int, y: int):
 
 
 def set_hardener_online(key_combo: str):
-    log("starting hardener...")
+    logger.info("starting hardener...")
     # set hardener online
     translate_key_combo(key_combo)
 
 
 def click_circle_menu(x: int, y: int, x_offset: int, y_offset: int):
-    log("clicking on the circle menu...")
+    logger.info("clicking on the circle menu...")
     pyautogui.moveTo(x, y)
     pyautogui.mouseDown()
     sleep_and_log(0.5)
@@ -56,7 +56,7 @@ def click_dock_circle_menu(x: int, y: int):
 
 
 def drone_out(x: int, y: int):
-    log("launching drones...")
+    logger.info("launching drones...")
     # drone out, random click in space
     pyautogui.click(x, y, button="left", duration=random.uniform(1, 2))
     # drone out
@@ -69,7 +69,7 @@ def drone_out(x: int, y: int):
 
 
 def drone_in():
-    log("drones returning to bay...")
+    logger.info("drones returning to bay...")
     # drone in
     pyautogui.keyDown("shift")
     pyautogui.press("r")
@@ -81,7 +81,7 @@ def drone_in():
 
 def clear_cargo(x: int, y: int):
     random_time = random.uniform(3, 4)
-    log("clearing cargo...")
+    logger.info("clearing cargo...")
     # clear cargo
     pyautogui.click(x + 175, y + 165, button="left", duration=random_time)
     pyautogui.mouseDown(button="left")
@@ -127,13 +127,13 @@ def mining_behaviour(
             # reset mouse assigned mining laser random in space
             pyautogui.moveTo(rm_x, rm_y)
             pyautogui.click(button="right")
-            log(f"Using unlock all targets key: {unlock_all_targets_keys}")
+            logger.info(f"Using unlock all targets key: {unlock_all_targets_keys}")
             [pyautogui.keyDown(key) for key in unlock_all_targets_keys.split("-")]
             time.sleep(0.5)
             [pyautogui.keyUp(key) for key in unlock_all_targets_keys.split("-")]
             sleep_and_log(0.5)
         else:
-            log("Manually unlocking targets 1 and 2")
+            logger.info("Manually unlocking targets 1 and 2")
             # reset target 1
             pyautogui.moveTo(tx1, ty1)
             pyautogui.keyDown("ctrl")
@@ -171,7 +171,7 @@ def mining_behaviour(
         sleep_and_log(0.5)
 
         # console
-        log("mining...")
+        logger.info("mining...")
 
         # target 1
         pyautogui.moveTo(tx1, ty1)
@@ -198,11 +198,11 @@ def mining_behaviour(
         # reset every 170 seconds (depends on mining barge)
         set_next_reset(mining_reset, NEXT_RESET_IN)
         sleep_and_log(mining_reset)
-        log("reset mining script...")
+        logger.info("reset mining script...")
 
         elapsed_time = time.time() - start_time
         if elapsed_time >= mining_loop:
-            log("Done mining")
+            logger.info("Done mining")
             break
 
 
@@ -257,13 +257,8 @@ def set_next_reset(time_interval: float, counter: str):
 
 
 def sleep_and_log(seconds: float):
-    log(f"sleeping {seconds} seconds")
+    logger.trace("sleeping {} seconds", seconds)
     time.sleep(seconds)
-
-
-def log(msg: str):
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    print(f"[{timestamp}] - {msg}")
 
 
 def sleep_long():
