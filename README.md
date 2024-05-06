@@ -69,6 +69,19 @@ Mining Hold Loading Time = 5000 m³ / (2 * 1.5 m³/s) = 1666 seconds
 ```
 In this case, it would take approximately 1666 seconds to deplete the entire cargo volume. Set the mining hold and yield and the script automatically calculate the loading time for you.
 
+## Using something else than a Venture
+
+For a Retriever this config will work, given you have two strip miners that both yield 7 m3 per second. Set your shield hardener in medium slot 2 (alt-f2) and your good to go
+
+```properties
+[SETTINGS]
+mining_runs = 
+mining_hold = 33000
+mining_yield = 14
+mining_reset_timer = 180
+hardener_key = Alt-F2
+```
+
 ## Notes
 This is an open-source project provided without any guarantees. Use it at your own risk.
 
