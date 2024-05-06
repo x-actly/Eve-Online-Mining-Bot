@@ -12,21 +12,26 @@ import pygetwindow as gw
 import re
 
 # Check if the file exists
-if not os.path.isfile('config.properties'):
+if not os.path.isfile("config.properties"):
     raise FileNotFoundError("Config file 'config.properties' not found.")
 
 # Load configurations from the property file
 config = configparser.ConfigParser()
-config.read('config.properties')
+config.read("config.properties")
 
 # a developer hatch/hook for now, if set to False things will surely break.
-disable_if_no_eve_windows = bool(config['SETTINGS'].get('disable_if_no_eve_windows', "True"))
+disable_if_no_eve_windows = bool(
+    config["SETTINGS"].get("disable_if_no_eve_windows", "True")
+)
 
 # When cargo hold is full, the ship will dock up and unload cargo, undock and warp to another belt
-cargo_loading_time_adjustment = int(config['SETTINGS'].get('cargo_loading_time_adjustment', "180"))
+cargo_loading_time_adjustment = int(
+    config["SETTINGS"].get("cargo_loading_time_adjustment", "180")
+)
 
 # Mining functions
 #########################################################
+
 
 def start_function():
     global stop_flag
@@ -34,62 +39,90 @@ def start_function():
     # make sure we save and update config before we start
     save_properties()
     mining_runs = int(entry.get())
-    undock_coo_value = [int(x.strip()) for x in config['POSITIONS']['undock_coo'].split(",")]
-    mining_coo_values = [(int(x.strip()), int(y.strip())) for x, y in (value.split(",") for value in config['POSITIONS']['mining_coo'].split("\n"))]
-    warp_to_coo_values = [int(x.strip()) for x in config['POSITIONS']['warp_to_coo'].split(",")]
-    clear_cargo_coo_values = [int(x.strip()) for x in config['POSITIONS']['clear_cargo_coo'].split(",")]
-    target_one_coo_values = [int(x.strip()) for x in config['POSITIONS']['target_one_coo'].split(",")]
-    target_two_coo_values = [int(x.strip()) for x in config['POSITIONS']['target_two_coo'].split(",")]
-    mouse_reset_coo_values = [int(x.strip()) for x in config['POSITIONS']['mouse_reset_coo'].split(",")]
-    mining_hold_value = int(config['SETTINGS']['mining_hold'])
-    mining_yield_value = float(config['SETTINGS']['mining_yield'].replace(',', '.'))
+    undock_coo_value = [
+        int(x.strip()) for x in config["POSITIONS"]["undock_coo"].split(",")
+    ]
+    mining_coo_values = [
+        (int(x.strip()), int(y.strip()))
+        for x, y in (
+            value.split(",") for value in config["POSITIONS"]["mining_coo"].split("\n")
+        )
+    ]
+    warp_to_coo_values = [
+        int(x.strip()) for x in config["POSITIONS"]["warp_to_coo"].split(",")
+    ]
+    clear_cargo_coo_values = [
+        int(x.strip()) for x in config["POSITIONS"]["clear_cargo_coo"].split(",")
+    ]
+    target_one_coo_values = [
+        int(x.strip()) for x in config["POSITIONS"]["target_one_coo"].split(",")
+    ]
+    target_two_coo_values = [
+        int(x.strip()) for x in config["POSITIONS"]["target_two_coo"].split(",")
+    ]
+    mouse_reset_coo_values = [
+        int(x.strip()) for x in config["POSITIONS"]["mouse_reset_coo"].split(",")
+    ]
+    mining_hold_value = int(config["SETTINGS"]["mining_hold"])
+    mining_yield_value = float(config["SETTINGS"]["mining_yield"].replace(",", "."))
     # add 2 seconds to mining_reset_timer to ensure sure we wait long enough for the lasers to complete its mining cycle
-    mining_reset_timer = 2 + int(config['SETTINGS'].get('mining_reset_timer', "120"))
+    mining_reset_timer = 2 + int(config["SETTINGS"].get("mining_reset_timer", "120"))
     fe.log(f"Using miner reset timer of {mining_reset_timer} seconds.")
-    cargo_loading_time =  mining_hold_value / mining_yield_value
+    cargo_loading_time = mining_hold_value / mining_yield_value
     if cargo_loading_time < fe.long_sleep_base:
-        fe.log("MINING HOLD OR YIELD IS LIKELY MISCONFIGURED, BECAUSE THE TOTAL TIME TO COMPLETE CARGO LOADING IS LESS THAN THE TIME TO WARP OUT TO BELT.")
-    hardener_key = config['SETTINGS'].get('hardener_key', "F3")
-    unlock_all_targets_key = config['SETTINGS'].get('unlock_all_targets_key', "")
+        fe.log(
+            "MINING HOLD OR YIELD IS LIKELY MISCONFIGURED, BECAUSE THE TOTAL TIME TO COMPLETE CARGO LOADING IS LESS THAN THE TIME TO WARP OUT TO BELT."
+        )
+    hardener_key = config["SETTINGS"].get("hardener_key", "F3")
+    unlock_all_targets_key = config["SETTINGS"].get("unlock_all_targets_key", "")
     fe.log(f"The mining script will run {mining_runs} mining runs!")
-    thread = threading.Thread(target=lambda: repeat_function(
-        mining_runs = mining_runs, 
-        undock_coo_value = undock_coo_value, 
-        mining_coo_values =  mining_coo_values, 
-        warp_to_coo_values = warp_to_coo_values, 
-        clear_cargo_coo_values = clear_cargo_coo_values, 
-        target_one_coo_values = target_one_coo_values, 
-        target_two_coo_values = target_two_coo_values, 
-        mouse_reset_coo_values = mouse_reset_coo_values, 
-        mining_reset_timer = mining_reset_timer,
-        cargo_loading_time = cargo_loading_time, 
-        hardener_key = hardener_key, 
-        unlock_all_targets_key = unlock_all_targets_key
-    ))
+    thread = threading.Thread(
+        target=lambda: repeat_function(
+            mining_runs=mining_runs,
+            undock_coo_value=undock_coo_value,
+            mining_coo_values=mining_coo_values,
+            warp_to_coo_values=warp_to_coo_values,
+            clear_cargo_coo_values=clear_cargo_coo_values,
+            target_one_coo_values=target_one_coo_values,
+            target_two_coo_values=target_two_coo_values,
+            mouse_reset_coo_values=mouse_reset_coo_values,
+            mining_reset_timer=mining_reset_timer,
+            cargo_loading_time=cargo_loading_time,
+            hardener_key=hardener_key,
+            unlock_all_targets_key=unlock_all_targets_key,
+        )
+    )
     thread.start()
 
-def repeat_function(mining_runs: int, 
-                    undock_coo_value: list[int], 
-                    mining_coo_values: list[int], 
-                    warp_to_coo_values: list[int], 
-                    clear_cargo_coo_values: list[int],
-                    target_one_coo_values: list[int], 
-                    target_two_coo_values: list[int], 
-                    mouse_reset_coo_values: list[int], 
-                    mining_reset_timer: int,
-                    cargo_loading_time: float, 
-                    hardener_key: str, 
-                    unlock_all_targets_key: str):
+
+def repeat_function(
+    mining_runs: int,
+    undock_coo_value: list[int],
+    mining_coo_values: list[int],
+    warp_to_coo_values: list[int],
+    clear_cargo_coo_values: list[int],
+    target_one_coo_values: list[int],
+    target_two_coo_values: list[int],
+    mouse_reset_coo_values: list[int],
+    mining_reset_timer: int,
+    cargo_loading_time: float,
+    hardener_key: str,
+    unlock_all_targets_key: str,
+):
     disable_fields()
     actual_mining_runs = 0
     update_mining_runs(actual_mining_runs, mining_runs)
-    estimated_run_time = mining_runs * (cargo_loading_time + (cargo_loading_time_adjustment if mining_runs > 1 else 0))
+    estimated_run_time = mining_runs * (
+        cargo_loading_time + (cargo_loading_time_adjustment if mining_runs > 1 else 0)
+    )
     fe.set_next_reset(estimated_run_time, fe.TIME_LEFT)
     fe.log(f"Estimate for completion is {estimated_run_time / 60} minutes!")
     while not stop_flag and actual_mining_runs < mining_runs:
         selected_eve_window.activate()
         fe.set_next_reset(cargo_loading_time, fe.CARGO_LOAD_TIME)
-        fe.log(f"The mining cargo is filled in about {cargo_loading_time / 60} minutes!")
+        fe.log(
+            f"The mining cargo is filled in about {cargo_loading_time / 60} minutes!"
+        )
         time.sleep(1)
         fe.undock(undock_coo_value[0], undock_coo_value[1])
         selected_eve_window.activate()
@@ -99,13 +132,18 @@ def repeat_function(mining_runs: int,
         selected_eve_window.activate()
         fe.drone_out(mouse_reset_coo_values[0], mouse_reset_coo_values[1])
         fe.mining_behaviour(
-            tx1 = target_one_coo_values[0], ty1 = target_one_coo_values[1], 
-            tx2 = target_two_coo_values[0], ty2 = target_two_coo_values[1], 
-            mr_start = mining_reset_timer, mr_end = mining_reset_timer, 
-            ml_start = cargo_loading_time, ml_end = cargo_loading_time,
-            rm_x = mouse_reset_coo_values[0], rm_y = mouse_reset_coo_values[1],
-            unlock_all_targets_keys = unlock_all_targets_key,
-            focus_eve_window = lambda: selected_eve_window.activate()
+            tx1=target_one_coo_values[0],
+            ty1=target_one_coo_values[1],
+            tx2=target_two_coo_values[0],
+            ty2=target_two_coo_values[1],
+            mr_start=mining_reset_timer,
+            mr_end=mining_reset_timer,
+            ml_start=cargo_loading_time,
+            ml_end=cargo_loading_time,
+            rm_x=mouse_reset_coo_values[0],
+            rm_y=mouse_reset_coo_values[1],
+            unlock_all_targets_keys=unlock_all_targets_key,
+            focus_eve_window=lambda: selected_eve_window.activate(),
         )
         selected_eve_window.activate()
         fe.drone_in()
@@ -119,12 +157,16 @@ def repeat_function(mining_runs: int,
     fe.log(f"Completed {actual_mining_runs}/{mining_runs} mining sessions")
     enable_fields()
 
+
 def stop_function():
     global stop_flag
     fe.set_next_reset(0, fe.TIME_LEFT)
     fe.log("The mining script ends with this run!")
     stop_flag = True
+
+
 #########################################################
+
 
 def disable_fields():
     # Disable input fields
@@ -140,7 +182,7 @@ def disable_fields():
     mining_coo_entry.config(state=tk.NORMAL)
     mining_coo_entry.tag_configure("disabled", foreground="gray")
     mining_coo_entry.config(state=tk.DISABLED)
-    mining_coo_entry.insert(tk.END, config['POSITIONS']['mining_coo'].lstrip('\n'))
+    mining_coo_entry.insert(tk.END, config["POSITIONS"]["mining_coo"].lstrip("\n"))
     mining_coo_entry.tag_add("disabled", "1.0", "end")
 
     # Disable buttons
@@ -148,6 +190,7 @@ def disable_fields():
     save_button.config(state=tk.DISABLED)
     check_button.config(state=tk.DISABLED)
     stop_button.config(state=tk.NORMAL)
+
 
 def enable_fields():
     # Enable input fields
@@ -162,12 +205,13 @@ def enable_fields():
     warp_to_coo_entry.config(state=tk.NORMAL)
     mining_coo_entry.config(state=tk.NORMAL)
     mining_coo_entry.tag_remove("disabled", "1.0", "end")
-    
+
     # Enable buttons
     start_button.config(state=tk.NORMAL)
     save_button.config(state=tk.NORMAL)
     check_button.config(state=tk.NORMAL)
     stop_button.config(state=tk.DISABLED)
+
 
 stop_flag = False
 
@@ -198,14 +242,16 @@ input_frame.pack(pady=10)
 button_frame = tk.Frame(root)
 button_frame.pack(pady=10)
 
-# EVE window selection 
+# EVE window selection
 #########################################################
+
 
 def on_window_select(selection):
     global selected_eve_window
     windows = gw.getWindowsWithTitle(selection)
     if windows:
         selected_eve_window = windows[0]
+
 
 # Label for the EVE window selector
 window_label = tk.Label(input_frame, text="Select EVE window:")
@@ -223,21 +269,28 @@ else:
 eve_window = tk.StringVar()
 if window_titles:
     eve_window.set(window_titles[0])
-    selected_eve_window = eve_windows[0]
-    fe.log(f"Selected the first EVE window")
+    if eve_windows:
+        selected_eve_window = eve_windows[0]
+        fe.log(f"Selected the first EVE window")
 else:
     eve_window.set("No EVE windows")
+
 
 # Function to update the OptionMenu text
 def update_option_menu(selection):
     if selection:
-        eve_window.set(re.sub(r'EVE - .*', 'EVE - REDACTED', selection))
+        eve_window.set(re.sub(r"EVE - .*", "EVE - REDACTED", selection))
     else:
         eve_window.set("No EVE windows")
 
-window_select = tk.OptionMenu(input_frame, eve_window, *window_titles, command=on_window_select)
+
+window_select = tk.OptionMenu(
+    input_frame, eve_window, *window_titles, command=on_window_select
+)
 update_option_menu(eve_window.get())  # Update initial text
-eve_window.trace_add('write', lambda *args: update_option_menu(eve_window.get()))  # Update text on selection change
+eve_window.trace_add(
+    "write", lambda *args: update_option_menu(eve_window.get())
+)  # Update text on selection change
 window_select.grid(row=0, column=1, padx=5, pady=4, sticky="w")
 
 # Mining time
@@ -250,7 +303,7 @@ entry_label.grid(row=1, column=0, sticky="w")
 # Entry field for the number of mining runs
 entry = tk.Entry(input_frame)
 entry.grid(row=1, column=1, padx=5, pady=4, sticky="w")
-entry.insert(tk.END, config['SETTINGS']['mining_runs'])
+entry.insert(tk.END, config["SETTINGS"]["mining_runs"])
 
 # Undock
 #########################################################
@@ -260,7 +313,7 @@ undock_coo_label = tk.Label(input_frame, text="Undock-Button Position:")
 undock_coo_label.grid(row=2, column=0, sticky="w")
 undock_coo_entry = tk.Entry(input_frame)
 undock_coo_entry.grid(row=2, column=1, padx=5, pady=4, sticky="w")
-undock_coo_entry.insert(tk.END, config['POSITIONS']['undock_coo'])
+undock_coo_entry.insert(tk.END, config["POSITIONS"]["undock_coo"])
 
 # Clear Cargo Position
 #########################################################
@@ -270,16 +323,19 @@ clear_cargo_coo_label = tk.Label(input_frame, text="Clear-Cargo Position:")
 clear_cargo_coo_label.grid(row=3, column=0, sticky="w")
 clear_cargo_coo_entry = tk.Entry(input_frame)
 clear_cargo_coo_entry.grid(row=3, column=1, padx=5, pady=4, sticky="w")
-clear_cargo_coo_entry.insert(tk.END, config['POSITIONS']['clear_cargo_coo'])
+clear_cargo_coo_entry.insert(tk.END, config["POSITIONS"]["clear_cargo_coo"])
 
 # check if the coordinate is set correctly
+
 
 def check_function():
     # Disable the button to prevent further clicks.
     check_button.config(state=tk.DISABLED)
 
     def execute_function():
-        clear_cargo_coo_values = [int(x.strip()) for x in clear_cargo_coo_entry.get().split(",")]
+        clear_cargo_coo_values = [
+            int(x.strip()) for x in clear_cargo_coo_entry.get().split(",")
+        ]
         fe.clear_cargo(clear_cargo_coo_values[0], clear_cargo_coo_values[1])
 
         # Enable the button after the function completes.
@@ -289,7 +345,10 @@ def check_function():
     thread = threading.Thread(target=execute_function)
     thread.start()
 
-check_button = tk.Button(input_frame, text="Test", compound="left", command=check_function)
+
+check_button = tk.Button(
+    input_frame, text="Test", compound="left", command=check_function
+)
 check_button.grid(row=3, column=2, padx=5, pady=4, sticky="w")
 
 # Mining Hold
@@ -300,7 +359,7 @@ mining_hold_label = tk.Label(input_frame, text="Mining Hold (m3):")
 mining_hold_label.grid(row=4, column=0, sticky="w")
 mining_hold_entry = tk.Entry(input_frame)
 mining_hold_entry.grid(row=4, column=1, padx=5, pady=4, sticky="w")
-mining_hold_entry.insert(tk.END, config['SETTINGS']['mining_hold'])
+mining_hold_entry.insert(tk.END, config["SETTINGS"]["mining_hold"])
 
 # Mining Yield
 #########################################################
@@ -310,7 +369,7 @@ mining_yield_label = tk.Label(input_frame, text="Mining Yield (m3/s):")
 mining_yield_label.grid(row=5, column=0, sticky="w")
 mining_yield_entry = tk.Entry(input_frame)
 mining_yield_entry.grid(row=5, column=1, padx=5, pady=4, sticky="w")
-mining_yield_entry.insert(tk.END, config['SETTINGS']['mining_yield'])
+mining_yield_entry.insert(tk.END, config["SETTINGS"]["mining_yield"])
 
 # Target-One-Position
 ########################################################
@@ -320,7 +379,7 @@ target_one_coo_label = tk.Label(input_frame, text="Target-One Overview Position:
 target_one_coo_label.grid(row=6, column=0, sticky="w")
 target_one_coo_entry = tk.Entry(input_frame)
 target_one_coo_entry.grid(row=6, column=1, padx=5, pady=4, sticky="w")
-target_one_coo_entry.insert(tk.END, config['POSITIONS']['target_one_coo'])
+target_one_coo_entry.insert(tk.END, config["POSITIONS"]["target_one_coo"])
 
 # Target-Two-Position
 #######################################################
@@ -330,7 +389,7 @@ target_two_coo_label = tk.Label(input_frame, text="Target-Two Overview Position:
 target_two_coo_label.grid(row=7, column=0, sticky="w")
 target_two_coo_entry = tk.Entry(input_frame)
 target_two_coo_entry.grid(row=7, column=1, padx=5, pady=4, sticky="w")
-target_two_coo_entry.insert(tk.END, config['POSITIONS']['target_two_coo'])
+target_two_coo_entry.insert(tk.END, config["POSITIONS"]["target_two_coo"])
 
 # Target-Reset-Position
 #######################################################
@@ -340,7 +399,7 @@ mouse_reset_coo_label = tk.Label(input_frame, text="Mouse Reset Position:")
 mouse_reset_coo_label.grid(row=8, column=0, sticky="w")
 mouse_reset_coo_entry = tk.Entry(input_frame)
 mouse_reset_coo_entry.grid(row=8, column=1, padx=5, pady=4, sticky="w")
-mouse_reset_coo_entry.insert(tk.END, config['POSITIONS']['mouse_reset_coo'])
+mouse_reset_coo_entry.insert(tk.END, config["POSITIONS"]["mouse_reset_coo"])
 
 # Home Position
 ##########################################################
@@ -350,7 +409,7 @@ warp_to_coo_label = tk.Label(input_frame, text="Home Bookmark:")
 warp_to_coo_label.grid(row=9, column=0, sticky="w")
 warp_to_coo_entry = tk.Entry(input_frame)
 warp_to_coo_entry.grid(row=9, column=1, padx=5, pady=4, sticky="w")
-warp_to_coo_entry.insert(tk.END, config['POSITIONS']['warp_to_coo'])
+warp_to_coo_entry.insert(tk.END, config["POSITIONS"]["warp_to_coo"])
 
 # Belt Bookmarks
 #########################################################
@@ -360,7 +419,7 @@ mining_coo_label = tk.Label(input_frame, text="Belt Bookmarks:")
 mining_coo_label.grid(row=10, column=0, sticky="w")
 mining_coo_entry = tk.Text(input_frame, width=15, height=5)
 mining_coo_entry.grid(row=10, column=1, padx=5, pady=4, sticky="w")
-mining_coo_entry.insert(tk.END, config['POSITIONS']['mining_coo'].lstrip('\n'))
+mining_coo_entry.insert(tk.END, config["POSITIONS"]["mining_coo"].lstrip("\n"))
 
 #########################################################
 
@@ -377,25 +436,28 @@ stop_button.config(state=tk.DISABLED)
 
 # Create global save button
 
+
 def save_properties():
-    config['SETTINGS']['mining_runs'] = entry.get()
-    config['POSITIONS']['undock_coo'] = undock_coo_entry.get()
-    config['POSITIONS']['clear_cargo_coo'] = clear_cargo_coo_entry.get()
-    config['SETTINGS']['mining_hold'] = mining_hold_entry.get()
-    config['SETTINGS']['mining_yield'] = mining_yield_entry.get()
-    config['POSITIONS']['target_one_coo'] = target_one_coo_entry.get()
-    config['POSITIONS']['target_two_coo'] = target_two_coo_entry.get()
-    config['POSITIONS']['mouse_reset_coo'] = mouse_reset_coo_entry.get()
-    config['POSITIONS']['warp_to_coo'] = warp_to_coo_entry.get()
-    config['POSITIONS']['mining_coo'] = mining_coo_entry.get(1.0, tk.END).strip()
-    with open('config.properties', 'w') as configfile:
+    config["SETTINGS"]["mining_runs"] = entry.get()
+    config["POSITIONS"]["undock_coo"] = undock_coo_entry.get()
+    config["POSITIONS"]["clear_cargo_coo"] = clear_cargo_coo_entry.get()
+    config["SETTINGS"]["mining_hold"] = mining_hold_entry.get()
+    config["SETTINGS"]["mining_yield"] = mining_yield_entry.get()
+    config["POSITIONS"]["target_one_coo"] = target_one_coo_entry.get()
+    config["POSITIONS"]["target_two_coo"] = target_two_coo_entry.get()
+    config["POSITIONS"]["mouse_reset_coo"] = mouse_reset_coo_entry.get()
+    config["POSITIONS"]["warp_to_coo"] = warp_to_coo_entry.get()
+    config["POSITIONS"]["mining_coo"] = mining_coo_entry.get(1.0, tk.END).strip()
+    with open("config.properties", "w") as configfile:
         config.write(configfile)
     fe.log("values saved!")
+
 
 save_button = tk.Button(button_frame, text="Save", command=save_properties)
 save_button.grid(row=0, column=2, padx=(20, 0), pady=10, ipadx=5)
 
 ########################################################
+
 
 def insert_mouse_position(event):
     x, y = get_mouse_position()
@@ -405,7 +467,9 @@ def insert_mouse_position(event):
         event.widget.delete(0, tk.END)
         event.widget.insert(tk.END, f"{x}, {y}")
 
+
 # Function to get mouse position
+
 
 def get_mouse_position():
     # Mausposition mit Hilfe der Windows-API abrufen
@@ -416,8 +480,8 @@ def get_mouse_position():
 
 
 class POINT(ctypes.Structure):
-    _fields_ = [("x", ctypes.c_long),
-                ("y", ctypes.c_long)]
+    _fields_ = [("x", ctypes.c_long), ("y", ctypes.c_long)]
+
 
 # Create a label to display the mouse position
 mouse_position_label = tk.Label(root, text="")
@@ -425,17 +489,19 @@ mouse_position_label.pack(pady=10)
 
 bold_font = tkFont.Font(weight="bold")
 
+
 # Function to update the mouse position
 def update_mouse_position():
     x, y = get_mouse_position()
     mouse_position_label.config(text=f"Mouse-Position: {x}, {y}", font=("Arial", 12))
     mouse_position_label.after(100, update_mouse_position)
 
+
 # Start update mouse position
 update_mouse_position()
 
 # icon_bitmap
-root.iconbitmap('')
+root.iconbitmap("")
 
 root.bind("<Control-i>", insert_mouse_position)
 
@@ -444,9 +510,12 @@ total_time_label.pack(pady=10)
 
 fe.update_timer(total_time_label, fe.TIME_LEFT)
 
+
 # label for completed/remaining mining runs
 def update_mining_runs(actual: int, wanted: int):
     mining_runs_result.config(text=f"Completed runs: {actual}/{wanted}")
+
+
 mining_runs_result = tk.Label(root, text="", font=("Arial", 12))
 mining_runs_result.pack(pady=10)
 update_mining_runs(0, 0)
