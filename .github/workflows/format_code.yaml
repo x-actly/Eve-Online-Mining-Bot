@@ -20,13 +20,6 @@ jobs:
       - name: Install dependencies
         run: pip install black
 
-      - name: Format code
-        run: black .
-
       - name: Check for unformatted code
         id: check-formatting
         run: black --check .
-
-      - name: Notify if unformatted
-        if: steps.check-formatting.outcome == 'failure'
-        run: echo "Unformatted code detected. Please run 'black .' to format."
