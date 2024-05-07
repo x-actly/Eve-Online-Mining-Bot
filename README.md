@@ -22,6 +22,14 @@ If Python is working on your machine correctly, you must install the necessary P
 pip install -r requirements.txt
 ```
 
+In some cases, you might need to use a virtual python environment:
+
+```bash
+python -m venv /path/to/env
+# from now on you need to prefix all commands with "/path/to/env/bin/"
+/path/to/env/bin/pip install -r requirements.txt
+```
+
 ## Usage
 
 1. Ensure that you have installed the required modules as per the requirements.
