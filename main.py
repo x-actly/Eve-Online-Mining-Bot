@@ -1,3 +1,4 @@
+import os
 import platform
 import tkinter as tk
 import tkinter.font as tkFont
@@ -230,6 +231,9 @@ root.geometry(f"{window_width}x{window_height}+{x_pos}+{y_pos}")
 
 # Make window not resizable
 root.resizable(False, True)
+
+# close everything on window close
+root.protocol("WM_DELETE_WINDOW", lambda: os._exit(0))
 
 # Create frame for input and buttons
 input_frame = tk.Frame(root)
