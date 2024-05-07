@@ -25,10 +25,12 @@ def undock(x: int, y: int):
     sleep_small()
 
 
-def set_hardener_online(key_combo: str):
-    logger.info("starting hardener...")
-    # set hardener online
-    translate_key_combo(key_combo)
+def set_hardener_online(key_combos: list[str]):
+    logger.info("starting hardeners...")
+    for index, key in enumerate(key_combos):
+        logger.info(f"Activating hardener {index + 1} with key {key}")
+        translate_key_combo(key)
+        time.sleep(0.5)
 
 
 def click_circle_menu(x: int, y: int, x_offset: int, y_offset: int):
@@ -85,10 +87,10 @@ def clear_cargo(x: int, y: int):
     # clear cargo
     pyautogui.click(x + 175, y + 165, button="left", duration=random_time)
     pyautogui.mouseDown(button="left")
-    pyautogui.dragRel(-175, -165, duration=random_time)
+    pyautogui.dragRel(-175, -165, duration=random_time, button="left")
     pyautogui.mouseUp(button="left")
     pyautogui.mouseDown(button="left")
-    pyautogui.dragRel(0, -250, duration=random_time)
+    pyautogui.dragRel(0, -250, duration=random_time, button="left")
     pyautogui.mouseUp(button="left")
     sleep_and_log(random_time)
 
@@ -207,19 +209,26 @@ def mining_behaviour(
 
 
 # Constants for timers
-TIME_LEFT = "Estimated time left"
 NEXT_RESET_IN = "Next reset in"
 CARGO_LOAD_TIME = "Cargo loaded in"
 
 # Dictionary to store next reset time for each counter
-timers = {TIME_LEFT: 0, NEXT_RESET_IN: 0, CARGO_LOAD_TIME: 0}
+timers = {NEXT_RESET_IN: 0, CARGO_LOAD_TIME: 0}
 
 
 # Function to update the countdown timer
 def update_timer(label: Label, counter: str):
-    # Calculate remaining time until the next reset
     remaining_time = max(0, timers[counter] - time.time())
+    remaining_str = get_remaining_time(remaining_time)
 
+    # Update the label text with the remaining time
+    label.config(text=f"{counter}: {remaining_str}")
+
+    # Schedule the update function to run again after 1 second
+    label.after(1000, update_timer, label, counter)
+
+
+def get_remaining_time(remaining_time: float):
     # Calculate days, hours, minutes, and seconds
     days = int(remaining_time // (60 * 60 * 24))
     remaining_time %= 60 * 60 * 24
@@ -235,12 +244,7 @@ def update_timer(label: Label, counter: str):
     if hours > 0:
         remaining_str += f"{hours}h "
     remaining_str += f"{minutes:02d}m {seconds:02d}s"
-
-    # Update the label text with the remaining time
-    label.config(text=f"{counter}: {remaining_str}")
-
-    # Schedule the update function to run again after 1 second
-    label.after(1000, update_timer, label, counter)
+    return remaining_str
 
 
 def translate_key_combo(key_combo: str):
