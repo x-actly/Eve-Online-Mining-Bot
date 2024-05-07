@@ -28,6 +28,8 @@ In some cases, you might need to use a virtual python environment:
 python -m venv /path/to/env
 # from now on you need to prefix all commands with "/path/to/env/bin/"
 /path/to/env/bin/pip install -r requirements.txt
+# even the python command
+/path/to/env/bin/python main.py
 ```
 
 ## Usage
