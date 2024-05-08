@@ -17,19 +17,11 @@ def long_interval():
     return random.uniform(long_sleep_base, long_sleep_base + 5)
 
 
-def sleep_long():
-    sleep_and_log(long_interval())
-
-
 def small_interval():
     return random.uniform(short_sleep_base, short_sleep_base + 5)
 
 
-def sleep_small():
-    sleep_and_log(small_interval())
-
-
-def undock(x: int, y: int):
+def undock(x: int, y: int, sleep: int = small_interval()):
     logger.info("undocking...")
     # undock
     time = random.uniform(1, 2)
@@ -37,7 +29,7 @@ def undock(x: int, y: int):
     pyautogui.mouseDown(button="left")
     sleep_and_log(time)
     pyautogui.mouseUp(button="left")
-    sleep_small()
+    sleep_and_log(sleep)
 
 
 def set_hardener_online(key_combos: list[str]):
