@@ -27,12 +27,6 @@ logger.add(
 
 config = ConfigHandler("config.properties")
 
-# disable the restriction for starting the bot only when a eve window is open
-# will not work on macos, so we disable it even if it is set to true
-disable_if_no_eve_windows = (
-    config.get_disable_if_no_eve_windows() and not platform.platform() == "Darwin"
-)
-
 # When cargo hold is full, the ship will dock up and unload cargo, undock and warp to another belt
 cargo_loading_time_adjustment = config.get_cargo_loading_time_adjustment()
 
@@ -533,8 +527,6 @@ mining_coo_entry.insert(tk.END, format_list_coo(config.get_mining_coo()))
 # Create start button
 start_button = tk.Button(button_frame, text="Start", command=start_function)
 start_button.grid(row=0, column=0, padx=(0, 10), pady=10, ipadx=5)
-if disable_if_no_eve_windows and not eve_windows:
-    start_button.config(state=tk.DISABLED)
 
 # Create stop button
 stop_button = tk.Button(button_frame, text="Stop", command=stop_function)
