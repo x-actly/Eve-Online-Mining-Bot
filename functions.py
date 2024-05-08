@@ -58,7 +58,9 @@ def click_warp_circle_menu(x: int, y: int):
     click_circle_menu(x, y, x_offset, y_offset)
 
 
-def click_dock_circle_menu(x: int, y: int, menu_sleep: int = long_interval(), sleep: int = 30):
+def click_dock_circle_menu(
+    x: int, y: int, menu_sleep: int = long_interval(), sleep: int = 30
+):
     x_offset = 0
     y_offset = random.randint(-51, -49)
     click_circle_menu(x, y, x_offset, y_offset, sleep=menu_sleep)
