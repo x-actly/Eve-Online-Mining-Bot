@@ -23,6 +23,9 @@ class ConfigHandler:
 
     def get_disable_if_no_eve_windows(self):
         return self._get_boolean_setting("disable_if_no_eve_windows", True)
+    
+    def get_take_screenshots(self):
+        return self._get_boolean_setting("take_screenshots", False)
 
     def get_cargo_loading_time_adjustment(self):
         return self._get_setting(
@@ -76,15 +79,6 @@ class ConfigHandler:
 
     def set_hardener_key(self, value):
         self._set_setting("hardener_key", value)
-
-    def set_unlock_all_targets_key(self, value):
-        self._set_setting("unlock_all_targets_key", value)
-
-    def set_disable_if_no_eve_windows(self, value):
-        self._set_setting("disable_if_no_eve_windows", str(value))
-
-    def set_cargo_loading_time_adjustment(self, value):
-        self._set_setting("cargo_loading_time_adjustment", str(value))
 
     def set_warp_to_coo(self, value):
         self._set_position("warp_to_coo", value)

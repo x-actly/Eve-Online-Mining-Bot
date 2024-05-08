@@ -139,7 +139,7 @@ def mining_behaviour(
         if unlock_all_targets_keys:
             # reset mouse assigned mining laser random in space
             pyautogui.moveTo(rm_x, rm_y)
-            pyautogui.click(button="right")
+            pyautogui.click(button="left")
             logger.info(f"Using unlock all targets key: {unlock_all_targets_keys}")
             [pyautogui.keyDown(key) for key in unlock_all_targets_keys.split("-")]
             time.sleep(0.5)
