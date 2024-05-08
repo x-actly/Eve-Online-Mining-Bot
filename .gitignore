@@ -2,3 +2,5 @@ __pycache__
 pyenv
 *.log
 *.png
+build/
+dist/

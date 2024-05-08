@@ -103,3 +103,11 @@ Tip: place and run the bot inside Dropbox folder and you can monitor progress re
 This is an open-source project provided without any guarantees. Use it at your own risk.
 
 Please ensure that you comply with EVE Online's terms of use and policies. The use of bots or automation may violate the game's terms of service.
+
+## Developers
+
+Build standalone exe file
+
+```
+pyinstaller main.spec
+```
