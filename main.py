@@ -10,6 +10,7 @@ import functions as fe
 from config import ConfigHandler
 import re
 from loguru import logger
+from datetime import datetime
 
 log_level = "TRACE"
 log_format = "[{time}] [{level}] {name}:{function}:{line} - {message}"
@@ -31,6 +32,9 @@ disable_if_no_eve_windows = config.get_disable_if_no_eve_windows()
 
 # When cargo hold is full, the ship will dock up and unload cargo, undock and warp to another belt
 cargo_loading_time_adjustment = config.get_cargo_loading_time_adjustment()
+
+# take screenshots after clearing cargo
+take_screenshots = config.get_take_screenshots()
 
 # Mining functions
 #########################################################
@@ -153,6 +157,9 @@ def repeat_function(
         fe.clear_cargo(clear_cargo_coo_values[0], clear_cargo_coo_values[1])
         actual_mining_runs += 1
         update_mining_runs(actual_mining_runs, mining_runs)
+        if take_screenshots:
+            img = pyautogui.screenshot()
+            img.save(f"eve_screenshot_{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}.png")
     logger.info(f"Completed {actual_mining_runs}/{mining_runs} mining sessions")
     enable_fields()
 
