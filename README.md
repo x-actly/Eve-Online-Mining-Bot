@@ -9,27 +9,20 @@ The Mining Bot Alpha Owl-Edition is a Python program developed to automate minin
 
 - Automated mining in EVE Online
 - User-friendly GUI for configuration
-- Easy control of bot start and stop
+- Easy control of bot start and stop (even a panic button)
 - Display of the current mouse position on the screen
+- Cross platform (Windows, Macos and Linux)
+- Can take screenshots of mining progress
+- Logging to console and log file
 
 ## Requirements
 
-To run this bot, you must install python first! You can find several Tutorials on youtube.com.
+To run this bot, you must install python first! You can find several Tutorials on youtube.com. The best is to instal python from their official website, both for macos and windows.
 
 If Python is working on your machine correctly, you must install the necessary Python modules. Use the following command:
 
 ```bash
 pip install -r requirements.txt
-```
-
-In some cases, you might need to use a virtual python environment:
-
-```bash
-python -m venv /path/to/env
-# from now on you need to prefix all commands with "/path/to/env/bin/"
-/path/to/env/bin/pip install -r requirements.txt
-# even the python command
-/path/to/env/bin/python main.py
 ```
 
 ## Usage
@@ -53,19 +46,21 @@ python main.py
    - Home Bookmark: Set the coordinates for the Station Bookmark.
    - Belt Bookmarks: Enter the coordinates for your Belt Bookmarks (one line per bookmark).
 
-   For all the settings above, you can click into the text field, move your mouse into the eve interface and type Ctrl-i to insert the current mouse position in the text field. For text fields the contents will be replaced, for the text area a new line will be appended.
+   For all the settings above, you can click into the text field, move your mouse into the eve interface and type Ctrl-i to insert the current mouse position in the text field. For text fields the contents will be replaced, for the text area a new line will be appended. You can test the positions of the coords with the test button.
 
 4. Click the "Save" button to hold the entered coordinates so that they persist across sessions.
 
 5. Set Mining Laser to High Power Slot 1-2.
 
-6. Set Shield Hardener to High Power Slot 3, if using a venture that have three high power slots. For a retriever this will be different and you need to configure hardener_key under [SETTINGS] in properties and set it to Alt-F2, for ex if you set the hardener into the second medium power slot.
+6. Set Shield Hardener to High Power Slot 3, if using a venture that have three high power slots. For a retriever this will be different and you need to configure hardener_keys under [SETTINGS] in properties and set it to Alt-F2, for ex if you set the hardener into the second medium power slot. You can also disable shield hardeners by setting hardener_keys to blank in config. You can also supply more with commma separation, for ex "Alt-F2, F3, F4" etc.
 
 7. Make sure you set shortcuts on default, but if you want to override "Unlock all targets" under "Combat" in "Shortcut" under "Settings", you can configure unlock_all_targets_key under [SETTINGS] in properties and this will make the bot properly unlock all asteroids with one command instead of using a lot of time to cancel selections for target one and two.
    
 8. If you are ready, dock up and click the "Start" button to initiate the mining bot.
    
 9. Click the stop button if you want to end the bot prematurely. It will complete the current mining cycle and then stop flying into the belt. 
+
+10. Click the panic button if you want to immediately call back drones and dock to station. This will exit the bot.
 
 ## Display of Mouse Position
 The GUI application continuously displays the current mouse position on the screen. This can be helpful for accurately determining the coordinates for the positions mentioned above.
@@ -81,16 +76,28 @@ In this case, it would take approximately 1666 seconds to deplete the entire car
 
 ## Using something else than a Venture
 
-For a Retriever this config will work, given you have two strip miners that both yield 7 m3 per second. Set your shield hardener in medium slot 2 (alt-f2) and your good to go
+For a Retriever this config will work, given you have two strip miners that both yield 7 m3 per second. This is an example and only contains the [SETTINGS] section and not the [POSITIONS] section:
 
 ```properties
 [SETTINGS]
-mining_runs = 
+mining_runs = 6
 mining_hold = 33000
 mining_yield = 14
 mining_reset_timer = 180
-hardener_key = Alt-F2
+
+# rest of the config
 ```
+
+## Take screenshots
+
+A handy feature that takes a screenshot after each time it unloads cargo in station before undocking for next run.
+
+```properties
+[SETTINGS]
+take_screenshots = True
+```
+
+Tip: place and run the bot inside Dropbox folder and you can monitor progress remotely.
 
 ## Notes
 This is an open-source project provided without any guarantees. Use it at your own risk.
