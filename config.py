@@ -23,7 +23,7 @@ class ConfigHandler:
 
     def get_disable_if_no_eve_windows(self):
         return self._get_boolean_setting("disable_if_no_eve_windows", True)
-    
+
     def get_take_screenshots(self):
         return self._get_boolean_setting("take_screenshots", False)
 

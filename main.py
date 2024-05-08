@@ -159,7 +159,9 @@ def repeat_function(
         update_mining_runs(actual_mining_runs, mining_runs)
         if take_screenshots:
             img = pyautogui.screenshot()
-            img.save(f"eve_screenshot_{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}.png")
+            img.save(
+                f"eve_screenshot_{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}.png"
+            )
     logger.info(f"Completed {actual_mining_runs}/{mining_runs} mining sessions")
     enable_fields()
 
