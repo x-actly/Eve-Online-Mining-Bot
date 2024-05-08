@@ -109,5 +109,6 @@ Please ensure that you comply with EVE Online's terms of use and policies. The u
 Build standalone exe file
 
 ```
-pyinstaller main.spec
+python -m pip install pyinstaller
+python -m PyInstaller main.spec
 ```
