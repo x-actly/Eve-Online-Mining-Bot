@@ -11,7 +11,7 @@ The Mining Bot Alpha Owl-Edition is a Python program developed to automate minin
 - User-friendly GUI for configuration
 - Easy control of bot start and stop (even a panic button)
 - Display of the current mouse position on the screen
-- Cross platform (Windows, Macos and Linux)
+- Cross platform (Windows, Macos and Linux), albeit no EVE window recognition on Macos and Linux
 - Can take screenshots of mining progress
 - Logging to console and log file
 
