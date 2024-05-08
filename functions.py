@@ -10,16 +10,20 @@ from loguru import logger
 long_sleep_base = 70
 short_sleep_base = 12
 
+
 # Functions
 ########################################################
 def long_interval():
     return random.uniform(long_sleep_base, long_sleep_base + 5)
 
+
 def sleep_long():
     sleep_and_log(long_interval())
 
+
 def small_interval():
     return random.uniform(short_sleep_base, short_sleep_base + 5)
+
 
 def sleep_small():
     sleep_and_log(small_interval())
@@ -44,7 +48,9 @@ def set_hardener_online(key_combos: list[str]):
         time.sleep(0.5)
 
 
-def click_circle_menu(x: int, y: int, x_offset: int, y_offset: int, sleep: int = long_interval()):
+def click_circle_menu(
+    x: int, y: int, x_offset: int, y_offset: int, sleep: int = long_interval()
+):
     logger.info("clicking on the circle menu...")
     pyautogui.moveTo(x, y)
     pyautogui.mouseDown()
@@ -214,7 +220,7 @@ def mining_behaviour(
         logger.info("reset mining script...")
 
         elapsed_time = time.time() - start_time
-        if elapsed_time >= mining_loop or globals['stop_flag'] == True:
+        if elapsed_time >= mining_loop or globals["stop_flag"] == True:
             logger.info("Done mining")
             break
 
@@ -274,4 +280,3 @@ def set_next_reset(time_interval: float, counter: str):
 def sleep_and_log(seconds: float):
     logger.trace("sleeping {} seconds", seconds)
     time.sleep(seconds)
-
