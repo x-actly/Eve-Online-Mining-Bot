@@ -212,7 +212,7 @@ def mining_behaviour(
         logger.info("reset mining script...")
 
         elapsed_time = time.time() - start_time
-        if elapsed_time >= mining_loop or globals["stop_flag"] == True:
+        if elapsed_time >= mining_loop or globals()["stop_flag"] == True:
             logger.info("Done mining")
             break
 
