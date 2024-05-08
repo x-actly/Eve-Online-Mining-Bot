@@ -28,7 +28,7 @@ logger.add(
 config = ConfigHandler("config.properties")
 
 # a developer hatch/hook for now, if set to False things will surely break.
-disable_if_no_eve_windows = config.get_disable_if_no_eve_windows()
+disable_if_no_eve_windows = config.get_disable_if_no_eve_windows() and not platform.platform() == "Darwin"
 
 # When cargo hold is full, the ship will dock up and unload cargo, undock and warp to another belt
 cargo_loading_time_adjustment = config.get_cargo_loading_time_adjustment()
