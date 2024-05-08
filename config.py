@@ -1,6 +1,10 @@
 import configparser
 import os
 
+# IMPORTANT: this MUST be tested after any code change
+# If an extra sleep is introduced, it might affect the total estimated time
+DEFAULT_CARGO_LOADING_TIME_ADJUSTMENT = 420
+
 
 class ConfigHandler:
     def __init__(self, config_path):
@@ -22,7 +26,9 @@ class ConfigHandler:
 
     def get_cargo_loading_time_adjustment(self):
         return self._get_setting(
-            "cargo_loading_time_adjustment", self.config.getint, 180
+            "cargo_loading_time_adjustment",
+            self.config.getint,
+            DEFAULT_CARGO_LOADING_TIME_ADJUSTMENT,
         )
 
     def get_mining_runs(self):
