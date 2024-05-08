@@ -162,6 +162,20 @@ def stop_function():
     logger.warning("The mining script ends with this run!")
     stop_flag = True
 
+def panic_function():
+    logger.warning("Panick! Bring in drones and dock to station")
+    panic_button.config(state=tk.DISABLED)
+    def execute_function():
+        stop_function()
+        activate_eve_window()
+        pyautogui.moveTo(*config.get_mouse_reset_coo())
+        pyautogui.click(button="left")
+        fe.drone_in(sleep=1)
+        fe.click_dock_circle_menu(*config.get_warp_to_coo(), menu_sleep=0, sleep=1)
+        os._exit(0)
+    thread = threading.Thread(target=execute_function)
+    thread.start()
+    
 
 #########################################################
 
@@ -512,6 +526,9 @@ stop_button = tk.Button(button_frame, text="Stop", command=stop_function)
 stop_button.grid(row=0, column=1, padx=(10, 0), pady=10, ipadx=5)
 stop_button.config(state=tk.DISABLED)
 
+panic_button = tk.Button(button_frame, text="Panic", command=panic_function, bg="red", fg="white")
+panic_button.grid(row=0, column=2, padx=(10, 0), pady=10, ipadx=5)
+
 # Create global save button
 
 
@@ -531,7 +548,7 @@ def save_properties():
 
 
 save_button = tk.Button(button_frame, text="Save", command=save_properties)
-save_button.grid(row=0, column=2, padx=(20, 0), pady=10, ipadx=5)
+save_button.grid(row=0, column=3, padx=(20, 0), pady=10, ipadx=5)
 
 ########################################################
 

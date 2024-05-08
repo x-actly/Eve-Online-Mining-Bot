@@ -12,6 +12,17 @@ short_sleep_base = 12
 
 # Functions
 ########################################################
+def long_interval():
+    return random.uniform(long_sleep_base, long_sleep_base + 5)
+
+def sleep_long():
+    sleep_and_log(long_interval())
+
+def small_interval():
+    return random.uniform(short_sleep_base, short_sleep_base + 5)
+
+def sleep_small():
+    sleep_and_log(small_interval())
 
 
 def undock(x: int, y: int):
@@ -33,14 +44,14 @@ def set_hardener_online(key_combos: list[str]):
         time.sleep(0.5)
 
 
-def click_circle_menu(x: int, y: int, x_offset: int, y_offset: int):
+def click_circle_menu(x: int, y: int, x_offset: int, y_offset: int, sleep: int = long_interval()):
     logger.info("clicking on the circle menu...")
     pyautogui.moveTo(x, y)
     pyautogui.mouseDown()
     sleep_and_log(0.5)
     pyautogui.moveRel(x_offset, y_offset, 1)
     pyautogui.mouseUp()
-    sleep_long()
+    sleep_and_log(sleep)
 
 
 def click_warp_circle_menu(x: int, y: int):
@@ -49,12 +60,12 @@ def click_warp_circle_menu(x: int, y: int):
     click_circle_menu(x, y, x_offset, y_offset)
 
 
-def click_dock_circle_menu(x: int, y: int):
+def click_dock_circle_menu(x: int, y: int, menu_sleep: int = None, sleep: int = 30):
     x_offset = 0
     y_offset = random.randint(-51, -49)
-    click_circle_menu(x, y, x_offset, y_offset)
+    click_circle_menu(x, y, x_offset, y_offset, sleep=menu_sleep)
     # sleep longer when clicking the docking button in the circle menu
-    sleep_and_log(30)
+    sleep_and_log(sleep)
 
 
 def drone_out(x: int, y: int):
@@ -70,7 +81,7 @@ def drone_out(x: int, y: int):
     pyautogui.keyUp("shift")
 
 
-def drone_in():
+def drone_in(sleep: int = small_interval()):
     logger.info("drones returning to bay...")
     # drone in
     pyautogui.keyDown("shift")
@@ -78,7 +89,7 @@ def drone_in():
     sleep_and_log(0.5)
     pyautogui.keyUp("shift")
     # drone time back to ship
-    sleep_small()
+    sleep_and_log(sleep)
 
 
 def clear_cargo(x: int, y: int):
@@ -203,7 +214,7 @@ def mining_behaviour(
         logger.info("reset mining script...")
 
         elapsed_time = time.time() - start_time
-        if elapsed_time >= mining_loop:
+        if elapsed_time >= mining_loop or globals['stop_flag'] == True:
             logger.info("Done mining")
             break
 
@@ -264,10 +275,3 @@ def sleep_and_log(seconds: float):
     logger.trace("sleeping {} seconds", seconds)
     time.sleep(seconds)
 
-
-def sleep_long():
-    sleep_and_log(random.uniform(long_sleep_base, long_sleep_base + 5))
-
-
-def sleep_small():
-    sleep_and_log(random.uniform(short_sleep_base, short_sleep_base + 3))
