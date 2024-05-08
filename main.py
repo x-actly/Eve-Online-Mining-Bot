@@ -27,7 +27,8 @@ logger.add(
 
 config = ConfigHandler("config.properties")
 
-# a developer hatch/hook for now, if set to False things will surely break.
+# disable the restriction for starting the bot only when a eve window is open
+# will not work on macos, so we disable it even if it is set to true
 disable_if_no_eve_windows = (
     config.get_disable_if_no_eve_windows() and not platform.platform() == "Darwin"
 )
