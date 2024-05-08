@@ -605,8 +605,10 @@ def update_estimated_run_time(*args):
         total_time_label.config(
             text=f"Estimated time to complete: {fe.get_remaining_time(estimated_run_time)}"
         )
+        start_button.config(state=tk.ACTIVE)
     else:
         total_time_label.config(text="Estimated time to complete: N/A")
+        start_button.config(state=tk.DISABLED)
 
 
 mining_hold_var.trace_add("write", update_estimated_run_time)
