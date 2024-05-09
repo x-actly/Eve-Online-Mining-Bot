@@ -4,32 +4,20 @@ import pyautogui
 from typing import Callable
 from loguru import logger
 
-# Constants
-########################################################
-
-long_sleep_base = 70
-short_sleep_base = 12
-
 
 # Functions
 ########################################################
-def long_interval():
-    return random.uniform(long_sleep_base, long_sleep_base + 5)
 
 
-def small_interval():
-    return random.uniform(short_sleep_base, short_sleep_base + 5)
-
-
-def undock(x: int, y: int, sleep: int = small_interval()):
+def undock(x: int, y: int):
     logger.info("undocking...")
     # undock
     time = random.uniform(1, 2)
     pyautogui.moveTo(x, y, duration=time)
     pyautogui.mouseDown(button="left")
-    sleep_and_log(time)
+    sleep_and_log(0.5)
     pyautogui.mouseUp(button="left")
-    sleep_and_log(sleep)
+    sleep_and_log(0.5)
 
 
 def set_hardener_online(key_combos: list[str]):
@@ -40,32 +28,26 @@ def set_hardener_online(key_combos: list[str]):
         time.sleep(0.5)
 
 
-def click_circle_menu(
-    x: int, y: int, x_offset: int, y_offset: int, sleep: int = long_interval()
-):
+def click_circle_menu(x: int, y: int, x_offset: int, y_offset: int):
     logger.info("clicking on the circle menu...")
     pyautogui.moveTo(x, y)
     pyautogui.mouseDown()
     sleep_and_log(0.5)
     pyautogui.moveRel(x_offset, y_offset, 1)
     pyautogui.mouseUp()
-    sleep_and_log(sleep)
+    sleep_and_log(0.5)
 
 
-def click_warp_circle_menu(x: int, y: int):
+def click_top_left_circle_menu(x: int, y: int):
     x_offset = -50
     y_offset = random.randint(-51, -49)
     click_circle_menu(x, y, x_offset, y_offset)
 
 
-def click_dock_circle_menu(
-    x: int, y: int, menu_sleep: int = long_interval(), sleep: int = 30
-):
+def click_top_center_circle_menu(x: int, y: int):
     x_offset = 0
     y_offset = random.randint(-51, -49)
-    click_circle_menu(x, y, x_offset, y_offset, sleep=menu_sleep)
-    # sleep longer when clicking the docking button in the circle menu
-    sleep_and_log(sleep)
+    click_circle_menu(x, y, x_offset, y_offset)
 
 
 def drone_out(x: int, y: int):
@@ -81,15 +63,13 @@ def drone_out(x: int, y: int):
     pyautogui.keyUp("shift")
 
 
-def drone_in(sleep: int = small_interval()):
+def drone_in():
     logger.info("drones returning to bay...")
     # drone in
     pyautogui.keyDown("shift")
     pyautogui.press("r")
     sleep_and_log(0.5)
     pyautogui.keyUp("shift")
-    # drone time back to ship
-    sleep_and_log(sleep)
 
 
 def clear_cargo(x: int, y: int):
@@ -115,10 +95,8 @@ def mining_behaviour(
     ty1: int,
     tx2: int,
     ty2: int,
-    mr_start: int,
-    mr_end: int,
-    ml_start: float,
-    ml_end: float,
+    mining_reset: int,
+    mining_loop: float,
     rm_x: int,
     rm_y: int,
     unlock_all_targets_keys: str,
@@ -127,12 +105,6 @@ def mining_behaviour(
 
     # start time to counter looptime
     start_time = time.time()
-
-    #  periodically reset interval while mining - mr_start = 250, mr_end = 260
-    mining_reset = random.uniform(mr_start, mr_end)
-
-    #  periodically break while loop - ml_start = 2500, ml_end = 2600
-    mining_loop = random.uniform(ml_start, ml_end)
 
     while True:
         focus_eve_window()
