@@ -8,7 +8,7 @@ DEFAULT_CARGO_LOADING_TIME_ADJUSTMENT = 420
 
 
 class ConfigHandler:
-    def __init__(self, config_path): # type: ignore
+    def __init__(self, config_path):  # type: ignore
         if not os.path.exists(config_path):
             raise FileNotFoundError(f"Configuration file {config_path} not found")
         self.config_path = config_path
