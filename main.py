@@ -615,6 +615,7 @@ def repeat_function(cargo_loading_time: float) -> None:
     logger.info(f"Completed {total_runs_str} mining sessions")
     enable_fields()
 
+
 def start_function() -> None:
     global stop_flag
     stop_flag = False
@@ -637,6 +638,7 @@ def start_function() -> None:
         target=lambda: repeat_function(cargo_loading_time=cargo_loading_time)
     )
     thread.start()
+
 
 start_button.config(command=lambda: start_function())
 stop_button.config(command=lambda: stop_function())
