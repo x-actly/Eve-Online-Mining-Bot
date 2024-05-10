@@ -14,6 +14,7 @@ jobs:
         python-version: "3.7"
     - run: pip install --upgrade pip
     - run: pip install "ruff<1" "mypy<2" "black<23" "isort<6" pytest
+    - run: pip install -r requirements.txt
     - run: ruff check .
     - run: mypy --strict .
     - run: black --check .

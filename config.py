@@ -1,6 +1,6 @@
 import configparser
 import os
-from typing import Any, Callable
+from typing import Any, Callable, List
 
 # IMPORTANT: this MUST be tested after any code change
 # If an extra sleep is introduced, it might affect the total estimated time
@@ -15,7 +15,7 @@ class ConfigHandler:
         self.config = configparser.ConfigParser()
         self.config.read(config_path)
 
-    def get_hardener_keys(self) -> list[str]:
+    def get_hardener_keys(self) -> List[str]:
         keys = self._get_setting("hardener_keys", self.config.get, "")
         return [key.strip() for key in keys.split(",") if key.strip()]
 
@@ -37,25 +37,25 @@ class ConfigHandler:
     def get_mining_runs(self) -> int:
         return int(self._get_setting("mining_runs", self.config.getint, 0))
 
-    def get_undock_coo(self) -> list[int]:
+    def get_undock_coo(self) -> List[int]:
         return self._get_coo("undock_coo")
 
-    def get_mining_coo(self) -> list[list[int]]:
+    def get_mining_coo(self) -> List[List[int]]:
         return self._get_coo_list("mining_coo")
 
-    def get_warp_to_coo(self) -> list[int]:
+    def get_warp_to_coo(self) -> List[int]:
         return self._get_coo("warp_to_coo")
 
-    def get_clear_cargo_coo(self) -> list[int]:
+    def get_clear_cargo_coo(self) -> List[int]:
         return self._get_coo("clear_cargo_coo")
 
-    def get_target_one_coo(self) -> list[int]:
+    def get_target_one_coo(self) -> List[int]:
         return self._get_coo("target_one_coo")
 
-    def get_target_two_coo(self) -> list[int]:
+    def get_target_two_coo(self) -> List[int]:
         return self._get_coo("target_two_coo")
 
-    def get_mouse_reset_coo(self) -> list[int]:
+    def get_mouse_reset_coo(self) -> List[int]:
         return self._get_coo("mouse_reset_coo")
 
     def get_mining_hold(self) -> int:
@@ -74,25 +74,25 @@ class ConfigHandler:
     def set_mining_runs(self, value: int) -> None:
         self._set_setting("mining_runs", value)
 
-    def set_undock_coo(self, value: list[int]) -> None:
+    def set_undock_coo(self, value: List[int]) -> None:
         self._set_position("undock_coo", value)
 
     def set_hardener_key(self, value: str) -> None:
         self._set_setting("hardener_key", value)
 
-    def set_warp_to_coo(self, value: list[int]) -> None:
+    def set_warp_to_coo(self, value: List[int]) -> None:
         self._set_position("warp_to_coo", value)
 
-    def set_clear_cargo_coo(self, value: list[int]) -> None:
+    def set_clear_cargo_coo(self, value: List[int]) -> None:
         self._set_position("clear_cargo_coo", value)
 
-    def set_target_one_coo(self, value: list[int]) -> None:
+    def set_target_one_coo(self, value: List[int]) -> None:
         self._set_position("target_one_coo", value)
 
-    def set_target_two_coo(self, value: list[int]) -> None:
+    def set_target_two_coo(self, value: List[int]) -> None:
         self._set_position("target_two_coo", value)
 
-    def set_mouse_reset_coo(self, value: list[int]) -> None:
+    def set_mouse_reset_coo(self, value: List[int]) -> None:
         self._set_position("mouse_reset_coo", value)
 
     def set_mining_hold(self, value: int) -> None:
@@ -104,7 +104,7 @@ class ConfigHandler:
     def set_mining_reset_timer(self, value: int) -> None:
         self._set_setting("mining_reset_timer", str(value))
 
-    def set_mining_coo(self, value: list[list[int]]) -> None:
+    def set_mining_coo(self, value: List[List[int]]) -> None:
         self._set_position("mining_coo", value)
 
     def save(self) -> None:
@@ -129,14 +129,14 @@ class ConfigHandler:
         except (configparser.NoSectionError, configparser.NoOptionError):
             return fallback
 
-    def _get_coo(self, key: str) -> list[int]:
+    def _get_coo(self, key: str) -> List[int]:
         coo = self.config.get("POSITIONS", key, fallback="")
         if coo == "":
             return []
         else:
             return [int(x.strip()) for x in coo.split(",")]
 
-    def _get_coo_list(self, key: str) -> list[list[int]]:
+    def _get_coo_list(self, key: str) -> List[List[int]]:
         coo_list = self.config.get("POSITIONS", key, fallback="")
         if coo_list == "":
             return []
@@ -148,5 +148,5 @@ class ConfigHandler:
     def _set_setting(self, key: str, value: Any) -> None:
         self.config.set("SETTINGS", key, str(value))
 
-    def _set_position(self, key: str, value: list[Any]) -> None:
+    def _set_position(self, key: str, value: List[Any]) -> None:
         self.config.set("POSITIONS", key, str(value))
