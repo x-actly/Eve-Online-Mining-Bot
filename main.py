@@ -72,7 +72,7 @@ def start_function() -> None:
     global stop_flag
     stop_flag = False
     save_properties()
-    mining_runs = int(entry.get())  # type: ignore
+    mining_runs = config.get_mining_runs()
     mining_hold_value = config.get_mining_hold()
     mining_yield_value = config.get_mining_yield()
     mining_reset_timer = config.get_mining_reset_timer()
@@ -146,32 +146,6 @@ def repeat_function(cargo_loading_time: float) -> None:
     total_runs_str = f"{actual_mining_runs}/{mining_runs}"
     logger.info(f"Completed {total_runs_str} mining sessions")
     enable_fields()
-
-
-def stop_function() -> None:
-    global stop_flag
-    stop_flag = True
-    stop_button.config(state=tk.DISABLED)  # type: ignore
-    logger.warning("The mining script will end on next reset!")
-
-
-def panic_function() -> None:
-    logger.warning("Panic! Bring in drones and dock to station")
-    panic_button.config(state=tk.DISABLED)  # type: ignore
-
-    def execute_function() -> None:
-        stop_function()
-        activate_eve_window()
-        x, y = config.get_mouse_reset_coo()
-        pyautogui.moveTo(x, y)
-        pyautogui.click(button="left")
-        fe.drone_in()
-        fe.sleep_and_log(1)
-        auto_dock_to_station()
-        os._exit(0)
-
-    thread = threading.Thread(target=execute_function)
-    thread.start()
 
 
 def auto_dock_to_station() -> None:
@@ -477,12 +451,12 @@ start_button = tk.Button(button_frame, text="Start", command=start_function)
 start_button.grid(row=0, column=0, padx=(0, 10), pady=10, ipadx=5)
 
 # Create stop button
-stop_button = tk.Button(button_frame, text="Stop", command=stop_function)
+stop_button = tk.Button(button_frame, text="Stop", command=lambda: stop_function())
 stop_button.grid(row=0, column=1, padx=(10, 0), pady=10, ipadx=5)
 stop_button.config(state=tk.DISABLED)
 
 panic_button = tk.Button(
-    button_frame, text="Panic", command=panic_function, bg="red", fg="white"
+    button_frame, text="Panic", command=lambda: panic_function(), bg="red", fg="white"
 )
 panic_button.grid(row=0, column=2, padx=(10, 0), pady=10, ipadx=5)
 
@@ -643,3 +617,29 @@ def enable_fields() -> None:
     save_button.config(state=tk.NORMAL)
     clear_cargo_coo_entry.config(state=tk.NORMAL)
     stop_button.config(state=tk.DISABLED)
+
+
+def stop_function() -> None:
+    global stop_flag
+    stop_flag = True
+    stop_button.config(state=tk.DISABLED)
+    logger.warning("The mining script will end on next reset!")
+
+
+def panic_function() -> None:
+    logger.warning("Panic! Bring in drones and dock to station")
+    panic_button.config(state=tk.DISABLED)
+
+    def execute_function() -> None:
+        stop_function()
+        activate_eve_window()
+        x, y = config.get_mouse_reset_coo()
+        pyautogui.moveTo(x, y)
+        pyautogui.click(button="left")
+        fe.drone_in()
+        fe.sleep_and_log(1)
+        auto_dock_to_station()
+        os._exit(0)
+
+    thread = threading.Thread(target=execute_function)
+    thread.start()
