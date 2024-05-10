@@ -1,17 +1,19 @@
 import os
 import platform
-import tkinter as tk
-import tkinter.font as tkFont
+import random
+import re
 import threading
 import time
-import random
+import tkinter as tk
+import tkinter.font as tkFont
+from datetime import datetime
 from typing import Any, List
+
 import pyautogui
+from loguru import logger
+
 import functions as fe
 from config import ConfigHandler
-import re
-from loguru import logger
-from datetime import datetime
 
 log_level = "TRACE"
 log_format = "[{time}] [{level}] {name}:{function}:{line} - {message}"

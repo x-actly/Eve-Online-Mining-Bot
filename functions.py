@@ -1,10 +1,10 @@
-from tkinter import Label
-import time
 import random
-import pyautogui
+import time
+from tkinter import Label
 from typing import Callable, List
-from loguru import logger
 
+import pyautogui
+from loguru import logger
 
 # Functions
 ########################################################
