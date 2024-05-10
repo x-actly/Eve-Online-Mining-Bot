@@ -101,6 +101,7 @@ def mining_behaviour(
     rm_y: int,
     unlock_all_targets_keys: str,
     activate_eve_window: Callable,
+    is_stopped: Callable
 ):
 
     # start time to counter looptime
@@ -186,7 +187,7 @@ def mining_behaviour(
         logger.info("reset mining script...")
 
         elapsed_time = time.time() - start_time
-        if elapsed_time >= mining_loop or globals().get("stop_flag", False):
+        if elapsed_time >= mining_loop or is_stopped():
             logger.info("Done mining")
             break
 

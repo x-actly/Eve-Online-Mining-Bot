@@ -39,6 +39,10 @@ SMALL_SLEEP = 12
 MEDIUM_SLEEP = 70
 LONG_SLEEP = 100
 
+# globals (just for reference, not actually needed)
+
+stop_flag = False
+
 # Mining functions
 #########################################################
 
@@ -117,6 +121,7 @@ def repeat_function(cargo_loading_time: float):
             rm_y=rm_y,
             unlock_all_targets_keys=config.get_unlock_all_targets_key(),
             activate_eve_window=activate_eve_window,
+            is_stopped=lambda: stop_flag
         )
         activate_eve_window()
         fe.drone_in()
@@ -141,12 +146,13 @@ def repeat_function(cargo_loading_time: float):
 
 def stop_function():
     global stop_flag
-    logger.warning("The mining script ends with this run!")
     stop_flag = True
+    stop_button.config(state=tk.DISABLED)
+    logger.warning("The mining script will end on next reset!")
 
 
 def panic_function():
-    logger.warning("Panick! Bring in drones and dock to station")
+    logger.warning("Panic! Bring in drones and dock to station")
     panic_button.config(state=tk.DISABLED)
 
     def execute_function():
