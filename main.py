@@ -33,6 +33,12 @@ cargo_loading_time_adjustment = config.get_cargo_loading_time_adjustment()
 # take screenshots after clearing cargo
 take_screenshots = config.get_take_screenshots()
 
+# CONSTANTS
+
+SMALL_SLEEP = 12
+MEDIUM_SLEEP = 70
+LONG_SLEEP = 100
+
 # Mining functions
 #########################################################
 
@@ -49,7 +55,7 @@ def get_cargo_loading_time(mining_hold: int, mining_yield: float):
     if mining_hold == 0:
         return 0
     time = mining_hold / mining_yield if mining_yield > 0 else 0
-    if time < 100:
+    if time < LONG_SLEEP:
         logger.error(
             "MINING HOLD OR YIELD IS LIKELY MISCONFIGURED, BECAUSE THE TOTAL TIME TO COMPLETE CARGO LOADING IS LESS THAN THE TIME TO WARP OUT TO BELT."
         )
@@ -90,11 +96,11 @@ def repeat_function(cargo_loading_time: float):
         time.sleep(1)
         undock_x, undock_y = config.get_undock_coo()
         fe.undock(x=undock_x, y=undock_y)
-        fe.sleep_and_log(10)
+        fe.sleep_and_log(SMALL_SLEEP)
         fe.set_hardener_online(config.get_hardener_keys())
         item = random.choice(config.get_mining_coo())
         fe.click_top_left_circle_menu(item[0], item[1])
-        fe.sleep_and_log(75)
+        fe.sleep_and_log(MEDIUM_SLEEP)
         rm_x, rm_y = config.get_mouse_reset_coo()
         fe.drone_out(x=rm_x, y=rm_y)
         tx1, ty1 = config.get_target_one_coo()
@@ -113,10 +119,10 @@ def repeat_function(cargo_loading_time: float):
         )
         activate_eve_window()
         fe.drone_in()
-        fe.sleep_and_log(10)
+        fe.sleep_and_log(SMALL_SLEEP)
         auto_dock_to_station()
         # sleep long enough to be in station when program wakes up
-        fe.sleep_and_log(100)
+        fe.sleep_and_log(LONG_SLEEP)
         # docking will take some time, need to refocus window
         activate_eve_window()
         cg_x, cg_y = config.get_clear_cargo_coo()
