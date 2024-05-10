@@ -1,0 +1,21 @@
+name: Code Quality
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: "3.7"
+    - run: pip install --upgrade pip
+    - run: pip install "ruff<1" "mypy<2" "black<23" "isort<6" pytest
+    - run: ruff check .
+    - run: mypy --strict .
+    - run: black --check .
+    - run: isort --check --profile black .
+    - run: pytest .

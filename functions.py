@@ -1,5 +1,6 @@
 from tkinter import Label
-import time, random
+import time
+import random
 import pyautogui
 from typing import Callable
 from loguru import logger
@@ -9,7 +10,7 @@ from loguru import logger
 ########################################################
 
 
-def undock(x: int, y: int):
+def undock(x: int, y: int) -> None:
     logger.info("undocking...")
     # undock
     time = random.uniform(1, 2)
@@ -20,7 +21,7 @@ def undock(x: int, y: int):
     sleep_and_log(0.5)
 
 
-def set_hardener_online(key_combos: list[str]):
+def set_hardener_online(key_combos: list[str]) -> None:
     logger.info("starting hardeners...")
     for index, key in enumerate(key_combos):
         logger.info(f"Activating hardener {index + 1} with key {key}")
@@ -28,7 +29,7 @@ def set_hardener_online(key_combos: list[str]):
         time.sleep(0.5)
 
 
-def click_circle_menu(x: int, y: int, x_offset: int, y_offset: int):
+def click_circle_menu(x: int, y: int, x_offset: int, y_offset: int) -> None:
     logger.info("clicking on the circle menu...")
     pyautogui.moveTo(x, y)
     pyautogui.mouseDown()
@@ -38,19 +39,19 @@ def click_circle_menu(x: int, y: int, x_offset: int, y_offset: int):
     sleep_and_log(0.5)
 
 
-def click_top_left_circle_menu(x: int, y: int):
+def click_top_left_circle_menu(x: int, y: int) -> None:
     x_offset = -50
     y_offset = random.randint(-51, -49)
     click_circle_menu(x, y, x_offset, y_offset)
 
 
-def click_top_center_circle_menu(x: int, y: int):
+def click_top_center_circle_menu(x: int, y: int) -> None:
     x_offset = 0
     y_offset = random.randint(-51, -49)
     click_circle_menu(x, y, x_offset, y_offset)
 
 
-def drone_out(x: int, y: int):
+def drone_out(x: int, y: int) -> None:
     logger.info("launching drones...")
     # drone out, random click in space
     pyautogui.click(x, y, button="left", duration=random.uniform(1, 2))
@@ -63,7 +64,7 @@ def drone_out(x: int, y: int):
     pyautogui.keyUp("shift")
 
 
-def drone_in():
+def drone_in() -> None:
     logger.info("drones returning to bay...")
     # drone in
     pyautogui.keyDown("shift")
@@ -72,7 +73,7 @@ def drone_in():
     pyautogui.keyUp("shift")
 
 
-def clear_cargo(x: int, y: int):
+def clear_cargo(x: int, y: int) -> None:
     random_time = random.uniform(3, 4)
     logger.info("clearing cargo...")
     # clear cargo
@@ -102,7 +103,7 @@ def mining_behaviour(
     unlock_all_targets_keys: str,
     activate_eve_window: Callable[[], None],
     is_stopped: Callable[[], bool],
-):
+) -> None:
 
     # start time to counter looptime
     start_time = time.time()
@@ -203,7 +204,7 @@ timers = {NEXT_RESET_IN: 0.0, CARGO_LOAD_TIME: 0.0}
 
 
 # Function to update the countdown timer
-def update_timer(label: Label, counter: str):
+def update_timer(label: Label, counter: str) -> None:
     remaining_time = max(0, timers[counter] - time.time())
     remaining_str = get_remaining_time(remaining_time)
 
@@ -214,7 +215,7 @@ def update_timer(label: Label, counter: str):
     label.after(1000, update_timer, label, counter)
 
 
-def get_remaining_time(remaining_time: float):
+def get_remaining_time(remaining_time: float) -> str:
     # Calculate days, hours, minutes, and seconds
     days = int(remaining_time // (60 * 60 * 24))
     remaining_time %= 60 * 60 * 24
@@ -233,7 +234,7 @@ def get_remaining_time(remaining_time: float):
     return remaining_str
 
 
-def translate_key_combo(key_combo: str):
+def translate_key_combo(key_combo: str) -> None:
     if key_combo:
         keys = key_combo.split("-")
         with pyautogui.hold(keys[0].lower()):
@@ -242,11 +243,11 @@ def translate_key_combo(key_combo: str):
 
 
 # Function to set the next reset time for a specific counter
-def set_next_reset(time_interval: float, counter: str):
+def set_next_reset(time_interval: float, counter: str) -> None:
     timers[counter] = time.time() + time_interval
 
 
-def sleep_and_log(seconds: float):
+def sleep_and_log(seconds: float) -> None:
     seconds = seconds + random.uniform(0, 1)
     logger.trace("sleeping {} seconds", seconds)
     time.sleep(seconds)

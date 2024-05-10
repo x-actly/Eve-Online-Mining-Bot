@@ -25,7 +25,7 @@ logger.add(
     retention="31 days",
 )
 
-config = ConfigHandler("config.properties")
+config = ConfigHandler("config.properties") # type: ignore
 
 # When cargo hold is full, the ship will dock up and unload cargo, undock and warp to another belt
 cargo_loading_time_adjustment = config.get_cargo_loading_time_adjustment()
@@ -48,14 +48,14 @@ stop_flag = False
 
 
 def get_estimated_run_time(
-    mining_runs: int, cargo_loading_time: int, cargo_loading_time_adjustment: int
-):
+    mining_runs: int, cargo_loading_time: float, cargo_loading_time_adjustment: int
+) -> float:
     return mining_runs * (
         cargo_loading_time + (cargo_loading_time_adjustment if mining_runs > 1 else 0)
     )
 
 
-def get_cargo_loading_time(mining_hold: int, mining_yield: float):
+def get_cargo_loading_time(mining_hold: int, mining_yield: float) -> float:
     if mining_hold == 0:
         return 0
     time = mining_hold / mining_yield if mining_yield > 0 else 0
@@ -64,11 +64,11 @@ def get_cargo_loading_time(mining_hold: int, mining_yield: float):
     return time
 
 
-def start_function():
+def start_function() -> None:
     global stop_flag
     stop_flag = False
     save_properties()
-    mining_runs = int(entry.get())
+    mining_runs = int(entry.get()) # type: ignore
     mining_hold_value = config.get_mining_hold()
     mining_yield_value = config.get_mining_yield()
     mining_reset_timer = config.get_mining_reset_timer()
@@ -88,7 +88,7 @@ def start_function():
     thread.start()
 
 
-def repeat_function(cargo_loading_time: float):
+def repeat_function(cargo_loading_time: float) -> None:
     disable_fields()
     actual_mining_runs = 0
     mining_runs = config.get_mining_runs()
@@ -144,21 +144,22 @@ def repeat_function(cargo_loading_time: float):
     enable_fields()
 
 
-def stop_function():
+def stop_function() -> None:
     global stop_flag
     stop_flag = True
-    stop_button.config(state=tk.DISABLED)
+    stop_button.config(state=tk.DISABLED) # type: ignore
     logger.warning("The mining script will end on next reset!")
 
 
-def panic_function():
+def panic_function() -> None:
     logger.warning("Panic! Bring in drones and dock to station")
-    panic_button.config(state=tk.DISABLED)
+    panic_button.config(state=tk.DISABLED) # type: ignore
 
-    def execute_function():
+    def execute_function() -> None:
         stop_function()
         activate_eve_window()
-        pyautogui.moveTo(*config.get_mouse_reset_coo())
+        x, y = config.get_mouse_reset_coo()
+        pyautogui.moveTo(x, y)
         pyautogui.click(button="left")
         fe.drone_in()
         fe.sleep_and_log(1)
@@ -169,7 +170,7 @@ def panic_function():
     thread.start()
 
 
-def auto_dock_to_station():
+def auto_dock_to_station() -> None:
     x, y = config.get_warp_to_coo()
     fe.click_top_left_circle_menu(x, y)
     fe.sleep_and_log(1)
@@ -181,49 +182,49 @@ def auto_dock_to_station():
 #########################################################
 
 
-def disable_fields():
+def disable_fields() -> None:
     # Disable input fields
-    entry.config(state=tk.DISABLED)
-    undock_coo_entry.config(state=tk.DISABLED)
-    clear_cargo_coo_entry.config(state=tk.DISABLED)
-    mining_hold_entry.config(state=tk.DISABLED)
-    mining_yield_entry.config(state=tk.DISABLED)
-    target_one_coo_entry.config(state=tk.DISABLED)
-    target_two_coo_entry.config(state=tk.DISABLED)
-    mouse_reset_coo_entry.config(state=tk.DISABLED)
-    warp_to_coo_entry.config(state=tk.DISABLED)
-    mining_coo_entry.config(state=tk.NORMAL)
-    mining_coo_entry.tag_configure("disabled", foreground="gray")
-    mining_coo_entry.config(state=tk.DISABLED)
-    mining_coo_entry.insert(tk.END, format_list_coo(config.get_mining_coo()))
-    mining_coo_entry.tag_add("disabled", "1.0", "end")
+    entry.config(state=tk.DISABLED) # type: ignore
+    undock_coo_entry.config(state=tk.DISABLED) # type: ignore
+    clear_cargo_coo_entry.config(state=tk.DISABLED) # type: ignore
+    mining_hold_entry.config(state=tk.DISABLED) # type: ignore
+    mining_yield_entry.config(state=tk.DISABLED) # type: ignore
+    target_one_coo_entry.config(state=tk.DISABLED) # type: ignore
+    target_two_coo_entry.config(state=tk.DISABLED) # type: ignore
+    mouse_reset_coo_entry.config(state=tk.DISABLED) # type: ignore
+    warp_to_coo_entry.config(state=tk.DISABLED) # type: ignore
+    mining_coo_entry.config(state=tk.NORMAL) # type: ignore
+    mining_coo_entry.tag_configure("disabled", foreground="gray") # type: ignore
+    mining_coo_entry.config(state=tk.DISABLED) # type: ignore
+    mining_coo_entry.insert(tk.END, format_list_coo(config.get_mining_coo())) # type: ignore
+    mining_coo_entry.tag_add("disabled", "1.0", "end") # type: ignore
 
     # Disable buttons
-    start_button.config(state=tk.DISABLED)
-    save_button.config(state=tk.DISABLED)
-    clear_cargo_coo_entry.config(state=tk.DISABLED)
-    stop_button.config(state=tk.NORMAL)
+    start_button.config(state=tk.DISABLED) # type: ignore
+    save_button.config(state=tk.DISABLED) # type: ignore
+    clear_cargo_coo_entry.config(state=tk.DISABLED) # type: ignore
+    stop_button.config(state=tk.NORMAL) # type: ignore
 
 
-def enable_fields():
+def enable_fields() -> None:
     # Enable input fields
-    entry.config(state=tk.NORMAL)
-    undock_coo_entry.config(state=tk.NORMAL)
-    clear_cargo_coo_entry.config(state=tk.NORMAL)
-    mining_hold_entry.config(state=tk.NORMAL)
-    mining_yield_entry.config(state=tk.NORMAL)
-    target_one_coo_entry.config(state=tk.NORMAL)
-    target_two_coo_entry.config(state=tk.NORMAL)
-    mouse_reset_coo_entry.config(state=tk.NORMAL)
-    warp_to_coo_entry.config(state=tk.NORMAL)
-    mining_coo_entry.config(state=tk.NORMAL)
-    mining_coo_entry.tag_remove("disabled", "1.0", "end")
+    entry.config(state=tk.NORMAL) # type: ignore
+    undock_coo_entry.config(state=tk.NORMAL) # type: ignore
+    clear_cargo_coo_entry.config(state=tk.NORMAL) # type: ignore
+    mining_hold_entry.config(state=tk.NORMAL) # type: ignore
+    mining_yield_entry.config(state=tk.NORMAL) # type: ignore
+    target_one_coo_entry.config(state=tk.NORMAL) # type: ignore
+    target_two_coo_entry.config(state=tk.NORMAL) # type: ignore
+    mouse_reset_coo_entry.config(state=tk.NORMAL) # type: ignore
+    warp_to_coo_entry.config(state=tk.NORMAL) # type: ignore
+    mining_coo_entry.config(state=tk.NORMAL) # type: ignore
+    mining_coo_entry.tag_remove("disabled", "1.0", "end") # type: ignore
 
     # Enable buttons
-    start_button.config(state=tk.NORMAL)
-    save_button.config(state=tk.NORMAL)
-    clear_cargo_coo_entry.config(state=tk.NORMAL)
-    stop_button.config(state=tk.DISABLED)
+    start_button.config(state=tk.NORMAL) # type: ignore
+    save_button.config(state=tk.NORMAL) # type: ignore
+    clear_cargo_coo_entry.config(state=tk.NORMAL) # type: ignore
+    stop_button.config(state=tk.DISABLED) # type: ignore
 
 
 stop_flag = False
@@ -274,12 +275,12 @@ def get_windows_with_title(title):
 
 # For some reason cant use global reference as in the function below
 # propably because its passed in lambda
-def activate_eve_window():
+def activate_eve_window() -> None:
     if "selected_eve_window" in globals():
         globals()["selected_eve_window"].activate()
 
 
-def on_window_select(selection):
+def on_window_select(selection) -> None:
     global selected_eve_window
     windows = get_windows_with_title(selection)
     if windows:
@@ -304,13 +305,13 @@ if window_titles:
     eve_window.set(window_titles[0])
     if eve_windows:
         selected_eve_window = eve_windows[0]
-        logger.info(f"Selected the first EVE window")
+        logger.info("Selected the first EVE window")
 else:
     eve_window.set("No EVE windows")
 
 
 # Function to update the OptionMenu text
-def update_option_menu(selection):
+def update_option_menu(selection) -> None:
     if selection:
         eve_window.set(re.sub(r"EVE - .*", "EVE - REDACTED", selection))
     else:
@@ -330,11 +331,11 @@ window_select.grid(row=0, column=1, padx=5, pady=4, sticky="w")
 #########################################################
 
 
-def format_coo(coo):
+def format_coo(coo) -> str:
     return ", ".join(map(str, coo))
 
 
-def format_list_coo(coo_list):
+def format_list_coo(coo_list) -> str:
     return "\n".join(format_coo(coo) for coo in coo_list)
 
 
@@ -534,7 +535,7 @@ panic_button.grid(row=0, column=2, padx=(10, 0), pady=10, ipadx=5)
 # Create global save button
 
 
-def save_properties():
+def save_properties() -> None:
     config.set_mining_runs(entry.get())
     config.set_undock_coo(undock_coo_entry.get())
     config.set_clear_cargo_coo(clear_cargo_coo_entry.get())
@@ -555,7 +556,7 @@ save_button.grid(row=0, column=3, padx=(20, 0), pady=10, ipadx=5)
 ########################################################
 
 
-def insert_mouse_position(event):
+def insert_mouse_position(event) -> None:
     x, y = pyautogui.position()
     if isinstance(event.widget, tk.Text):
         event.widget.insert(tk.END, f"\n{x}, {y}")
@@ -572,7 +573,7 @@ bold_font = tkFont.Font(weight="bold")
 
 
 # Function to update the mouse position
-def update_mouse_position():
+def update_mouse_position() -> None:
     x, y = pyautogui.position()
     mouse_position_label.config(text=f"Mouse-Position: {x}, {y}", font=("Arial", 12))
     mouse_position_label.after(100, update_mouse_position)
@@ -587,7 +588,7 @@ root.iconbitmap("")
 root.bind("<Control-i>", insert_mouse_position)
 
 
-def update_estimated_run_time(*args):
+def update_estimated_run_time(*args) -> None:
     config.set_mining_runs(entry_var.get())
     config.set_mining_hold(mining_hold_var.get())
     config.set_mining_yield(mining_yield_var.get())
