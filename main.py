@@ -379,24 +379,7 @@ panic_button = tk.Button(button_frame, text="Panic", bg="red", fg="white")
 panic_button.grid(row=0, column=2, padx=(10, 0), pady=10, ipadx=5)
 
 # Create global save button
-
-
-def save_properties() -> None:
-    config.set_mining_runs(entry.get())
-    config.set_undock_coo(undock_coo_entry.get())
-    config.set_clear_cargo_coo(clear_cargo_coo_entry.get())
-    config.set_mining_hold(mining_hold_entry.get())
-    config.set_mining_yield(mining_yield_entry.get())
-    config.set_target_one_coo(target_one_coo_entry.get())
-    config.set_target_two_coo(target_two_coo_entry.get())
-    config.set_mouse_reset_coo(mouse_reset_coo_entry.get())
-    config.set_warp_to_coo(warp_to_coo_entry.get())
-    config.set_mining_coo(mining_coo_entry.get(1.0, tk.END).strip())
-    config.save()
-    logger.info("Configuration updated")
-
-
-save_button = tk.Button(button_frame, text="Save", command=lambda: save_properties())
+save_button = tk.Button(button_frame, text="Save")
 save_button.grid(row=0, column=3, padx=(20, 0), pady=10, ipadx=5)
 
 ########################################################
@@ -560,6 +543,21 @@ def panic_function() -> None:
     thread.start()
 
 
+def save_properties() -> None:
+    config.set_mining_runs(entry.get())
+    config.set_undock_coo(undock_coo_entry.get())
+    config.set_clear_cargo_coo(clear_cargo_coo_entry.get())
+    config.set_mining_hold(mining_hold_entry.get())
+    config.set_mining_yield(mining_yield_entry.get())
+    config.set_target_one_coo(target_one_coo_entry.get())
+    config.set_target_two_coo(target_two_coo_entry.get())
+    config.set_mouse_reset_coo(mouse_reset_coo_entry.get())
+    config.set_warp_to_coo(warp_to_coo_entry.get())
+    config.set_mining_coo(mining_coo_entry.get(1.0, tk.END).strip())
+    config.save()
+    logger.info("Configuration updated")
+
+
 def repeat_function(cargo_loading_time: float) -> None:
     disable_fields()
     actual_mining_runs = 0
@@ -640,9 +638,10 @@ def start_function() -> None:
     thread.start()
 
 
-start_button.config(command=lambda: start_function())
-stop_button.config(command=lambda: stop_function())
-panic_button.config(command=lambda: panic_function())
+start_button.config(command=start_function)
+stop_button.config(command=stop_function)
+panic_button.config(command=panic_function)
+save_button.config(command=save_properties)
 
 # Start Tkinter Window
 root.mainloop()
