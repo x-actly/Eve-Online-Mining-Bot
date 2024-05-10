@@ -132,7 +132,7 @@ def repeat_function(cargo_loading_time: float):
         if take_screenshots:
             img = pyautogui.screenshot()
             img.save(
-                f"eve_screenshot_{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}.png"
+                f'eve_screenshot_{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}.png'
             )
     logger.info(
         f"Completed {actual_mining_runs}/{config.get_mining_runs()} mining sessions"
