@@ -100,8 +100,8 @@ def mining_behaviour(
     rm_x: int,
     rm_y: int,
     unlock_all_targets_keys: str,
-    activate_eve_window: Callable,
-    is_stopped: Callable,
+    activate_eve_window: Callable[[], None],
+    is_stopped: Callable[[], bool],
 ):
 
     # start time to counter looptime
@@ -114,9 +114,11 @@ def mining_behaviour(
             pyautogui.moveTo(rm_x, rm_y)
             pyautogui.click(button="left")
             logger.info(f"Using unlock all targets key: {unlock_all_targets_keys}")
-            [pyautogui.keyDown(key) for key in unlock_all_targets_keys.split("-")]
-            time.sleep(0.5)
-            [pyautogui.keyUp(key) for key in unlock_all_targets_keys.split("-")]
+            for key in unlock_all_targets_keys.split("-"):
+                pyautogui.keyDown(key)
+            sleep_and_log(0.5)
+            for key in unlock_all_targets_keys.split("-"):
+                pyautogui.keyUp(key)
             sleep_and_log(0.5)
         else:
             logger.info("Manually unlocking targets 1 and 2")
@@ -197,7 +199,7 @@ NEXT_RESET_IN = "Next reset in"
 CARGO_LOAD_TIME = "Cargo loaded in"
 
 # Dictionary to store next reset time for each counter
-timers = {NEXT_RESET_IN: 0, CARGO_LOAD_TIME: 0}
+timers = {NEXT_RESET_IN: 0.0, CARGO_LOAD_TIME: 0.0}
 
 
 # Function to update the countdown timer

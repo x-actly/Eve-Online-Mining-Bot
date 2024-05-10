@@ -18,8 +18,12 @@ jobs:
           python-version: 3.8
 
       - name: Install dependencies
-        run: pip install black
+        run: pip install black mypy
 
       - name: Check for unformatted code
         id: check-formatting
         run: black --check .
+      
+      - name: Check for bad types
+        id: check-types
+        run: mypy main.py

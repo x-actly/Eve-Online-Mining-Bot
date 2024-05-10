@@ -264,7 +264,8 @@ button_frame.pack(pady=10)
 
 def get_windows_with_title(title):
     if platform.system() == "Windows":
-        import pygetwindow as gw
+        # since there is not types for this libary, we ignore the types
+        import pygetwindow as gw  # type: ignore
 
         return gw.getWindowsWithTitle(title)
     else:
