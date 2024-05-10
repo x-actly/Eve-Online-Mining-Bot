@@ -23,6 +23,10 @@ jobs:
       - name: Check for unformatted code
         id: check-formatting
         run: black --check .
+
+      - name: Install missing types
+        id: install-types
+        run: mypy --install-types
       
       - name: Check for bad types
         id: check-types

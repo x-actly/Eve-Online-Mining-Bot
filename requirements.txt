@@ -4,3 +4,4 @@ pyautogui
 Pillow
 pygetwindow
 loguru
+types-PyAutoGUI
