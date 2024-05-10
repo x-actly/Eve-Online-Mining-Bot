@@ -68,86 +68,6 @@ def get_cargo_loading_time(mining_hold: int, mining_yield: float) -> float:
     return time
 
 
-def start_function() -> None:
-    global stop_flag
-    stop_flag = False
-    save_properties()
-    mining_runs = config.get_mining_runs()
-    mining_hold_value = config.get_mining_hold()
-    mining_yield_value = config.get_mining_yield()
-    mining_reset_timer = config.get_mining_reset_timer()
-    logger.info("The mining script will run {} mining runs!", mining_runs)
-    logger.info("Using miner reset timer of {} seconds.", mining_reset_timer)
-    cargo_loading_time = get_cargo_loading_time(mining_hold_value, mining_yield_value)
-    estimated_run_time = get_estimated_run_time(
-        mining_runs=mining_runs,
-        cargo_loading_time=cargo_loading_time,
-        cargo_loading_time_adjustment=cargo_loading_time_adjustment,
-    )
-    estimated_run_time_str = fe.get_remaining_time(estimated_run_time)
-    logger.info(f"Estimate for completion is {estimated_run_time_str}")
-    thread = threading.Thread(
-        target=lambda: repeat_function(cargo_loading_time=cargo_loading_time)
-    )
-    thread.start()
-
-
-def repeat_function(cargo_loading_time: float) -> None:
-    disable_fields()
-    actual_mining_runs = 0
-    mining_runs = config.get_mining_runs()
-    update_mining_runs(actual_mining_runs, mining_runs)
-    while not stop_flag and actual_mining_runs < mining_runs:
-        activate_eve_window()
-        fe.set_next_reset(cargo_loading_time, fe.CARGO_LOAD_TIME)
-        loaded_in_str = fe.get_remaining_time(cargo_loading_time)
-        logger.info(f"The mining cargo is filled in about {loaded_in_str}")
-        time.sleep(1)
-        undock_x, undock_y = config.get_undock_coo()
-        fe.undock(x=undock_x, y=undock_y)
-        fe.sleep_and_log(SMALL_SLEEP)
-        fe.set_hardener_online(config.get_hardener_keys())
-        item = random.choice(config.get_mining_coo())
-        fe.click_top_left_circle_menu(item[0], item[1])
-        fe.sleep_and_log(MEDIUM_SLEEP)
-        rm_x, rm_y = config.get_mouse_reset_coo()
-        fe.drone_out(x=rm_x, y=rm_y)
-        tx1, ty1 = config.get_target_one_coo()
-        tx2, ty2 = config.get_target_two_coo()
-        fe.mining_behaviour(
-            tx1=tx1,
-            ty1=ty1,
-            tx2=tx2,
-            ty2=ty2,
-            mining_reset=config.get_mining_reset_timer(),
-            mining_loop=cargo_loading_time,
-            rm_x=rm_x,
-            rm_y=rm_y,
-            unlock_all_targets_keys=config.get_unlock_all_targets_key(),
-            activate_eve_window=activate_eve_window,
-            is_stopped=lambda: stop_flag,
-        )
-        activate_eve_window()
-        fe.drone_in()
-        fe.sleep_and_log(SMALL_SLEEP)
-        auto_dock_to_station()
-        # sleep long enough to be in station when program wakes up
-        fe.sleep_and_log(LONG_SLEEP)
-        # docking will take some time, need to refocus window
-        activate_eve_window()
-        cg_x, cg_y = config.get_clear_cargo_coo()
-        fe.clear_cargo(x=cg_x, y=cg_y)
-        actual_mining_runs += 1
-        update_mining_runs(actual_mining_runs, mining_runs)
-        if take_screenshots:
-            img = pyautogui.screenshot()
-            now_str = datetime.now().strftime("%d-%m-%Y-%H-%M-%S")
-            img.save(f"eve_screenshot_{now_str}.png")
-    total_runs_str = f"{actual_mining_runs}/{mining_runs}"
-    logger.info(f"Completed {total_runs_str} mining sessions")
-    enable_fields()
-
-
 def auto_dock_to_station() -> None:
     x, y = config.get_warp_to_coo()
     fe.click_top_left_circle_menu(x, y)
@@ -447,17 +367,15 @@ mining_coo_entry.insert(tk.END, format_list_coo(config.get_mining_coo()))
 #########################################################
 
 # Create start button
-start_button = tk.Button(button_frame, text="Start", command=start_function)
+start_button = tk.Button(button_frame, text="Start")
 start_button.grid(row=0, column=0, padx=(0, 10), pady=10, ipadx=5)
 
 # Create stop button
-stop_button = tk.Button(button_frame, text="Stop", command=lambda: stop_function())
+stop_button = tk.Button(button_frame, text="Stop")
 stop_button.grid(row=0, column=1, padx=(10, 0), pady=10, ipadx=5)
 stop_button.config(state=tk.DISABLED)
 
-panic_button = tk.Button(
-    button_frame, text="Panic", command=lambda: panic_function(), bg="red", fg="white"
-)
+panic_button = tk.Button(button_frame, text="Panic", bg="red", fg="white")
 panic_button.grid(row=0, column=2, padx=(10, 0), pady=10, ipadx=5)
 
 # Create global save button
@@ -478,7 +396,7 @@ def save_properties() -> None:
     logger.info("Configuration updated")
 
 
-save_button = tk.Button(button_frame, text="Save", command=save_properties)
+save_button = tk.Button(button_frame, text="Save", command=lambda: save_properties())
 save_button.grid(row=0, column=3, padx=(20, 0), pady=10, ipadx=5)
 
 ########################################################
@@ -570,9 +488,6 @@ next_reset_label.pack(pady=10)
 # Start updating the countdown timer
 fe.update_timer(next_reset_label, fe.NEXT_RESET_IN)
 
-# Start Tkinter Window
-root.mainloop()
-
 
 def disable_fields() -> None:
     # Disable input fields
@@ -643,3 +558,89 @@ def panic_function() -> None:
 
     thread = threading.Thread(target=execute_function)
     thread.start()
+
+
+def repeat_function(cargo_loading_time: float) -> None:
+    disable_fields()
+    actual_mining_runs = 0
+    mining_runs = config.get_mining_runs()
+    update_mining_runs(actual_mining_runs, mining_runs)
+    while not stop_flag and actual_mining_runs < mining_runs:
+        activate_eve_window()
+        fe.set_next_reset(cargo_loading_time, fe.CARGO_LOAD_TIME)
+        loaded_in_str = fe.get_remaining_time(cargo_loading_time)
+        logger.info(f"The mining cargo is filled in about {loaded_in_str}")
+        time.sleep(1)
+        undock_x, undock_y = config.get_undock_coo()
+        fe.undock(x=undock_x, y=undock_y)
+        fe.sleep_and_log(SMALL_SLEEP)
+        fe.set_hardener_online(config.get_hardener_keys())
+        item = random.choice(config.get_mining_coo())
+        fe.click_top_left_circle_menu(item[0], item[1])
+        fe.sleep_and_log(MEDIUM_SLEEP)
+        rm_x, rm_y = config.get_mouse_reset_coo()
+        fe.drone_out(x=rm_x, y=rm_y)
+        tx1, ty1 = config.get_target_one_coo()
+        tx2, ty2 = config.get_target_two_coo()
+        fe.mining_behaviour(
+            tx1=tx1,
+            ty1=ty1,
+            tx2=tx2,
+            ty2=ty2,
+            mining_reset=config.get_mining_reset_timer(),
+            mining_loop=cargo_loading_time,
+            rm_x=rm_x,
+            rm_y=rm_y,
+            unlock_all_targets_keys=config.get_unlock_all_targets_key(),
+            activate_eve_window=activate_eve_window,
+            is_stopped=lambda: stop_flag,
+        )
+        activate_eve_window()
+        fe.drone_in()
+        fe.sleep_and_log(SMALL_SLEEP)
+        auto_dock_to_station()
+        # sleep long enough to be in station when program wakes up
+        fe.sleep_and_log(LONG_SLEEP)
+        # docking will take some time, need to refocus window
+        activate_eve_window()
+        cg_x, cg_y = config.get_clear_cargo_coo()
+        fe.clear_cargo(x=cg_x, y=cg_y)
+        actual_mining_runs += 1
+        update_mining_runs(actual_mining_runs, mining_runs)
+        if take_screenshots:
+            img = pyautogui.screenshot()
+            now_str = datetime.now().strftime("%d-%m-%Y-%H-%M-%S")
+            img.save(f"eve_screenshot_{now_str}.png")
+    total_runs_str = f"{actual_mining_runs}/{mining_runs}"
+    logger.info(f"Completed {total_runs_str} mining sessions")
+    enable_fields()
+
+def start_function() -> None:
+    global stop_flag
+    stop_flag = False
+    save_properties()
+    mining_runs = config.get_mining_runs()
+    mining_hold_value = config.get_mining_hold()
+    mining_yield_value = config.get_mining_yield()
+    mining_reset_timer = config.get_mining_reset_timer()
+    logger.info("The mining script will run {} mining runs!", mining_runs)
+    logger.info("Using miner reset timer of {} seconds.", mining_reset_timer)
+    cargo_loading_time = get_cargo_loading_time(mining_hold_value, mining_yield_value)
+    estimated_run_time = get_estimated_run_time(
+        mining_runs=mining_runs,
+        cargo_loading_time=cargo_loading_time,
+        cargo_loading_time_adjustment=cargo_loading_time_adjustment,
+    )
+    estimated_run_time_str = fe.get_remaining_time(estimated_run_time)
+    logger.info(f"Estimate for completion is {estimated_run_time_str}")
+    thread = threading.Thread(
+        target=lambda: repeat_function(cargo_loading_time=cargo_loading_time)
+    )
+    thread.start()
+
+start_button.config(command=lambda: start_function())
+stop_button.config(command=lambda: stop_function())
+panic_button.config(command=lambda: panic_function())
+
+# Start Tkinter Window
+root.mainloop()
