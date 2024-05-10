@@ -71,40 +71,40 @@ class ConfigHandler:
         )
         return 2 + int(mining_reset_timer)
 
-    def set_mining_runs(self, value: int) -> None:
+    def set_mining_runs(self, value: str) -> None:
         self._set_setting("mining_runs", value)
 
-    def set_undock_coo(self, value: List[int]) -> None:
+    def set_undock_coo(self, value: str) -> None:
         self._set_position("undock_coo", value)
 
     def set_hardener_key(self, value: str) -> None:
         self._set_setting("hardener_key", value)
 
-    def set_warp_to_coo(self, value: List[int]) -> None:
+    def set_warp_to_coo(self, value: str) -> None:
         self._set_position("warp_to_coo", value)
 
-    def set_clear_cargo_coo(self, value: List[int]) -> None:
+    def set_clear_cargo_coo(self, value: str) -> None:
         self._set_position("clear_cargo_coo", value)
 
-    def set_target_one_coo(self, value: List[int]) -> None:
+    def set_target_one_coo(self, value: str) -> None:
         self._set_position("target_one_coo", value)
 
-    def set_target_two_coo(self, value: List[int]) -> None:
+    def set_target_two_coo(self, value: str) -> None:
         self._set_position("target_two_coo", value)
 
-    def set_mouse_reset_coo(self, value: List[int]) -> None:
+    def set_mouse_reset_coo(self, value: str) -> None:
         self._set_position("mouse_reset_coo", value)
 
-    def set_mining_hold(self, value: int) -> None:
+    def set_mining_hold(self, value: str) -> None:
         self._set_setting("mining_hold", str(value))
 
-    def set_mining_yield(self, value: float) -> None:
+    def set_mining_yield(self, value: str) -> None:
         self._set_setting("mining_yield", str(value))
 
-    def set_mining_reset_timer(self, value: int) -> None:
+    def set_mining_reset_timer(self, value: str) -> None:
         self._set_setting("mining_reset_timer", str(value))
 
-    def set_mining_coo(self, value: List[List[int]]) -> None:
+    def set_mining_coo(self, value: str) -> None:
         self._set_position("mining_coo", value)
 
     def save(self) -> None:
@@ -145,8 +145,8 @@ class ConfigHandler:
                 [int(x.strip()) for x in coo.split(",")] for coo in coo_list.split("\n")
             ]
 
-    def _set_setting(self, key: str, value: Any) -> None:
+    def _set_setting(self, key: str, value: str) -> None:
         self.config.set("SETTINGS", key, str(value))
 
-    def _set_position(self, key: str, value: List[Any]) -> None:
+    def _set_position(self, key: str, value: str) -> None:
         self.config.set("POSITIONS", key, str(value))

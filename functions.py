@@ -2,7 +2,7 @@ from tkinter import Label
 import time
 import random
 import pyautogui
-from typing import Callable
+from typing import Callable, List
 from loguru import logger
 
 
@@ -21,7 +21,7 @@ def undock(x: int, y: int) -> None:
     sleep_and_log(0.5)
 
 
-def set_hardener_online(key_combos: list[str]) -> None:
+def set_hardener_online(key_combos: List[str]) -> None:
     logger.info("starting hardeners...")
     for index, key in enumerate(key_combos):
         logger.info(f"Activating hardener {index + 1} with key {key}")

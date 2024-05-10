@@ -5,6 +5,7 @@ import tkinter.font as tkFont
 import threading
 import time
 import random
+from typing import Any, List
 import pyautogui
 import functions as fe
 from config import ConfigHandler
@@ -42,6 +43,7 @@ LONG_SLEEP = 100
 # globals (just for reference, not actually needed)
 
 stop_flag = False
+selected_eve_window: Any = None
 
 # Mining functions
 #########################################################
@@ -184,47 +186,47 @@ def auto_dock_to_station() -> None:
 
 def disable_fields() -> None:
     # Disable input fields
-    entry.config(state=tk.DISABLED) # type: ignore
-    undock_coo_entry.config(state=tk.DISABLED) # type: ignore
-    clear_cargo_coo_entry.config(state=tk.DISABLED) # type: ignore
-    mining_hold_entry.config(state=tk.DISABLED) # type: ignore
-    mining_yield_entry.config(state=tk.DISABLED) # type: ignore
-    target_one_coo_entry.config(state=tk.DISABLED) # type: ignore
-    target_two_coo_entry.config(state=tk.DISABLED) # type: ignore
-    mouse_reset_coo_entry.config(state=tk.DISABLED) # type: ignore
-    warp_to_coo_entry.config(state=tk.DISABLED) # type: ignore
-    mining_coo_entry.config(state=tk.NORMAL) # type: ignore
-    mining_coo_entry.tag_configure("disabled", foreground="gray") # type: ignore
-    mining_coo_entry.config(state=tk.DISABLED) # type: ignore
-    mining_coo_entry.insert(tk.END, format_list_coo(config.get_mining_coo())) # type: ignore
-    mining_coo_entry.tag_add("disabled", "1.0", "end") # type: ignore
+    entry.config(state=tk.DISABLED)
+    undock_coo_entry.config(state=tk.DISABLED)
+    clear_cargo_coo_entry.config(state=tk.DISABLED)
+    mining_hold_entry.config(state=tk.DISABLED)
+    mining_yield_entry.config(state=tk.DISABLED)
+    target_one_coo_entry.config(state=tk.DISABLED)
+    target_two_coo_entry.config(state=tk.DISABLED)
+    mouse_reset_coo_entry.config(state=tk.DISABLED)
+    warp_to_coo_entry.config(state=tk.DISABLED)
+    mining_coo_entry.config(state=tk.NORMAL)
+    mining_coo_entry.tag_configure("disabled", foreground="gray")
+    mining_coo_entry.config(state=tk.DISABLED)
+    mining_coo_entry.insert(tk.END, format_list_coo(config.get_mining_coo()))
+    mining_coo_entry.tag_add("disabled", "1.0", "end")
 
     # Disable buttons
-    start_button.config(state=tk.DISABLED) # type: ignore
-    save_button.config(state=tk.DISABLED) # type: ignore
-    clear_cargo_coo_entry.config(state=tk.DISABLED) # type: ignore
-    stop_button.config(state=tk.NORMAL) # type: ignore
+    start_button.config(state=tk.DISABLED)
+    save_button.config(state=tk.DISABLED)
+    clear_cargo_coo_entry.config(state=tk.DISABLED)
+    stop_button.config(state=tk.NORMAL)
 
 
 def enable_fields() -> None:
     # Enable input fields
-    entry.config(state=tk.NORMAL) # type: ignore
-    undock_coo_entry.config(state=tk.NORMAL) # type: ignore
-    clear_cargo_coo_entry.config(state=tk.NORMAL) # type: ignore
-    mining_hold_entry.config(state=tk.NORMAL) # type: ignore
-    mining_yield_entry.config(state=tk.NORMAL) # type: ignore
-    target_one_coo_entry.config(state=tk.NORMAL) # type: ignore
-    target_two_coo_entry.config(state=tk.NORMAL) # type: ignore
-    mouse_reset_coo_entry.config(state=tk.NORMAL) # type: ignore
-    warp_to_coo_entry.config(state=tk.NORMAL) # type: ignore
-    mining_coo_entry.config(state=tk.NORMAL) # type: ignore
-    mining_coo_entry.tag_remove("disabled", "1.0", "end") # type: ignore
+    entry.config(state=tk.NORMAL)
+    undock_coo_entry.config(state=tk.NORMAL)
+    clear_cargo_coo_entry.config(state=tk.NORMAL)
+    mining_hold_entry.config(state=tk.NORMAL)
+    mining_yield_entry.config(state=tk.NORMAL)
+    target_one_coo_entry.config(state=tk.NORMAL)
+    target_two_coo_entry.config(state=tk.NORMAL)
+    mouse_reset_coo_entry.config(state=tk.NORMAL)
+    warp_to_coo_entry.config(state=tk.NORMAL)
+    mining_coo_entry.config(state=tk.NORMAL)
+    mining_coo_entry.tag_remove("disabled", "1.0", "end")
 
     # Enable buttons
-    start_button.config(state=tk.NORMAL) # type: ignore
-    save_button.config(state=tk.NORMAL) # type: ignore
-    clear_cargo_coo_entry.config(state=tk.NORMAL) # type: ignore
-    stop_button.config(state=tk.DISABLED) # type: ignore
+    start_button.config(state=tk.NORMAL)
+    save_button.config(state=tk.NORMAL)
+    clear_cargo_coo_entry.config(state=tk.NORMAL)
+    stop_button.config(state=tk.DISABLED)
 
 
 stop_flag = False
@@ -263,7 +265,7 @@ button_frame.pack(pady=10)
 #########################################################
 
 
-def get_windows_with_title(title):
+def get_windows_with_title(title) -> List[Any]:
     if platform.system() == "Windows":
         # since there is not types for this libary, we ignore the types
         import pygetwindow as gw  # type: ignore
@@ -280,7 +282,7 @@ def activate_eve_window() -> None:
         globals()["selected_eve_window"].activate()
 
 
-def on_window_select(selection) -> None:
+def on_window_select(selection: str) -> None:
     global selected_eve_window
     windows = get_windows_with_title(selection)
     if windows:
@@ -292,6 +294,7 @@ window_label = tk.Label(input_frame, text="Select EVE window:")
 window_label.grid(row=0, column=0, sticky="w")
 
 # Get list of EVE windows
+window_titles: list[str] = []
 eve_windows = get_windows_with_title("EVE -")
 if eve_windows:
     window_titles = [window.title for window in eve_windows]
@@ -311,7 +314,7 @@ else:
 
 
 # Function to update the OptionMenu text
-def update_option_menu(selection) -> None:
+def update_option_menu(selection: str) -> None:
     if selection:
         eve_window.set(re.sub(r"EVE - .*", "EVE - REDACTED", selection))
     else:
@@ -331,11 +334,11 @@ window_select.grid(row=0, column=1, padx=5, pady=4, sticky="w")
 #########################################################
 
 
-def format_coo(coo) -> str:
+def format_coo(coo: List[int]) -> str:
     return ", ".join(map(str, coo))
 
 
-def format_list_coo(coo_list) -> str:
+def format_list_coo(coo_list: List[List[int]]) -> str:
     return "\n".join(format_coo(coo) for coo in coo_list)
 
 
