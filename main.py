@@ -76,7 +76,8 @@ def start_function():
         cargo_loading_time=cargo_loading_time,
         cargo_loading_time_adjustment=cargo_loading_time_adjustment,
     )
-    logger.info(f"Estimate for completion is {estimated_run_time / 60} minutes!")
+    estimated_run_time_str = fe.get_remaining_time(estimated_run_time)
+    logger.info(f"Estimate for completion is {estimated_run_time_str}")
     thread = threading.Thread(
         target=lambda: repeat_function(cargo_loading_time=cargo_loading_time)
     )
@@ -91,8 +92,8 @@ def repeat_function(cargo_loading_time: float):
     while not stop_flag and actual_mining_runs < mining_runs:
         activate_eve_window()
         fe.set_next_reset(cargo_loading_time, fe.CARGO_LOAD_TIME)
-        loaded_minutes = cargo_loading_time / 60
-        logger.info(f"The mining cargo is filled in about {loaded_minutes} minutes!")
+        loaded_in_str = fe.get_remaining_time(cargo_loading_time)
+        logger.info(f"The mining cargo is filled in about {loaded_in_str}")
         time.sleep(1)
         undock_x, undock_y = config.get_undock_coo()
         fe.undock(x=undock_x, y=undock_y)
