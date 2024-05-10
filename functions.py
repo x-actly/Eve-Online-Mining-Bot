@@ -101,7 +101,7 @@ def mining_behaviour(
     rm_y: int,
     unlock_all_targets_keys: str,
     activate_eve_window: Callable,
-    is_stopped: Callable
+    is_stopped: Callable,
 ):
 
     # start time to counter looptime

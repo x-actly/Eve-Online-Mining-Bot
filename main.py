@@ -121,7 +121,7 @@ def repeat_function(cargo_loading_time: float):
             rm_y=rm_y,
             unlock_all_targets_keys=config.get_unlock_all_targets_key(),
             activate_eve_window=activate_eve_window,
-            is_stopped=lambda: stop_flag
+            is_stopped=lambda: stop_flag,
         )
         activate_eve_window()
         fe.drone_in()
