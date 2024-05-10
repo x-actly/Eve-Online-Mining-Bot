@@ -244,5 +244,6 @@ def set_next_reset(time_interval: float, counter: str):
 
 
 def sleep_and_log(seconds: float):
+    seconds = seconds + random.uniform(0, 1)
     logger.trace("sleeping {} seconds", seconds)
     time.sleep(seconds)
