@@ -183,57 +183,6 @@ def auto_dock_to_station() -> None:
     fe.translate_key_combo("Ctrl-S")
 
 
-#########################################################
-
-
-def disable_fields() -> None:
-    # Disable input fields
-    entry.config(state=tk.DISABLED)  # type: ignore
-    undock_coo_entry.config(state=tk.DISABLED)  # type: ignore
-    clear_cargo_coo_entry.config(state=tk.DISABLED)  # type: ignore
-    mining_hold_entry.config(state=tk.DISABLED)  # type: ignore
-    mining_yield_entry.config(state=tk.DISABLED)  # type: ignore
-    target_one_coo_entry.config(state=tk.DISABLED)  # type: ignore
-    target_two_coo_entry.config(state=tk.DISABLED)  # type: ignore
-    mouse_reset_coo_entry.config(state=tk.DISABLED)  # type: ignore
-    warp_to_coo_entry.config(state=tk.DISABLED)  # type: ignore
-    mining_coo_entry.config(state=tk.NORMAL)  # type: ignore
-    mining_coo_entry.tag_configure("disabled", foreground="gray")  # type: ignore
-    mining_coo_entry.config(state=tk.DISABLED)  # type: ignore
-    mining_coo_entry.insert(tk.END, format_list_coo(config.get_mining_coo()))  # type: ignore
-    mining_coo_entry.tag_add("disabled", "1.0", "end")  # type: ignore
-
-    # Disable buttons
-    start_button.config(state=tk.DISABLED)  # type: ignore
-    save_button.config(state=tk.DISABLED)  # type: ignore
-    clear_cargo_coo_entry.config(state=tk.DISABLED)  # type: ignore
-    stop_button.config(state=tk.NORMAL)  # type: ignore
-
-
-def enable_fields() -> None:
-    # Enable input fields
-    entry.config(state=tk.NORMAL)  # type: ignore
-    undock_coo_entry.config(state=tk.NORMAL)  # type: ignore
-    clear_cargo_coo_entry.config(state=tk.NORMAL)  # type: ignore
-    mining_hold_entry.config(state=tk.NORMAL)  # type: ignore
-    mining_yield_entry.config(state=tk.NORMAL)  # type: ignore
-    target_one_coo_entry.config(state=tk.NORMAL)  # type: ignore
-    target_two_coo_entry.config(state=tk.NORMAL)  # type: ignore
-    mouse_reset_coo_entry.config(state=tk.NORMAL)  # type: ignore
-    warp_to_coo_entry.config(state=tk.NORMAL)  # type: ignore
-    mining_coo_entry.config(state=tk.NORMAL)  # type: ignore
-    mining_coo_entry.tag_remove("disabled", "1.0", "end")  # type: ignore
-
-    # Enable buttons
-    start_button.config(state=tk.NORMAL)  # type: ignore
-    save_button.config(state=tk.NORMAL)  # type: ignore
-    clear_cargo_coo_entry.config(state=tk.NORMAL)  # type: ignore
-    stop_button.config(state=tk.DISABLED)  # type: ignore
-
-
-stop_flag = False
-
-
 # GUI settings
 #########################################################
 
@@ -649,3 +598,48 @@ fe.update_timer(next_reset_label, fe.NEXT_RESET_IN)
 
 # Start Tkinter Window
 root.mainloop()
+
+
+def disable_fields() -> None:
+    # Disable input fields
+    entry.config(state=tk.DISABLED)
+    undock_coo_entry.config(state=tk.DISABLED)
+    clear_cargo_coo_entry.config(state=tk.DISABLED)
+    mining_hold_entry.config(state=tk.DISABLED)
+    mining_yield_entry.config(state=tk.DISABLED)
+    target_one_coo_entry.config(state=tk.DISABLED)
+    target_two_coo_entry.config(state=tk.DISABLED)
+    mouse_reset_coo_entry.config(state=tk.DISABLED)
+    warp_to_coo_entry.config(state=tk.DISABLED)
+    mining_coo_entry.config(state=tk.NORMAL)
+    mining_coo_entry.tag_configure("disabled", foreground="gray")
+    mining_coo_entry.config(state=tk.DISABLED)
+    mining_coo_entry.insert(tk.END, format_list_coo(config.get_mining_coo()))
+    mining_coo_entry.tag_add("disabled", "1.0", "end")
+
+    # Disable buttons
+    start_button.config(state=tk.DISABLED)
+    save_button.config(state=tk.DISABLED)
+    clear_cargo_coo_entry.config(state=tk.DISABLED)
+    stop_button.config(state=tk.NORMAL)
+
+
+def enable_fields() -> None:
+    # Enable input fields
+    entry.config(state=tk.NORMAL)
+    undock_coo_entry.config(state=tk.NORMAL)
+    clear_cargo_coo_entry.config(state=tk.NORMAL)
+    mining_hold_entry.config(state=tk.NORMAL)
+    mining_yield_entry.config(state=tk.NORMAL)
+    target_one_coo_entry.config(state=tk.NORMAL)
+    target_two_coo_entry.config(state=tk.NORMAL)
+    mouse_reset_coo_entry.config(state=tk.NORMAL)
+    warp_to_coo_entry.config(state=tk.NORMAL)
+    mining_coo_entry.config(state=tk.NORMAL)
+    mining_coo_entry.tag_remove("disabled", "1.0", "end")
+
+    # Enable buttons
+    start_button.config(state=tk.NORMAL)
+    save_button.config(state=tk.NORMAL)
+    clear_cargo_coo_entry.config(state=tk.NORMAL)
+    stop_button.config(state=tk.DISABLED)
