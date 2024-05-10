@@ -56,9 +56,7 @@ def get_cargo_loading_time(mining_hold: int, mining_yield: float):
         return 0
     time = mining_hold / mining_yield if mining_yield > 0 else 0
     if time < LONG_SLEEP:
-        logger.error(
-            "MINING HOLD OR YIELD IS LIKELY MISCONFIGURED, BECAUSE THE TOTAL TIME TO COMPLETE CARGO LOADING IS LESS THAN THE TIME TO WARP OUT TO BELT."
-        )
+        logger.error("Mining yield misconfiguration: loading time < warp-out time.")
     return time
 
 
@@ -79,20 +77,22 @@ def start_function():
         cargo_loading_time_adjustment=cargo_loading_time_adjustment,
     )
     logger.info(f"Estimate for completion is {estimated_run_time / 60} minutes!")
-    thread = threading.Thread(target=lambda: repeat_function(cargo_loading_time))
+    thread = threading.Thread(
+        target=lambda: repeat_function(cargo_loading_time=cargo_loading_time)
+    )
     thread.start()
 
 
 def repeat_function(cargo_loading_time: float):
     disable_fields()
     actual_mining_runs = 0
-    update_mining_runs(actual_mining_runs, config.get_mining_runs())
-    while not stop_flag and actual_mining_runs < config.get_mining_runs():
+    mining_runs = config.get_mining_runs()
+    update_mining_runs(actual_mining_runs, mining_runs)
+    while not stop_flag and actual_mining_runs < mining_runs:
         activate_eve_window()
         fe.set_next_reset(cargo_loading_time, fe.CARGO_LOAD_TIME)
-        logger.info(
-            f"The mining cargo is filled in about {cargo_loading_time / 60} minutes!"
-        )
+        loaded_minutes = cargo_loading_time / 60
+        logger.info(f"The mining cargo is filled in about {loaded_minutes} minutes!")
         time.sleep(1)
         undock_x, undock_y = config.get_undock_coo()
         fe.undock(x=undock_x, y=undock_y)
@@ -115,7 +115,7 @@ def repeat_function(cargo_loading_time: float):
             rm_x=rm_x,
             rm_y=rm_y,
             unlock_all_targets_keys=config.get_unlock_all_targets_key(),
-            focus_eve_window=lambda: activate_eve_window(),
+            activate_eve_window=activate_eve_window,
         )
         activate_eve_window()
         fe.drone_in()
@@ -128,15 +128,13 @@ def repeat_function(cargo_loading_time: float):
         cg_x, cg_y = config.get_clear_cargo_coo()
         fe.clear_cargo(x=cg_x, y=cg_y)
         actual_mining_runs += 1
-        update_mining_runs(actual_mining_runs, config.get_mining_runs())
+        update_mining_runs(actual_mining_runs, mining_runs)
         if take_screenshots:
             img = pyautogui.screenshot()
-            img.save(
-                f'eve_screenshot_{datetime.now().strftime("%d-%m-%Y-%H-%M-%S")}.png'
-            )
-    logger.info(
-        f"Completed {actual_mining_runs}/{config.get_mining_runs()} mining sessions"
-    )
+            now_str = datetime.now().strftime("%d-%m-%Y-%H-%M-%S")
+            img.save(f"eve_screenshot_{now_str}.png")
+    total_runs_str = f"{actual_mining_runs}/{mining_runs}"
+    logger.info(f"Completed {total_runs_str} mining sessions")
     enable_fields()
 
 
