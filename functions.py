@@ -100,14 +100,14 @@ def mining_behaviour(
     rm_x: int,
     rm_y: int,
     unlock_all_targets_keys: str,
-    focus_eve_window: Callable,
+    activate_eve_window: Callable,
 ):
 
     # start time to counter looptime
     start_time = time.time()
 
     while True:
-        focus_eve_window()
+        activate_eve_window()
         if unlock_all_targets_keys:
             # reset mouse assigned mining laser random in space
             pyautogui.moveTo(rm_x, rm_y)
@@ -164,7 +164,7 @@ def mining_behaviour(
         pyautogui.click(button="left")
         pyautogui.keyUp("ctrl")
         sleep_and_log(3)
-        focus_eve_window()
+        activate_eve_window()
         pyautogui.press("f1")
 
         sleep_and_log(0.5)
@@ -175,7 +175,7 @@ def mining_behaviour(
         pyautogui.click(button="left")
         pyautogui.keyUp("ctrl")
         sleep_and_log(3)
-        focus_eve_window()
+        activate_eve_window()
         # second left click to focus the second target
         pyautogui.click(button="left")
         pyautogui.press("f2")
