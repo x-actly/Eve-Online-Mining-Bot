@@ -230,12 +230,17 @@ undock_coo_label.grid(row=4, column=0, sticky="w")
 undock_coo_entry = tk.Entry(input_frame)
 undock_coo_entry.grid(row=4, column=1, padx=5, pady=4, sticky="w")
 undock_coo_entry.insert(tk.END, format_coo(config.get_undock_coo()))
+
+
+def test_undock():
+    save_properties()
+    pyautogui.moveTo(*config.get_undock_coo())
+
+
 undock_test_button = tk.Button(
     input_frame,
     text="Test",
-    command=lambda: execute_and_enable(
-        undock_test_button, lambda: pyautogui.moveTo(*config.get_undock_coo())
-    ),
+    command=lambda: execute_and_enable(undock_test_button, test_undock),
 )
 undock_test_button.grid(row=4, column=2, padx=5, pady=4, sticky="w")
 
@@ -267,7 +272,7 @@ def execute_and_enable(button, func):
     thread.start()
 
 
-def save_and_clear_cargo():
+def test_clear_cargo():
     save_properties()
     fe.clear_cargo(*config.get_clear_cargo_coo())
 
@@ -276,7 +281,7 @@ clear_cargo_check_button = tk.Button(
     input_frame,
     text="Test",
     compound="left",
-    command=lambda: execute_and_enable(clear_cargo_check_button, save_and_clear_cargo),
+    command=lambda: execute_and_enable(clear_cargo_check_button, test_clear_cargo),
 )
 clear_cargo_check_button.grid(row=5, column=2, padx=5, pady=4, sticky="w")
 
@@ -289,12 +294,19 @@ target_one_coo_label.grid(row=6, column=0, sticky="w")
 target_one_coo_entry = tk.Entry(input_frame)
 target_one_coo_entry.grid(row=6, column=1, padx=5, pady=4, sticky="w")
 target_one_coo_entry.insert(tk.END, format_coo(config.get_target_one_coo()))
+
+
+def test_target_one():
+    save_properties()
+    pyautogui.moveTo(*config.get_target_one_coo())
+
+
 target_one_coo_test_button = tk.Button(
     input_frame,
     text="Test",
     command=lambda: execute_and_enable(
         target_one_coo_test_button,
-        lambda: pyautogui.moveTo(*config.get_target_one_coo()),
+        test_target_one,
     ),
 )
 target_one_coo_test_button.grid(row=6, column=2, padx=5, pady=4, sticky="w")
@@ -308,15 +320,22 @@ target_two_coo_label.grid(row=7, column=0, sticky="w")
 target_two_coo_entry = tk.Entry(input_frame)
 target_two_coo_entry.grid(row=7, column=1, padx=5, pady=4, sticky="w")
 target_two_coo_entry.insert(tk.END, format_coo(config.get_target_two_coo()))
-target_one_coo_test_button = tk.Button(
+
+
+def test_target_two():
+    save_properties()
+    pyautogui.moveTo(*config.get_target_two_coo())
+
+
+target_two_coo_test_button = tk.Button(
     input_frame,
     text="Test",
     command=lambda: execute_and_enable(
         target_one_coo_test_button,
-        lambda: pyautogui.moveTo(*config.get_target_two_coo()),
+        test_target_two,
     ),
 )
-target_one_coo_test_button.grid(row=7, column=2, padx=5, pady=4, sticky="w")
+target_two_coo_test_button.grid(row=7, column=2, padx=5, pady=4, sticky="w")
 
 # Target-Reset-Position
 #######################################################
@@ -327,15 +346,22 @@ mouse_reset_coo_label.grid(row=8, column=0, sticky="w")
 mouse_reset_coo_entry = tk.Entry(input_frame)
 mouse_reset_coo_entry.grid(row=8, column=1, padx=5, pady=4, sticky="w")
 mouse_reset_coo_entry.insert(tk.END, format_coo(config.get_mouse_reset_coo()))
-target_one_coo_test_button = tk.Button(
+
+
+def test_mouse_reset():
+    save_properties()
+    pyautogui.moveTo(*config.get_mouse_reset_coo())
+
+
+mouse_reset_coo_test_button = tk.Button(
     input_frame,
     text="Test",
     command=lambda: execute_and_enable(
         target_one_coo_test_button,
-        lambda: pyautogui.moveTo(*config.get_mouse_reset_coo()),
+        test_mouse_reset,
     ),
 )
-target_one_coo_test_button.grid(row=8, column=2, padx=5, pady=4, sticky="w")
+mouse_reset_coo_test_button.grid(row=8, column=2, padx=5, pady=4, sticky="w")
 
 # Home Position
 ##########################################################
@@ -346,15 +372,22 @@ warp_to_coo_label.grid(row=9, column=0, sticky="w")
 warp_to_coo_entry = tk.Entry(input_frame)
 warp_to_coo_entry.grid(row=9, column=1, padx=5, pady=4, sticky="w")
 warp_to_coo_entry.insert(tk.END, format_coo(config.get_warp_to_coo()))
-target_one_coo_test_button = tk.Button(
+
+
+def test_warp_to():
+    save_properties()
+    pyautogui.moveTo(*config.get_warp_to_coo())
+
+
+warp_to_coo_test_button = tk.Button(
     input_frame,
     text="Test",
     command=lambda: execute_and_enable(
         target_one_coo_test_button,
-        lambda: pyautogui.moveTo(*config.get_warp_to_coo()),
+        test_warp_to,
     ),
 )
-target_one_coo_test_button.grid(row=9, column=2, padx=5, pady=4, sticky="w")
+warp_to_coo_test_button.grid(row=9, column=2, padx=5, pady=4, sticky="w")
 
 # Belt Bookmarks
 #########################################################
