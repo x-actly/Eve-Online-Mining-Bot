@@ -70,6 +70,10 @@ class ConfigHandler:
             "mining_reset_timer", self.config.get, "120"
         )
         return 2 + int(mining_reset_timer)
+    
+    def get_warping_time(self) -> int:
+        warping_time = self._get_setting("warping_time", self.config.get, "70")
+        return int(warping_time.replace(",", "."))
 
     def set_mining_runs(self, value: str) -> None:
         self._set_setting("mining_runs", value)
@@ -103,6 +107,9 @@ class ConfigHandler:
 
     def set_mining_reset_timer(self, value: str) -> None:
         self._set_setting("mining_reset_timer", str(value))
+
+    def set_warping_time(self, value: str) -> None:
+        self._set_setting("warping_time", str(value))
 
     def set_mining_coo(self, value: str) -> None:
         self._set_position("mining_coo", value)
