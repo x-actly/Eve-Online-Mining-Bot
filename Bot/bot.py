@@ -1,6 +1,5 @@
 import os
 import platform
-import random
 import re
 import threading
 import time
@@ -576,7 +575,7 @@ def repeat_function(cargo_loading_time: float) -> None:
         fe.undock(x=undock_x, y=undock_y)
         fe.sleep_and_log(SMALL_SLEEP)
         fe.set_hardener_online(config.get_hardener_keys())
-        item = random.choice(config.get_mining_coo())
+        item = fe.get_random_coord(config.get_mining_coo())
         fe.click_top_left_circle_menu(item[0], item[1])
         fe.sleep_and_log(warping_time)
         rm_x, rm_y = config.get_mouse_reset_coo()

@@ -20,4 +20,6 @@ jobs:
     - run: mypy --strict .
     - run: black --check .
     - run: isort --check --profile black .
-    - run: pytest .
+    - name: Install XVFB
+      run: sudo apt-get install xvfb
+    - run: xvfb-run pytest .
