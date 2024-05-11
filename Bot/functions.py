@@ -9,6 +9,17 @@ from loguru import logger
 # Functions
 ########################################################
 
+# Initialize a variable to store the last selected coordinate
+last_selected_coord: List[int] = []
+
+
+def get_random_coord(coords: List[List[int]]) -> List[int]:
+    global last_selected_coord
+    available_coords = [coord for coord in coords if coord != last_selected_coord]
+    selected_coord = random.choice(available_coords)
+    last_selected_coord = selected_coord
+    return selected_coord
+
 
 def undock(x: int, y: int) -> None:
     logger.info("undocking...")
