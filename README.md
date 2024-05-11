@@ -101,7 +101,7 @@ warping_time = 70
 
 ## Take screenshots
 
-A handy feature that takes a screenshot after each time it unloads cargo in station before undocking for next run.
+A handy feature that takes a screenshot after each time it unloads cargo in station before undocking for next run. Defaults to False.
 
 ```properties
 [SETTINGS]
@@ -109,6 +109,15 @@ take_screenshots = True
 ```
 
 Tip: place and run the bot inside Dropbox folder and you can monitor progress remotely.
+
+## Disable auto reset of miners
+
+This is useful if you have disabled auto repeat on the miners. If you have auto repeat off, you dont need to cancel miners before activating the miners again, because if you have a matching mining duration, for ex 180 seconds, for strip miners, the miners will be finished on the next reset. Defaults to True.
+
+```properties
+[SETTINGS]
+auto_reset_miners = False
+```
 
 ## Notes
 This is an open-source project provided without any guarantees. Use it at your own risk.

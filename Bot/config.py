@@ -32,6 +32,9 @@ class ConfigHandler:
     def get_take_screenshots(self) -> bool:
         return self._get_boolean_setting("take_screenshots", False)
 
+    def get_auto_reset_miners(self) -> bool:
+        return self._get_boolean_setting("auto_reset_miners", True)
+
     def get_cargo_loading_time_adjustment(self) -> int:
         default = _DEFAULT_CARGO_LOADING_TIME_ADJUSTMENT + self.get_warping_time()
         return self._get_setting("cargo_loading_time_adjustment", self.config.getint, default)  # type: ignore

@@ -38,6 +38,9 @@ take_screenshots = config.get_take_screenshots()
 # warping to belt time
 warping_time = config.get_warping_time()
 
+# auto reset miners before selecting and activating new targets
+auto_reset_miners = config.get_auto_reset_miners()
+
 # CONSTANTS
 
 SMALL_SLEEP = 12
@@ -68,15 +71,6 @@ def get_cargo_loading_time(mining_hold: int, mining_yield: float) -> float:
     if time < LONG_SLEEP:
         logger.error("Mining yield misconfiguration: loading time < warp-out time.")
     return time
-
-
-def auto_dock_to_station() -> None:
-    x, y = config.get_warp_to_coo()
-    fe.click_top_left_circle_menu(x, y)
-    fe.sleep_and_log(1)
-    fe.click_top_center_circle_menu(x, y)
-    fe.sleep_and_log(0.5)
-    fe.translate_key_combo("Ctrl-S")
 
 
 # GUI settings
@@ -571,7 +565,7 @@ def panic_function() -> None:
         pyautogui.click(button="left")
         fe.drone_in()
         fe.sleep_and_log(1)
-        auto_dock_to_station()
+        fe.auto_dock_to_station(config.get_warp_to_coo())
         os._exit(0)
 
     thread = threading.Thread(target=execute_function)
@@ -627,11 +621,12 @@ def repeat_function(cargo_loading_time: float) -> None:
             unlock_all_targets_keys=config.get_unlock_all_targets_key(),
             activate_eve_window=activate_eve_window,
             is_stopped=lambda: stop_flag,
+            auto_reset_miners=auto_reset_miners,
         )
         activate_eve_window()
         fe.drone_in()
         fe.sleep_and_log(SMALL_SLEEP)
-        auto_dock_to_station()
+        fe.auto_dock_to_station(config.get_warp_to_coo())
         # sleep long enough to be in station when program wakes up
         fe.sleep_and_log(LONG_SLEEP)
         # docking will take some time, need to refocus window

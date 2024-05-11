@@ -15,3 +15,10 @@ def test_default_warping_time():
     expected = config._DEFAULT_WARPING_TIME
     assert actual == expected
     assert actual == 70
+
+
+def test_auto_reset_miners():
+    cfg = config.ConfigHandler("tests/test_config_without_auto_reset_miners.properties")
+    actual = cfg.get_auto_reset_miners()
+    expected = True
+    assert actual == expected

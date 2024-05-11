@@ -21,6 +21,15 @@ def get_random_coord(coords: List[List[int]]) -> List[int]:
     return selected_coord
 
 
+def auto_dock_to_station(coords: List[int]) -> None:
+    x, y = coords
+    click_top_left_circle_menu(x, y)
+    sleep_and_log(1)
+    click_top_center_circle_menu(x, y)
+    sleep_and_log(0.5)
+    translate_key_combo("Ctrl-S")
+
+
 def undock(x: int, y: int) -> None:
     logger.info("undocking...")
     # undock
@@ -114,6 +123,7 @@ def mining_behaviour(
     unlock_all_targets_keys: str,
     activate_eve_window: Callable[[], None],
     is_stopped: Callable[[], bool],
+    auto_reset_miners: bool,
 ) -> None:
 
     # start time to counter looptime
@@ -152,17 +162,18 @@ def mining_behaviour(
             pyautogui.keyUp("ctrl")
             pyautogui.keyUp("shift")
 
-        # reset mininglaser 1
-        pyautogui.keyDown("f1")
-        sleep_and_log(0.5)
-        pyautogui.keyUp("f1")
+        if auto_reset_miners:
+            # reset mininglaser 1
+            pyautogui.keyDown("f1")
+            sleep_and_log(0.5)
+            pyautogui.keyUp("f1")
 
-        sleep_and_log(1)
+            sleep_and_log(1)
 
-        # reset mininglaser 2
-        pyautogui.keyDown("f2")
-        sleep_and_log(0.5)
-        pyautogui.keyUp("f2")
+            # reset mininglaser 2
+            pyautogui.keyDown("f2")
+            sleep_and_log(0.5)
+            pyautogui.keyUp("f2")
 
         # reset mouse assigned mining laser random in space
         pyautogui.moveTo(rm_x, rm_y)
