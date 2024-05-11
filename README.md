@@ -25,6 +25,8 @@ If Python is working on your machine correctly, you must install the necessary P
 pip install -r requirements.txt
 ```
 
+It has been tested to work on Python 3. No progress will likely be done to make it backwards compatible with Python 2 (if not already compatible). Depending on your setup you might need to make aliases from pip3 and python3 to pip and python, or just change the commands.
+
 ## Usage
 
 1. Ensure that you have installed the required modules as per the requirements.
@@ -105,6 +107,18 @@ This is an open-source project provided without any guarantees. Use it at your o
 Please ensure that you comply with EVE Online's terms of use and policies. The use of bots or automation may violate the game's terms of service.
 
 ## Developers
+
+Check that code quality is up to maintainable standards before pushing to main (!) or branch. A pro tip is always pushing to a new branch and making a PR to make sure code quality is good before its merged into main.
+
+### on macos or linux
+```
+sh check.sh
+```
+
+### on windows:
+```
+./check.bat
+```
 
 Build standalone exe file
 

@@ -139,7 +139,7 @@ window_label = tk.Label(input_frame, text="Select EVE window:")
 window_label.grid(row=0, column=0, sticky="w")
 
 # Get list of EVE windows
-window_titles: list[str] = []
+window_titles: List[str] = []
 eve_windows = get_windows_with_title("EVE -")
 if eve_windows:
     window_titles = [window.title for window in eve_windows]
