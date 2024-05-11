@@ -94,8 +94,8 @@ mining_reset_timer = 180
 
 This value indicates how long the ship takes to reach the corresponding bookmark (belt) after undocking. From experience, we've set the value to 70 seconds. This is sufficient for most distances; however, we've provided you with the option to adjust this value if it's not enough.
 
-```proberties
-[Settings]
+```properties
+[SETTINGS]
 warping_time = 70
 ```
 
