@@ -6,3 +6,4 @@ python -m black .
 python -m ruff check . --fix
 python -m isort --profile black .
 python -m pytest .
+python -m mypy --strict .
