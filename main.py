@@ -36,6 +36,9 @@ cargo_loading_time_adjustment = config.get_cargo_loading_time_adjustment()
 # take screenshots after clearing cargo
 take_screenshots = config.get_take_screenshots()
 
+# warping to belt time
+warping_time = config.get_warping_time()
+
 # CONSTANTS
 
 SMALL_SLEEP = 12
@@ -575,7 +578,7 @@ def repeat_function(cargo_loading_time: float) -> None:
         fe.set_hardener_online(config.get_hardener_keys())
         item = random.choice(config.get_mining_coo())
         fe.click_top_left_circle_menu(item[0], item[1])
-        fe.sleep_and_log(MEDIUM_SLEEP)
+        fe.sleep_and_log(warping_time)
         rm_x, rm_y = config.get_mouse_reset_coo()
         fe.drone_out(x=rm_x, y=rm_y)
         tx1, ty1 = config.get_target_one_coo()

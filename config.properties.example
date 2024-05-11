@@ -6,6 +6,8 @@ mining_yield = 3
 mining_reset_timer = 120
 # this the default hardener key, supply more hardeners with commaseparation, you can also comment out or blank it out to disable shield hardeners
 hardener_keys = F3
+# this is the default warping time to belt in seconds, increase this value if necessary
+warping_time = 70
 # uncomment this if you have this configured
 #unlock_all_targets_key = Ctrl-Alt-T
 # take screenshot after unloading cargo

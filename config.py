@@ -71,6 +71,10 @@ class ConfigHandler:
         )
         return 2 + int(mining_reset_timer)
 
+    def get_warping_time(self) -> int:
+        warping_time = self._get_setting("warping_time", self.config.get, "70")
+        return int(warping_time.replace(",", "."))
+
     def set_mining_runs(self, value: str) -> None:
         self._set_setting("mining_runs", value)
 
