@@ -108,9 +108,6 @@ class ConfigHandler:
     def set_mining_reset_timer(self, value: str) -> None:
         self._set_setting("mining_reset_timer", str(value))
 
-    def set_warping_time(self, value: str) -> None:
-        self._set_setting("warping_time", str(value))
-
     def set_mining_coo(self, value: str) -> None:
         self._set_position("mining_coo", value)
 
