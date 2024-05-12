@@ -162,16 +162,24 @@ def mining_behaviour(
             pyautogui.keyUp("ctrl")
             pyautogui.keyUp("shift")
 
-            sleep_and_log(0.5)
-
         if auto_reset_miners:
             # reset mininglaser 1
-            pyautogui.press("f1")
-
+            pyautogui.keyDown("f1")
             sleep_and_log(0.5)
+            pyautogui.keyUp("f1")
+
+            sleep_and_log(1)
 
             # reset mininglaser 2
-            pyautogui.press("f2")
+            pyautogui.keyDown("f2")
+            sleep_and_log(0.5)
+            pyautogui.keyUp("f2")
+
+        # reset mouse assigned mining laser random in space
+        pyautogui.moveTo(rm_x, rm_y)
+        pyautogui.click(button="right")
+
+        sleep_and_log(0.5)
 
         # console
         logger.info("mining...")
