@@ -1,6 +1,7 @@
 import os
 import platform
 import re
+import sys
 import threading
 import time
 import tkinter as tk
@@ -14,12 +15,13 @@ from loguru import logger
 from Bot import config as cfg
 from Bot import functions as fe
 
-log_level = "TRACE"
-log_format = "[{time}] [{level}] {name}:{function}:{line} - {message}"
+config = cfg.ConfigHandler("config.properties")  # type: ignore
+
+log_level = config.get_log_level()
 logger.add(
     "client.log",
     level=log_level,
-    format=log_format,
+    format="[{time}] [{level}] {name}:{function}:{line} - {message}",
     colorize=False,
     backtrace=True,
     diagnose=True,
@@ -27,7 +29,7 @@ logger.add(
     retention="31 days",
 )
 
-config = cfg.ConfigHandler("config.properties")  # type: ignore
+logger.add(sys.stderr, level=log_level)
 
 # When cargo hold is full, the ship will dock up and unload cargo, undock and warp to another belt
 cargo_loading_time_adjustment = config.get_cargo_loading_time_adjustment()
@@ -676,5 +678,6 @@ save_button.config(command=save_properties)
 
 def start() -> None:
     logger.info("Starting bot")
+    logger.trace("Hi")
     # Start Tkinter Window
     root.mainloop()

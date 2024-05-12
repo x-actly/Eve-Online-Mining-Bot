@@ -22,6 +22,9 @@ class ConfigHandler:
         self.config = configparser.ConfigParser()
         self.config.read(config_path)
 
+    def get_log_level(self) -> str:
+        return self._get_setting("log_level", self.config.get, "INFO")  # type: ignore
+
     def get_hardener_keys(self) -> List[str]:
         keys = self._get_setting("hardener_keys", self.config.get, "")
         return [key.strip() for key in keys.split(",") if key.strip()]
