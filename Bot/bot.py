@@ -361,19 +361,19 @@ mouse_reset_coo_test_button.grid(row=8, column=2, padx=5, pady=4, sticky="w")
 ##########################################################
 
 # Create input field for warp-to position
-warp_to_coo_label = tk.Label(input_frame, text="Home Bookmark:")
-warp_to_coo_label.grid(row=9, column=0, sticky="w")
-warp_to_coo_entry = tk.Entry(input_frame)
-warp_to_coo_entry.grid(row=9, column=1, padx=5, pady=4, sticky="w")
-warp_to_coo_entry.insert(tk.END, format_coo(config.get_warp_to_coo()))
+home_coo_label = tk.Label(input_frame, text="Home Bookmark:")
+home_coo_label.grid(row=9, column=0, sticky="w")
+home_coo_entry = tk.Entry(input_frame)
+home_coo_entry.grid(row=9, column=1, padx=5, pady=4, sticky="w")
+home_coo_entry.insert(tk.END, format_coo(config.get_home_coo()))
 
 
 def test_warp_to():
     save_properties()
-    pyautogui.moveTo(*config.get_warp_to_coo())
+    pyautogui.moveTo(*config.get_home_coo())
 
 
-warp_to_coo_test_button = tk.Button(
+home_coo_test_button = tk.Button(
     input_frame,
     text="Test",
     command=lambda: execute_and_enable(
@@ -381,7 +381,7 @@ warp_to_coo_test_button = tk.Button(
         test_warp_to,
     ),
 )
-warp_to_coo_test_button.grid(row=9, column=2, padx=5, pady=4, sticky="w")
+home_coo_test_button.grid(row=9, column=2, padx=5, pady=4, sticky="w")
 
 # Belt Bookmarks
 #########################################################
@@ -511,7 +511,7 @@ def disable_fields() -> None:
     target_one_coo_entry.config(state=tk.DISABLED)
     target_two_coo_entry.config(state=tk.DISABLED)
     mouse_reset_coo_entry.config(state=tk.DISABLED)
-    warp_to_coo_entry.config(state=tk.DISABLED)
+    home_coo_entry.config(state=tk.DISABLED)
     mining_coo_entry.config(state=tk.NORMAL)
     mining_coo_entry.tag_configure("disabled", foreground="gray")
     mining_coo_entry.config(state=tk.DISABLED)
@@ -535,7 +535,7 @@ def enable_fields() -> None:
     target_one_coo_entry.config(state=tk.NORMAL)
     target_two_coo_entry.config(state=tk.NORMAL)
     mouse_reset_coo_entry.config(state=tk.NORMAL)
-    warp_to_coo_entry.config(state=tk.NORMAL)
+    home_coo_entry.config(state=tk.NORMAL)
     mining_coo_entry.config(state=tk.NORMAL)
     mining_coo_entry.tag_remove("disabled", "1.0", "end")
 
@@ -565,7 +565,7 @@ def panic_function() -> None:
         pyautogui.click(button="left")
         fe.drone_in()
         fe.sleep_and_log(1)
-        fe.auto_dock_to_station(config.get_warp_to_coo())
+        fe.auto_dock_to_station(config.get_home_coo())
         os._exit(0)
 
     thread = threading.Thread(target=execute_function)
@@ -581,7 +581,7 @@ def save_properties() -> None:
     config.set_target_one_coo(target_one_coo_entry.get())
     config.set_target_two_coo(target_two_coo_entry.get())
     config.set_mouse_reset_coo(mouse_reset_coo_entry.get())
-    config.set_warp_to_coo(warp_to_coo_entry.get())
+    config.set_home_coo(home_coo_entry.get())
     config.set_mining_coo(mining_coo_entry.get(1.0, tk.END).strip())
     config.save()
     logger.info("Configuration updated")
@@ -626,7 +626,7 @@ def repeat_function(cargo_loading_time: float) -> None:
         activate_eve_window()
         fe.drone_in()
         fe.sleep_and_log(SMALL_SLEEP)
-        fe.auto_dock_to_station(config.get_warp_to_coo())
+        fe.auto_dock_to_station(config.get_home_coo())
         # sleep long enough to be in station when program wakes up
         fe.sleep_and_log(LONG_SLEEP)
         # docking will take some time, need to refocus window

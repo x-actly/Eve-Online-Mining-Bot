@@ -48,7 +48,7 @@ class ConfigHandler:
     def get_mining_coo(self) -> List[List[int]]:
         return self._get_coo_list("mining_coo")
 
-    def get_warp_to_coo(self) -> List[int]:
+    def get_home_coo(self) -> List[int]:
         return self._get_coo("warp_to_coo")
 
     def get_clear_cargo_coo(self) -> List[int]:
@@ -81,7 +81,7 @@ class ConfigHandler:
     def set_undock_coo(self, value: str) -> None:
         self._set_position("undock_coo", value)
 
-    def set_warp_to_coo(self, value: str) -> None:
+    def set_home_coo(self, value: str) -> None:
         self._set_position("warp_to_coo", value)
 
     def set_clear_cargo_coo(self, value: str) -> None:
