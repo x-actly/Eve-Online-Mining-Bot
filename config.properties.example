@@ -1,4 +1,5 @@
 [SETTINGS]
+log_level = INFO
 mining_runs = 5
 mining_hold = 5000
 mining_yield = 3
