@@ -17,6 +17,8 @@ from Bot import functions as fe
 
 config = cfg.ConfigHandler("config.properties")  # type: ignore
 
+logger.remove()
+
 log_level = config.get_log_level()
 logger.add(
     "client.log",
@@ -29,7 +31,7 @@ logger.add(
     retention="31 days",
 )
 
-logger.add(sys.stderr, level=log_level)
+logger.add(sys.stdout, level=log_level)
 
 # When cargo hold is full, the ship will dock up and unload cargo, undock and warp to another belt
 cargo_loading_time_adjustment = config.get_cargo_loading_time_adjustment()
