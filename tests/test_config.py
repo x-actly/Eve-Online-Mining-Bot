@@ -10,7 +10,7 @@ def test_warping_time_is_added_to_default_cargo_loading_time_adjustment():
 
 
 def test_default_warping_time():
-    cfg = config.ConfigHandler("tests/test_config_without_warping_time.properties")
+    cfg = config.ConfigHandler("tests/empty.properties")
     actual = cfg.get_warping_time()
     expected = config._DEFAULT_WARPING_TIME
     assert actual == expected
@@ -18,7 +18,7 @@ def test_default_warping_time():
 
 
 def test_auto_reset_miners():
-    cfg = config.ConfigHandler("tests/test_config_without_auto_reset_miners.properties")
+    cfg = config.ConfigHandler("tests/empty.properties")
     actual = cfg.get_auto_reset_miners()
     expected = True
     assert actual == expected
