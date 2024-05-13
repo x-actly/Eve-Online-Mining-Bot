@@ -610,6 +610,7 @@ def repeat_function(cargo_loading_time: float) -> None:
         item = fe.get_random_coord(config.get_mining_coo())
         fe.click_top_left_circle_menu(item[0], item[1])
         fe.sleep_and_log(warping_time)
+        activate_eve_window()
         rm_x, rm_y = config.get_mouse_reset_coo()
         fe.drone_out(x=rm_x, y=rm_y)
         tx1, ty1 = config.get_target_one_coo()
