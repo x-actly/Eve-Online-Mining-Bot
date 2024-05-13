@@ -54,7 +54,7 @@ def click_circle_menu(x: int, y: int, x_offset: int, y_offset: int) -> None:
     pyautogui.moveTo(x, y)
     pyautogui.mouseDown()
     sleep_and_log(0.5)
-    pyautogui.dragRel(x_offset, y_offset, 1, button='left')
+    pyautogui.dragRel(x_offset, y_offset, 1, button="left")
     pyautogui.mouseUp()
     sleep_and_log(0.5)
 
