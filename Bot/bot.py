@@ -123,8 +123,9 @@ def get_windows_with_title(title) -> List[Any]:
 # For some reason cant use global reference as in the function below
 # propably because its passed in lambda
 def activate_eve_window() -> None:
-    if "selected_eve_window" in globals():
-        globals()["selected_eve_window"].activate()
+    selected_eve_window = globals().get("selected_eve_window")
+    if selected_eve_window is not None:
+        selected_eve_window.activate()
 
 
 def on_window_select(selection: str) -> None:
