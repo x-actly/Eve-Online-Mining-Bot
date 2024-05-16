@@ -9,11 +9,13 @@ from loguru import logger
 import pytesseract
 
 def collect_words(screenshot):
-    # Perform OCR on the screenshot
+    # Perform OCR on the screenshot with English language setting
     d = pytesseract.image_to_data(screenshot, output_type=pytesseract.Output.DICT)
 
-    # Initialize lists to store word coordinates
-    word_coords = []
+    # Initialize variables to store combined words and their coordinates
+    combined_words = []
+    current_word = ""
+    x_start, x_end, y_start, y_end = float('inf'), float('-inf'), float('inf'), float('-inf')
 
     # Loop through detected text boxes
     for i in range(len(d['level'])):
@@ -23,12 +25,24 @@ def collect_words(screenshot):
         # Only consider text boxes containing meaningful words
         if level == 5 and text:
             x, y, w, h = d['left'][i], d['top'][i], d['width'][i], d['height'][i]
-            center_x = x + (w / 2)
-            center_y = y + (h / 2)
-            word_coords.append((text, x, y, w, h, center_x, center_y))
 
-    # return the list of word coordinates
-    return word_coords
+            # Check if the word is close to the previous word horizontally
+            if abs(x - x_end) <= 30:  # Adjust the threshold as needed
+                current_word += " " + text
+                x_end = max(x_end, x + w)
+                y_end = max(y_end, y + h)
+            else:
+                if current_word:
+                    combined_words.append((current_word, x_start, y_start, x_end - x_start, y_end - y_start, (x_start + x_end) / 2, (y_start + y_end) / 2))
+                current_word = text
+                x_start, x_end = x, x + w
+                y_start, y_end = y, y + h
+
+    # Append the last word
+    if current_word:
+        combined_words.append((current_word, x_start, y_start, x_end - x_start, y_end - y_start, (x_start + x_end) / 2, (y_start + y_end) / 2))
+
+    return combined_words
 
 # Functions
 ########################################################
