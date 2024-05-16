@@ -1,71 +1,111 @@
 import random
 import re
 import time
-from tkinter import Label
-from typing import Callable, List, Tuple
+from tkinter import Image, Label
+from typing import Callable, List, NamedTuple
 
 import pyautogui
+import pytesseract  # type: ignore
 from loguru import logger
-
-import pytesseract
 
 CLOSE_WORDS_THRESHOLD = 30
 
-type Sentence = Tuple[str, int, int, int, int, int, int]
+
+class Sentence(NamedTuple):
+    word: str
+    x: float
+    y: float
+    w: float
+    h: float
+    c_x: float
+    c_y: float
+
 
 LOCATION_SPOT_PATTERN = re.compile(r"spot (\d+)", re.IGNORECASE)
 HOME_SPOT_PATTERN = re.compile(r"home", re.IGNORECASE)
 
+
 def get_mining_spots(sentences: List[Sentence]) -> List[Sentence]:
     return [item for item in sentences if LOCATION_SPOT_PATTERN.search(item[0])]
+
 
 def get_undock_button(sentences: List[Sentence]) -> Sentence | None:
     return next((item for item in sentences if item[0] == "Undock"), None)
 
+
 def get_home_spot(sentences: List[Sentence]) -> Sentence | None:
     return next((item for item in sentences if HOME_SPOT_PATTERN.search(item[0])), None)
 
-def collect_sentences(screenshot) -> List[Sentence]:
+
+def collect_sentences(screenshot: Image) -> List[Sentence]:
     # Perform OCR on the screenshot with English language setting
     d = pytesseract.image_to_data(screenshot, output_type=pytesseract.Output.DICT)
 
     # Initialize variables to store combined words and their coordinates
     combined_words = []
     current_word = ""
-    x_start, x_end, y_start, y_end = float('inf'), float('-inf'), float('inf'), float('-inf')
+    x_start, x_end, y_start, y_end = (
+        float("inf"),
+        float("-inf"),
+        float("inf"),
+        float("-inf"),
+    )
 
     # Loop through detected text boxes
-    for i in range(len(d['level'])):
-        level = d['level'][i]
-        text = d['text'][i].strip()
+    for i in range(len(d["level"])):
+        level = d["level"][i]
+        text = d["text"][i].strip()
 
         # Only consider text boxes containing meaningful words
         if level == 5 and text:
-            x, y, w, h = d['left'][i], d['top'][i], d['width'][i], d['height'][i]
+            x, y, w, h = d["left"][i], d["top"][i], d["width"][i], d["height"][i]
 
             # Check if the word is close to the previous word horizontally
-            if abs(x - x_end) <= CLOSE_WORDS_THRESHOLD:  # Adjust the threshold as needed
+            if (
+                abs(x - x_end) <= CLOSE_WORDS_THRESHOLD
+            ):  # Adjust the threshold as needed
                 current_word += " " + text
                 x_end = max(x_end, x + w)
                 y_end = max(y_end, y + h)
             else:
                 if current_word:
-                    combined_words.append((current_word, x_start, y_start, x_end - x_start, y_end - y_start, (x_start + x_end) / 2, (y_start + y_end) / 2))
+                    combined_words.append(
+                        Sentence(
+                            current_word,
+                            x_start,
+                            y_start,
+                            x_end - x_start,
+                            y_end - y_start,
+                            (x_start + x_end) / 2,
+                            (y_start + y_end) / 2,
+                        )
+                    )
                 current_word = text
                 x_start, x_end = x, x + w
                 y_start, y_end = y, y + h
 
     # Append the last word
     if current_word:
-        combined_words.append((current_word, x_start, y_start, x_end - x_start, y_end - y_start, (x_start + x_end) / 2, (y_start + y_end) / 2))
+        combined_words.append(
+            Sentence(
+                current_word,
+                x_start,
+                y_start,
+                x_end - x_start,
+                y_end - y_start,
+                (x_start + x_end) / 2,
+                (y_start + y_end) / 2,
+            )
+        )
 
     return combined_words
+
 
 # Functions
 ########################################################
 
 # Initialize a variable to store the last selected coordinate
-last_selected_coord: List[int] = []
+last_selected_coord: Sentence = Sentence("", 0, 0, 0, 0, 0.0, 0.0)
 
 
 def get_random_coord(coords: List[Sentence]) -> Sentence:
