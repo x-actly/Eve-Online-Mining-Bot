@@ -16,7 +16,7 @@ CLOSE_WORDS_THRESHOLD = 30
 LOCATION_SPOT_PATTERN = re.compile(r"spot (\d+)", re.IGNORECASE)
 HOME_SPOT_PATTERN = re.compile(r"home", re.IGNORECASE)
 WARP_TO_WITHIN_PATTERN = re.compile(r"warp to within", re.IGNORECASE)
-ASTEROID_SPOT_PATTERN = re.compile(r"(\d+\s*(?:km|m))\s+asteroid", re.IGNORECASE)
+ASTEROID_SPOT_PATTERN = re.compile(r"(\d+\s*(?:km|m)).*asteroid", re.IGNORECASE)
 
 
 class Sentence(NamedTuple):
@@ -35,9 +35,9 @@ def get_mining_spots(sentences: List[Sentence]) -> List[Sentence]:
 
 def get_distance_from_str(s: str) -> int:
     if s.endswith("km"):
-        return int(s.split(" ")[0]) * 1000
+        return int(s.split("km")[0]) * 1000
     if s.endswith("m"):
-        return int(s.split(" ")[0])
+        return int(s.split("m")[0])
     return 20000  # default to 100km which is basically too far
 
 
@@ -70,6 +70,19 @@ def get_warp_to_within(sentences: List[Sentence]) -> Sentence | None:
     return next(
         (item for item in sentences if WARP_TO_WITHIN_PATTERN.search(item[0])), None
     )
+
+
+def retry_sentences_search(get_fn, validation_fn, retry_count=10):
+    for i in range(retry_count):
+        sentences = collect_sentences(pyautogui.screenshot())
+        result = get_fn(sentences)
+        if validation_fn(result):
+            return result
+        else:
+            logger.error("Invalid result! Retrying...")
+            time.sleep(0.2)
+    logger.error("Invalid result after retries! Exiting...")
+    return None
 
 
 def collect_sentences(screenshot: PIL.Image.Image) -> List[Sentence]:
@@ -156,8 +169,7 @@ def auto_dock_to_station(x: int, y: int) -> None:
     pyautogui.moveTo(x, y)
     pyautogui.rightClick(x, y)
     sleep_and_log(0.5)
-    sentences = collect_sentences(pyautogui.screenshot())
-    dock_button = get_dock_button(sentences)
+    dock_button = retry_sentences_search(get_dock_button, lambda x: x is not None)
     if dock_button:
         pyautogui.moveTo(dock_button.c_x, dock_button.c_y)
         pyautogui.click(dock_button.c_x, dock_button.c_y)
@@ -192,8 +204,7 @@ def click_warp_to_within(x: int, y: int) -> None:
     pyautogui.moveTo(x, y)
     pyautogui.rightClick(x, y)
     sleep_and_log(0.5)
-    sentences = collect_sentences(pyautogui.screenshot())
-    warp_to_within = get_warp_to_within(sentences)
+    warp_to_within = retry_sentences_search(get_warp_to_within, lambda x: x is not None)
     if warp_to_within:
         pyautogui.moveTo(warp_to_within.c_x, warp_to_within.c_y)
         pyautogui.click(warp_to_within.c_x, warp_to_within.c_y)
@@ -293,6 +304,8 @@ def mining_behaviour(
             pyautogui.click(button="left")
             pyautogui.keyUp("ctrl")
             pyautogui.keyUp("shift")
+
+            sleep_and_log(0.5)
 
         if auto_reset_miners:
             # reset mininglaser 1

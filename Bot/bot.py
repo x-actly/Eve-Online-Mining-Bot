@@ -564,14 +564,15 @@ def panic_function() -> None:
     def execute_function() -> None:
         stop_function()
         activate_eve_window()
-        sentences = fe.collect_sentences(pyautogui.screenshot())
-        _, _, _, _, _, home_x, home_y = fe.get_home_spot(sentences)
         x, y = config.get_mouse_reset_coo()
         pyautogui.moveTo(x, y)
         pyautogui.click(button="left")
         fe.drone_in()
         fe.sleep_and_log(1)
-        fe.auto_dock_to_station(home_x, home_y)
+        home_spot = fe.retry_sentences_search(
+            fe.get_home_spot, lambda val: val is not None
+        )
+        fe.auto_dock_to_station(home_spot.c_x, home_spot.c_y)
         os._exit(0)
 
     thread = threading.Thread(target=execute_function)
@@ -604,34 +605,39 @@ def repeat_function(cargo_loading_time: float) -> None:
         loaded_in_str = fe.get_remaining_time(cargo_loading_time)
         logger.info(f"The mining cargo is filled in about {loaded_in_str}")
         sentences = fe.collect_sentences(pyautogui.screenshot())
-        _, _, _, _, _, undock_x, undock_y = fe.get_undock_button(sentences)
-        fe.undock(x=undock_x, y=undock_y)
+        undock_button = fe.retry_sentences_search(
+            fe.get_undock_button, lambda val: val is not None
+        )
+        fe.undock(undock_button.c_x, undock_button.c_y)
         fe.sleep_and_log(SMALL_SLEEP)
         fe.set_hardener_online(config.get_hardener_keys())
-        _, _, _, _, _, spot_x, spot_y = spot = fe.get_random_coord(
-            fe.get_mining_spots(sentences)
-        )
-        logger.info(f"Warping to {spot}", spot=spot.word)
-        fe.click_warp_to_within(spot_x, spot_y)
+        random_spot = fe.get_random_coord(fe.get_mining_spots(sentences))
+        logger.info("Warping to {spot}", spot=random_spot.word)
+        fe.click_warp_to_within(random_spot.c_x, random_spot.c_y)
         fe.sleep_and_log(warping_time)
         activate_eve_window()
         rm_x, rm_y = config.get_mouse_reset_coo()
         fe.drone_out(x=rm_x, y=rm_y)
-        sentences = fe.collect_sentences(pyautogui.screenshot())
-        asteroids = fe.get_asteroids(sentences)
-        if len(asteroids) < 2:
+        asteroids = fe.retry_sentences_search(
+            fe.get_asteroids,
+            lambda val: val is not None and len(val) >= 2,
+        )
+        if not asteroids:
             logger.error("Not enough asteroids found! Exiting...")
             stop_function()
-            _, _, _, _, _, home_x, home_y = fe.get_home_spot(sentences)
-            fe.auto_dock_to_station(home_x, home_y)
+            home_spot = fe.retry_sentences_search(
+                fe.get_home_spot,
+                lambda val: val is not None,
+            )
+            fe.auto_dock_to_station(home_spot.c_x, home_spot.c_y)
             break
-        _, _, _, _, _, tx1, ty1 = asteroids[0]
-        _, _, _, _, _, tx2, ty2 = asteroids[0]
+        t1 = asteroids[0]
+        t2 = asteroids[1]
         fe.mining_behaviour(
-            tx1=tx1,
-            ty1=ty1,
-            tx2=tx2,
-            ty2=ty2,
+            tx1=t1.c_x,
+            ty1=t1.c_y,
+            tx2=t2.c_x,
+            ty2=t2.c_y,
             mining_reset=config.get_mining_reset_timer(),
             mining_loop=cargo_loading_time,
             rm_x=rm_x,
@@ -644,8 +650,11 @@ def repeat_function(cargo_loading_time: float) -> None:
         activate_eve_window()
         fe.drone_in()
         fe.sleep_and_log(SMALL_SLEEP)
-        _, _, _, _, _, home_x, home_y = fe.get_home_spot(sentences)
-        fe.auto_dock_to_station(home_x, home_y)
+        home_spot = fe.retry_sentences_search(
+            fe.get_home_spot,
+            lambda val: val is not None,
+        )
+        fe.auto_dock_to_station(home_spot.c_x, home_spot.c_y)
         # sleep long enough to be in station when program wakes up
         fe.sleep_and_log(LONG_SLEEP)
         # docking will take some time, need to refocus window
