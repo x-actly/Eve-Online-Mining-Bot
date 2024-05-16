@@ -608,9 +608,10 @@ def repeat_function(cargo_loading_time: float) -> None:
         fe.undock(x=undock_x, y=undock_y)
         fe.sleep_and_log(SMALL_SLEEP)
         fe.set_hardener_online(config.get_hardener_keys())
-        _, _, _, _, _, spot_x, spot_y = fe.get_random_coord(
+        _, _, _, _, _, spot_x, spot_y = spot = fe.get_random_coord(
             fe.get_mining_spots(sentences)
         )
+        logger.info(f"Warping to {spot}", spot=spot.word)
         fe.click_top_left_circle_menu(spot_x, spot_y)
         fe.sleep_and_log(warping_time)
         activate_eve_window()
