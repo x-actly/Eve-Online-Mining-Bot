@@ -23,7 +23,9 @@ def collect_words(screenshot):
         # Only consider text boxes containing meaningful words
         if level == 5 and text:
             x, y, w, h = d['left'][i], d['top'][i], d['width'][i], d['height'][i]
-            word_coords.append((text, x, y, w, h))
+            center_x = x + (w / 2)
+            center_y = y + (h / 2)
+            word_coords.append((text, x, y, w, h, center_x, center_y))
 
     # return the list of word coordinates
     return word_coords
