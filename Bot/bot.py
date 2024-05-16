@@ -617,8 +617,16 @@ def repeat_function(cargo_loading_time: float) -> None:
         activate_eve_window()
         rm_x, rm_y = config.get_mouse_reset_coo()
         fe.drone_out(x=rm_x, y=rm_y)
-        tx1, ty1 = config.get_target_one_coo()
-        tx2, ty2 = config.get_target_two_coo()
+        sentences = fe.collect_sentences(pyautogui.screenshot())
+        asteroids = fe.get_asteroids(sentences)
+        if len(asteroids) < 2:
+            logger.error("Not enough asteroids found! Exiting...")
+            stop_function()
+            _, _, _, _, _, home_x, home_y = fe.get_home_spot(sentences)
+            fe.auto_dock_to_station(home_x, home_y)
+            break
+        _, _, _, _, _, tx1, ty1 = asteroids[0]
+        _, _, _, _, _, tx2, ty2 = asteroids[0]
         fe.mining_behaviour(
             tx1=tx1,
             ty1=ty1,

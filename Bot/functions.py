@@ -1,9 +1,11 @@
+import platform
 import random
 import re
 import time
-from tkinter import Image, Label
+from tkinter import Label
 from typing import Callable, List, NamedTuple
 
+import PIL
 import pyautogui
 import pytesseract  # type: ignore
 from loguru import logger
@@ -14,6 +16,7 @@ from loguru import logger
 CLOSE_WORDS_THRESHOLD = 30
 LOCATION_SPOT_PATTERN = re.compile(r"spot (\d+)", re.IGNORECASE)
 HOME_SPOT_PATTERN = re.compile(r"home", re.IGNORECASE)
+ASTEROID_SPOT_PATTERN = re.compile(r"(\d+\s*(?:km|m))\s+asteroid", re.IGNORECASE)
 
 
 class Sentence(NamedTuple):
@@ -30,6 +33,27 @@ def get_mining_spots(sentences: List[Sentence]) -> List[Sentence]:
     return [item for item in sentences if LOCATION_SPOT_PATTERN.search(item[0])]
 
 
+def get_distance_from_str(s: str) -> int:
+    if s.endswith("km"):
+        return int(s.split(" ")[0]) * 1000
+    if s.endswith("m"):
+        return int(s.split(" ")[0])
+    return 20000  # default to 100km which is basically too far
+
+
+def get_asteroids(sentences: List[Sentence]) -> List[Sentence]:
+    processed_sentences = [
+        (match.group(1), item)
+        for item in sentences
+        for match in [ASTEROID_SPOT_PATTERN.search(item.word)]
+        if match
+    ]
+    sorted_sentences = sorted(
+        processed_sentences, key=lambda x: get_distance_from_str(x[0])
+    )
+    return [sentence for _, sentence in sorted_sentences]
+
+
 def get_undock_button(sentences: List[Sentence]) -> Sentence | None:
     return next((item for item in sentences if item[0] == "Undock"), None)
 
@@ -38,7 +62,7 @@ def get_home_spot(sentences: List[Sentence]) -> Sentence | None:
     return next((item for item in sentences if HOME_SPOT_PATTERN.search(item[0])), None)
 
 
-def collect_sentences(screenshot: Image) -> List[Sentence]:
+def collect_sentences(screenshot: PIL.Image.Image) -> List[Sentence]:
     # Perform OCR on the screenshot with English language setting
     d = pytesseract.image_to_data(screenshot, output_type=pytesseract.Output.DICT)
 
@@ -118,11 +142,30 @@ def get_random_coord(coords: List[Sentence]) -> Sentence:
 
 
 def auto_dock_to_station(x: int, y: int) -> None:
-    click_top_left_circle_menu(x, y)
-    sleep_and_log(1)
-    click_top_center_circle_menu(x, y)
-    sleep_and_log(0.5)
+    current_os = platform.system()
+
+    if current_os == "Darwin":  # macOS
+        pyautogui.rightClick(x, y)
+        sleep_and_log(0.5)
+        sentences = collect_sentences(pyautogui.screenshot())
+        dock_button = get_dock_button_from_within_range(sentences)
+        if dock_button:
+            pyautogui.moveTo(dock_button.c_x, dock_button.c_y)
+            pyautogui.click(dock_button.c_x, dock_button.c_y)
+            sleep_and_log(0.5)
+        else:
+            logger.error("No dock button found! Panic!")
+            raise Exception("No dock button found! Panic!")
+    else:
+        click_top_left_circle_menu(x, y)
+        sleep_and_log(1)
+        click_top_center_circle_menu(x, y)
+        sleep_and_log(0.5)
     translate_key_combo("Ctrl-S")
+
+
+def get_dock_button_from_within_range(sentences: List[Sentence]) -> Sentence | None:
+    return next((item for item in sentences if item.word == "Dock"), None)
 
 
 def undock(x: int, y: int) -> None:
