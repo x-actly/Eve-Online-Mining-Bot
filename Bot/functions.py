@@ -1,7 +1,8 @@
 import random
+import re
 import time
 from tkinter import Label
-from typing import Callable, List
+from typing import Callable, List, Tuple
 
 import pyautogui
 from loguru import logger
@@ -10,7 +11,17 @@ import pytesseract
 
 CLOSE_WORDS_THRESHOLD = 30
 
-def collect_words(screenshot):
+type Sentence = Tuple[str, int, int, int, int, int, int]
+
+LOCATION_SPOT_PATTERN = re.compile(r"spot (\d+)", re.IGNORECASE)
+
+def get_mining_spots(sentences: List[Sentence]) -> List[Sentence]:
+    return [item for item in sentences if LOCATION_SPOT_PATTERN.search(item[0])]
+
+def get_undock_button(sentences: List[Sentence]) -> Sentence | None:
+    return next((item for item in sentences if item[0] == "Undock"), None)
+
+def collect_sentences(screenshot) -> List[Sentence]:
     # Perform OCR on the screenshot with English language setting
     d = pytesseract.image_to_data(screenshot, output_type=pytesseract.Output.DICT)
 
@@ -53,7 +64,7 @@ def collect_words(screenshot):
 last_selected_coord: List[int] = []
 
 
-def get_random_coord(coords: List[List[int]]) -> List[int]:
+def get_random_coord(coords: List[Sentence]) -> Sentence:
     global last_selected_coord
     available_coords = [coord for coord in coords if coord != last_selected_coord]
     selected_coord = random.choice(available_coords)
@@ -217,7 +228,7 @@ def mining_behaviour(
 
         # reset mouse assigned mining laser random in space
         pyautogui.moveTo(rm_x, rm_y)
-        pyautogui.click(button="right")
+        pyautogui.click(button="left")
 
         sleep_and_log(0.5)
 
