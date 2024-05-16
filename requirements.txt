@@ -5,3 +5,4 @@ Pillow
 pygetwindow
 loguru
 types-PyAutoGUI
+pytesseract

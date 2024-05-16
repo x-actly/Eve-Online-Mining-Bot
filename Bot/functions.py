@@ -1,3 +1,4 @@
+from io import BytesIO
 import random
 import time
 from tkinter import Label
@@ -5,6 +6,28 @@ from typing import Callable, List
 
 import pyautogui
 from loguru import logger
+
+import pytesseract
+
+def collect_words(screenshot):
+    # Perform OCR on the screenshot
+    d = pytesseract.image_to_data(screenshot, output_type=pytesseract.Output.DICT)
+
+    # Initialize lists to store word coordinates
+    word_coords = []
+
+    # Loop through detected text boxes
+    for i in range(len(d['level'])):
+        level = d['level'][i]
+        text = d['text'][i].strip()
+
+        # Only consider text boxes containing meaningful words
+        if level == 5 and text:
+            x, y, w, h = d['left'][i], d['top'][i], d['width'][i], d['height'][i]
+            word_coords.append((text, x, y, w, h))
+
+    # return the list of word coordinates
+    return word_coords
 
 # Functions
 ########################################################
