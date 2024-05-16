@@ -14,12 +14,16 @@ CLOSE_WORDS_THRESHOLD = 30
 type Sentence = Tuple[str, int, int, int, int, int, int]
 
 LOCATION_SPOT_PATTERN = re.compile(r"spot (\d+)", re.IGNORECASE)
+HOME_SPOT_PATTERN = re.compile(r"home", re.IGNORECASE)
 
 def get_mining_spots(sentences: List[Sentence]) -> List[Sentence]:
     return [item for item in sentences if LOCATION_SPOT_PATTERN.search(item[0])]
 
 def get_undock_button(sentences: List[Sentence]) -> Sentence | None:
     return next((item for item in sentences if item[0] == "Undock"), None)
+
+def get_home_spot(sentences: List[Sentence]) -> Sentence | None:
+    return next((item for item in sentences if HOME_SPOT_PATTERN.search(item[0])), None)
 
 def collect_sentences(screenshot) -> List[Sentence]:
     # Perform OCR on the screenshot with English language setting
@@ -72,8 +76,7 @@ def get_random_coord(coords: List[Sentence]) -> Sentence:
     return selected_coord
 
 
-def auto_dock_to_station(coords: List[int]) -> None:
-    x, y = coords
+def auto_dock_to_station(x: int, y: int) -> None:
     click_top_left_circle_menu(x, y)
     sleep_and_log(1)
     click_top_center_circle_menu(x, y)

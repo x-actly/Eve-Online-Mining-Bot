@@ -565,12 +565,14 @@ def panic_function() -> None:
     def execute_function() -> None:
         stop_function()
         activate_eve_window()
+        sentences = fe.collect_sentences(pyautogui.screenshot())
+        _, _, _, _, _, home_x, home_y = fe.get_home_spot(sentences)
         x, y = config.get_mouse_reset_coo()
         pyautogui.moveTo(x, y)
         pyautogui.click(button="left")
         fe.drone_in()
         fe.sleep_and_log(1)
-        fe.auto_dock_to_station(config.get_home_coo())
+        fe.auto_dock_to_station(home_x, home_y)
         os._exit(0)
 
     thread = threading.Thread(target=execute_function)
@@ -632,7 +634,8 @@ def repeat_function(cargo_loading_time: float) -> None:
         activate_eve_window()
         fe.drone_in()
         fe.sleep_and_log(SMALL_SLEEP)
-        fe.auto_dock_to_station(config.get_home_coo())
+        _, _, _, _, _, home_x, home_y = fe.get_home_spot(sentences)
+        fe.auto_dock_to_station(home_x, home_y)
         # sleep long enough to be in station when program wakes up
         fe.sleep_and_log(LONG_SLEEP)
         # docking will take some time, need to refocus window
