@@ -1,4 +1,3 @@
-from io import BytesIO
 import random
 import time
 from tkinter import Label
