@@ -1,4 +1,3 @@
-import platform
 import random
 import re
 import time
@@ -16,6 +15,7 @@ from loguru import logger
 CLOSE_WORDS_THRESHOLD = 30
 LOCATION_SPOT_PATTERN = re.compile(r"spot (\d+)", re.IGNORECASE)
 HOME_SPOT_PATTERN = re.compile(r"home", re.IGNORECASE)
+WARP_TO_WITHIN_PATTERN = re.compile(r"warp to within", re.IGNORECASE)
 ASTEROID_SPOT_PATTERN = re.compile(r"(\d+\s*(?:km|m))\s+asteroid", re.IGNORECASE)
 
 
@@ -58,8 +58,18 @@ def get_undock_button(sentences: List[Sentence]) -> Sentence | None:
     return next((item for item in sentences if item[0] == "Undock"), None)
 
 
+def get_dock_button(sentences: List[Sentence]) -> Sentence | None:
+    return next((item for item in sentences if item.word == "Dock"), None)
+
+
 def get_home_spot(sentences: List[Sentence]) -> Sentence | None:
     return next((item for item in sentences if HOME_SPOT_PATTERN.search(item[0])), None)
+
+
+def get_warp_to_within(sentences: List[Sentence]) -> Sentence | None:
+    return next(
+        (item for item in sentences if WARP_TO_WITHIN_PATTERN.search(item[0])), None
+    )
 
 
 def collect_sentences(screenshot: PIL.Image.Image) -> List[Sentence]:
@@ -142,30 +152,20 @@ def get_random_coord(coords: List[Sentence]) -> Sentence:
 
 
 def auto_dock_to_station(x: int, y: int) -> None:
-    current_os = platform.system()
-
-    if current_os == "Darwin":  # macOS
-        pyautogui.rightClick(x, y)
+    logger.info("auto docking...")
+    pyautogui.moveTo(x, y)
+    pyautogui.rightClick(x, y)
+    sleep_and_log(0.5)
+    sentences = collect_sentences(pyautogui.screenshot())
+    dock_button = get_dock_button(sentences)
+    if dock_button:
+        pyautogui.moveTo(dock_button.c_x, dock_button.c_y)
+        pyautogui.click(dock_button.c_x, dock_button.c_y)
         sleep_and_log(0.5)
-        sentences = collect_sentences(pyautogui.screenshot())
-        dock_button = get_dock_button_from_within_range(sentences)
-        if dock_button:
-            pyautogui.moveTo(dock_button.c_x, dock_button.c_y)
-            pyautogui.click(dock_button.c_x, dock_button.c_y)
-            sleep_and_log(0.5)
-        else:
-            logger.error("No dock button found! Panic!")
-            raise Exception("No dock button found! Panic!")
     else:
-        click_top_left_circle_menu(x, y)
-        sleep_and_log(1)
-        click_top_center_circle_menu(x, y)
-        sleep_and_log(0.5)
+        logger.error("No dock button found! Panic!")
+        raise Exception("No dock button found! Panic!")
     translate_key_combo("Ctrl-S")
-
-
-def get_dock_button_from_within_range(sentences: List[Sentence]) -> Sentence | None:
-    return next((item for item in sentences if item.word == "Dock"), None)
 
 
 def undock(x: int, y: int) -> None:
@@ -187,26 +187,20 @@ def set_hardener_online(key_combos: List[str]) -> None:
         time.sleep(0.5)
 
 
-def click_circle_menu(x: int, y: int, x_offset: int, y_offset: int) -> None:
-    logger.info("clicking on the circle menu...")
+def click_warp_to_within(x: int, y: int) -> None:
+    logger.info("opening right click context menu...")
     pyautogui.moveTo(x, y)
-    pyautogui.mouseDown()
+    pyautogui.rightClick(x, y)
     sleep_and_log(0.5)
-    pyautogui.moveRel(x_offset, y_offset, 1)
-    pyautogui.mouseUp()
-    sleep_and_log(0.5)
-
-
-def click_top_left_circle_menu(x: int, y: int) -> None:
-    x_offset = -50
-    y_offset = random.randint(-51, -49)
-    click_circle_menu(x, y, x_offset, y_offset)
-
-
-def click_top_center_circle_menu(x: int, y: int) -> None:
-    x_offset = 0
-    y_offset = random.randint(-51, -49)
-    click_circle_menu(x, y, x_offset, y_offset)
+    sentences = collect_sentences(pyautogui.screenshot())
+    warp_to_within = get_warp_to_within(sentences)
+    if warp_to_within:
+        pyautogui.moveTo(warp_to_within.c_x, warp_to_within.c_y)
+        pyautogui.click(warp_to_within.c_x, warp_to_within.c_y)
+        sleep_and_log(0.5)
+    else:
+        logger.error("No dock button found! Panic!")
+        raise Exception("No dock button found! Panic!")
 
 
 def drone_out(x: int, y: int) -> None:

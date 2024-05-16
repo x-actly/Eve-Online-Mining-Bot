@@ -612,7 +612,7 @@ def repeat_function(cargo_loading_time: float) -> None:
             fe.get_mining_spots(sentences)
         )
         logger.info(f"Warping to {spot}", spot=spot.word)
-        fe.click_top_left_circle_menu(spot_x, spot_y)
+        fe.click_warp_to_within(spot_x, spot_y)
         fe.sleep_and_log(warping_time)
         activate_eve_window()
         rm_x, rm_y = config.get_mouse_reset_coo()
