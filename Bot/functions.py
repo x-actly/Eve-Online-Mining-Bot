@@ -9,6 +9,8 @@ import pyautogui
 import pytesseract  # type: ignore
 from loguru import logger
 
+pytesseract.pytesseract.tesseract_cmd = "C:\\Program Files\\Tesseract-OCR\\tesseract.exe"
+
 # Tesseract functions
 ########################################################
 
@@ -302,8 +304,8 @@ def mining_behaviour(
         sleep_and_log(0.5)
 
         logger.info("mining...")
-        activate_mining_laser(tx1, ty1, "f1", activate_eve_window)
-        activate_mining_laser(tx2, ty2, "f2", activate_eve_window)
+        activate_mining_laser(tx1, ty1, "f1")
+        activate_mining_laser(tx2, ty2, "f2")
 
         # reset every 170 seconds (depends on mining barge)
         set_next_reset(mining_reset, NEXT_RESET_IN)
@@ -316,30 +318,35 @@ def mining_behaviour(
             break
 
 
-def activate_mining_laser(
-    x: int, y: int, button: str, activate_eve_window: Callable[[], None]
-) -> None:
+def activate_mining_laser(x: int, y: int, button: str) -> None:
     pyautogui.moveTo(x, y, duration=1)
+    sleep_and_log(0.5)
     pyautogui.click(button="left")
+    sleep_and_log(0.5)
+    pyautogui.click(button="left")
+    sleep_and_log(0.5)
     pyautogui.keyDown("ctrl")
     pyautogui.click(button="left")
     pyautogui.keyUp("ctrl")
     sleep_and_log(3)
-    activate_eve_window()
     pyautogui.click(button="left")
     pyautogui.press(button)
-    sleep_and_log(0.5)
+    sleep_and_log(2)
 
 
 def unlock_mining_laser(x: int, y: int) -> None:
     pyautogui.moveTo(x, y, duration=1)
+    sleep_and_log(0.5)
     pyautogui.click(button="left")
+    sleep_and_log(0.5)
+    pyautogui.click(button="left")
+    sleep_and_log(0.5)
     pyautogui.keyDown("ctrl")
     pyautogui.keyDown("shift")
     pyautogui.click(button="left")
     pyautogui.keyUp("ctrl")
     pyautogui.keyUp("shift")
-    sleep_and_log(0.5)
+    sleep_and_log(2)
 
 
 def reset_mining_laser(button: Literal["f1"] | Literal["f2"]) -> None:
