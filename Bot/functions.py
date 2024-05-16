@@ -8,7 +8,12 @@ import pyautogui
 import pytesseract  # type: ignore
 from loguru import logger
 
+# Tesseract functions
+########################################################
+
 CLOSE_WORDS_THRESHOLD = 30
+LOCATION_SPOT_PATTERN = re.compile(r"spot (\d+)", re.IGNORECASE)
+HOME_SPOT_PATTERN = re.compile(r"home", re.IGNORECASE)
 
 
 class Sentence(NamedTuple):
@@ -19,10 +24,6 @@ class Sentence(NamedTuple):
     h: float
     c_x: float
     c_y: float
-
-
-LOCATION_SPOT_PATTERN = re.compile(r"spot (\d+)", re.IGNORECASE)
-HOME_SPOT_PATTERN = re.compile(r"home", re.IGNORECASE)
 
 
 def get_mining_spots(sentences: List[Sentence]) -> List[Sentence]:
