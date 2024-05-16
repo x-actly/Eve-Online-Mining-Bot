@@ -565,9 +565,7 @@ def panic_function() -> None:
         stop_function()
         activate_eve_window()
         x, y = config.get_mouse_reset_coo()
-        pyautogui.moveTo(x, y)
-        pyautogui.click(button="left")
-        fe.drone_in()
+        fe.drone_in(x, y)
         fe.sleep_and_log(1)
         home_spot = fe.retry_sentences_search(
             fe.get_home_spot, lambda val: val is not None
@@ -648,7 +646,7 @@ def repeat_function(cargo_loading_time: float) -> None:
             auto_reset_miners=auto_reset_miners,
         )
         activate_eve_window()
-        fe.drone_in()
+        fe.drone_in(rm_x, rm_y)
         fe.sleep_and_log(SMALL_SLEEP)
         home_spot = fe.retry_sentences_search(
             fe.get_home_spot,

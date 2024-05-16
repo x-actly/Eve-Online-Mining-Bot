@@ -2,7 +2,7 @@ import random
 import re
 import time
 from tkinter import Label
-from typing import Callable, List, NamedTuple
+from typing import Any, Callable, List, Literal, NamedTuple
 
 import PIL
 import pyautogui
@@ -16,7 +16,8 @@ CLOSE_WORDS_THRESHOLD = 30
 LOCATION_SPOT_PATTERN = re.compile(r"spot (\d+)", re.IGNORECASE)
 HOME_SPOT_PATTERN = re.compile(r"home", re.IGNORECASE)
 WARP_TO_WITHIN_PATTERN = re.compile(r"warp to within", re.IGNORECASE)
-ASTEROID_SPOT_PATTERN = re.compile(r"(\d+\s*(?:km|m)).*asteroid", re.IGNORECASE)
+SET_DESTINATION_PATTERN = re.compile(r"set destination", re.IGNORECASE)
+ASTEROID_SPOT_PATTERN = re.compile(r"(\d+.*(?:km|m)).*asteroid", re.IGNORECASE)
 
 
 class Sentence(NamedTuple):
@@ -33,25 +34,13 @@ def get_mining_spots(sentences: List[Sentence]) -> List[Sentence]:
     return [item for item in sentences if LOCATION_SPOT_PATTERN.search(item[0])]
 
 
-def get_distance_from_str(s: str) -> int:
-    if s.endswith("km"):
-        return int(s.split("km")[0]) * 1000
-    if s.endswith("m"):
-        return int(s.split("m")[0])
-    return 20000  # default to 100km which is basically too far
-
-
 def get_asteroids(sentences: List[Sentence]) -> List[Sentence]:
-    processed_sentences = [
-        (match.group(1), item)
+    return [
+        item
         for item in sentences
         for match in [ASTEROID_SPOT_PATTERN.search(item.word)]
         if match
     ]
-    sorted_sentences = sorted(
-        processed_sentences, key=lambda x: get_distance_from_str(x[0])
-    )
-    return [sentence for _, sentence in sorted_sentences]
 
 
 def get_undock_button(sentences: List[Sentence]) -> Sentence | None:
@@ -72,15 +61,25 @@ def get_warp_to_within(sentences: List[Sentence]) -> Sentence | None:
     )
 
 
-def retry_sentences_search(get_fn, validation_fn, retry_count=10):
-    for i in range(retry_count):
+def get_set_destination(sentences: List[Sentence]) -> Sentence | None:
+    return next(
+        (item for item in sentences if SET_DESTINATION_PATTERN.search(item[0])), None
+    )
+
+
+def retry_sentences_search(
+    get_fn: Callable[[List[Sentence]], Any],
+    validation_fn: Callable[[Any], Any],
+    retry_count: int = 10,
+) -> Any:
+    for _ in range(retry_count):
         sentences = collect_sentences(pyautogui.screenshot())
         result = get_fn(sentences)
         if validation_fn(result):
             return result
         else:
-            logger.error("Invalid result! Retrying...")
-            time.sleep(0.2)
+            logger.error("Invalid result! Retrying in 0.5s...")
+            time.sleep(0.5)
     logger.error("Invalid result after retries! Exiting...")
     return None
 
@@ -171,7 +170,7 @@ def auto_dock_to_station(x: int, y: int) -> None:
     sleep_and_log(0.5)
     dock_button = retry_sentences_search(get_dock_button, lambda x: x is not None)
     if dock_button:
-        pyautogui.moveTo(dock_button.c_x, dock_button.c_y)
+        pyautogui.moveTo(dock_button.c_x, dock_button.c_y, duration=1)
         pyautogui.click(dock_button.c_x, dock_button.c_y)
         sleep_and_log(0.5)
     else:
@@ -183,8 +182,7 @@ def auto_dock_to_station(x: int, y: int) -> None:
 def undock(x: int, y: int) -> None:
     logger.info("undocking...")
     # undock
-    time = random.uniform(1, 2)
-    pyautogui.moveTo(x, y, duration=time)
+    pyautogui.moveTo(x, y, duration=1)
     pyautogui.mouseDown(button="left")
     sleep_and_log(0.5)
     pyautogui.mouseUp(button="left")
@@ -206,7 +204,7 @@ def click_warp_to_within(x: int, y: int) -> None:
     sleep_and_log(0.5)
     warp_to_within = retry_sentences_search(get_warp_to_within, lambda x: x is not None)
     if warp_to_within:
-        pyautogui.moveTo(warp_to_within.c_x, warp_to_within.c_y)
+        pyautogui.moveTo(warp_to_within.c_x, warp_to_within.c_y, duration=1)
         pyautogui.click(warp_to_within.c_x, warp_to_within.c_y)
         sleep_and_log(0.5)
     else:
@@ -217,7 +215,8 @@ def click_warp_to_within(x: int, y: int) -> None:
 def drone_out(x: int, y: int) -> None:
     logger.info("launching drones...")
     # drone out, random click in space
-    pyautogui.click(x, y, button="left", duration=random.uniform(1, 2))
+    pyautogui.moveTo(x, y, duration=1)
+    pyautogui.click(x, y, button="left")
     # drone out
     sleep_and_log(3)
     pyautogui.keyDown("shift")
@@ -227,9 +226,12 @@ def drone_out(x: int, y: int) -> None:
     pyautogui.keyUp("shift")
 
 
-def drone_in() -> None:
+def drone_in(x: int, y: int) -> None:
     logger.info("drones returning to bay...")
-    # drone in
+    # drone in, random click in space
+    pyautogui.moveTo(x, y, duration=1)
+    pyautogui.click(x, y, button="left")
+    sleep_and_log(0.5)
     pyautogui.keyDown("shift")
     pyautogui.press("r")
     sleep_and_log(0.5)
@@ -240,7 +242,7 @@ def clear_cargo(x: int, y: int) -> None:
     random_time = random.uniform(3, 4)
     logger.info("clearing cargo...")
     # clear cargo
-    pyautogui.click(x + 175, y + 165, button="left", duration=random_time)
+    pyautogui.click(x + 175, y + 165, button="left", duration=1)
     pyautogui.mouseDown(button="left")
     pyautogui.dragRel(-175, -165, duration=random_time, button="left")
     pyautogui.mouseUp(button="left")
@@ -276,7 +278,7 @@ def mining_behaviour(
         activate_eve_window()
         if unlock_all_targets_keys:
             # reset mouse assigned mining laser random in space
-            pyautogui.moveTo(rm_x, rm_y)
+            pyautogui.moveTo(rm_x, rm_y, duration=1)
             pyautogui.click(button="left")
             logger.info(f"Using unlock all targets key: {unlock_all_targets_keys}")
             for key in unlock_all_targets_keys.split("-"):
@@ -287,69 +289,21 @@ def mining_behaviour(
             sleep_and_log(0.5)
         else:
             logger.info("Manually unlocking targets 1 and 2")
-            # reset target 1
-            pyautogui.moveTo(tx1, ty1)
-            pyautogui.keyDown("ctrl")
-            pyautogui.keyDown("shift")
-            pyautogui.click(button="left")
-            pyautogui.keyUp("ctrl")
-            pyautogui.keyUp("shift")
-
-            sleep_and_log(0.5)
-
-            # reset target 2
-            pyautogui.moveTo(tx2, ty2)
-            pyautogui.keyDown("ctrl")
-            pyautogui.keyDown("shift")
-            pyautogui.click(button="left")
-            pyautogui.keyUp("ctrl")
-            pyautogui.keyUp("shift")
-
-            sleep_and_log(0.5)
+            unlock_mining_laser(tx1, ty1)
+            unlock_mining_laser(tx2, ty2)
 
         if auto_reset_miners:
-            # reset mininglaser 1
-            pyautogui.keyDown("f1")
-            sleep_and_log(0.5)
-            pyautogui.keyUp("f1")
-
-            sleep_and_log(1)
-
-            # reset mininglaser 2
-            pyautogui.keyDown("f2")
-            sleep_and_log(0.5)
-            pyautogui.keyUp("f2")
+            reset_mining_laser("f1")
+            reset_mining_laser("f2")
 
         # reset mouse assigned mining laser random in space
         pyautogui.moveTo(rm_x, rm_y)
         pyautogui.click(button="left")
-
         sleep_and_log(0.5)
 
-        # console
         logger.info("mining...")
-
-        # target 1
-        pyautogui.moveTo(tx1, ty1)
-        pyautogui.keyDown("ctrl")
-        pyautogui.click(button="left")
-        pyautogui.keyUp("ctrl")
-        sleep_and_log(3)
-        activate_eve_window()
-        pyautogui.press("f1")
-
-        sleep_and_log(0.5)
-
-        # target 2
-        pyautogui.moveTo(tx2, ty2)
-        pyautogui.keyDown("ctrl")
-        pyautogui.click(button="left")
-        pyautogui.keyUp("ctrl")
-        sleep_and_log(3)
-        activate_eve_window()
-        # second left click to focus the second target
-        pyautogui.click(button="left")
-        pyautogui.press("f2")
+        activate_mining_laser(tx1, ty1, "f1", activate_eve_window)
+        activate_mining_laser(tx2, ty2, "f2", activate_eve_window)
 
         # reset every 170 seconds (depends on mining barge)
         set_next_reset(mining_reset, NEXT_RESET_IN)
@@ -360,6 +314,39 @@ def mining_behaviour(
         if elapsed_time >= mining_loop or is_stopped():
             logger.info("Done mining")
             break
+
+
+def activate_mining_laser(
+    x: int, y: int, button: str, activate_eve_window: Callable[[], None]
+) -> None:
+    pyautogui.moveTo(x, y, duration=1)
+    pyautogui.click(button="left")
+    pyautogui.keyDown("ctrl")
+    pyautogui.click(button="left")
+    pyautogui.keyUp("ctrl")
+    sleep_and_log(3)
+    activate_eve_window()
+    pyautogui.click(button="left")
+    pyautogui.press(button)
+    sleep_and_log(0.5)
+
+
+def unlock_mining_laser(x: int, y: int) -> None:
+    pyautogui.moveTo(x, y, duration=1)
+    pyautogui.click(button="left")
+    pyautogui.keyDown("ctrl")
+    pyautogui.keyDown("shift")
+    pyautogui.click(button="left")
+    pyautogui.keyUp("ctrl")
+    pyautogui.keyUp("shift")
+    sleep_and_log(0.5)
+
+
+def reset_mining_laser(button: Literal["f1"] | Literal["f2"]) -> None:
+    pyautogui.keyDown(button)
+    sleep_and_log(0.5)
+    pyautogui.keyUp(button)
+    sleep_and_log(1)
 
 
 # Constants for timers

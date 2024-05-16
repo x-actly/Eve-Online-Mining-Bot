@@ -73,7 +73,7 @@ class ConfigHandler:
         return self._get_setting("mining_yield", self.config.getfloat, 0.0)  # type: ignore
 
     def get_mining_reset_timer(self) -> int:
-        return 2 + self._get_setting("mining_reset_timer", self.config.getint, 120)  # type: ignore
+        return 2 + self._get_setting("mining_reset_timer", self.config.getint, 60)  # type: ignore
 
     def get_warping_time(self) -> int:
         return self._get_setting("warping_time", self.config.getfloat, _DEFAULT_WARPING_TIME)  # type: ignore
