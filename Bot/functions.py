@@ -8,6 +8,8 @@ from loguru import logger
 
 import pytesseract
 
+CLOSE_WORDS_THRESHOLD = 30
+
 def collect_words(screenshot):
     # Perform OCR on the screenshot with English language setting
     d = pytesseract.image_to_data(screenshot, output_type=pytesseract.Output.DICT)
@@ -27,7 +29,7 @@ def collect_words(screenshot):
             x, y, w, h = d['left'][i], d['top'][i], d['width'][i], d['height'][i]
 
             # Check if the word is close to the previous word horizontally
-            if abs(x - x_end) <= 30:  # Adjust the threshold as needed
+            if abs(x - x_end) <= CLOSE_WORDS_THRESHOLD:  # Adjust the threshold as needed
                 current_word += " " + text
                 x_end = max(x_end, x + w)
                 y_end = max(y_end, y + h)
