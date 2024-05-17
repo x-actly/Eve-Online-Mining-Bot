@@ -8,8 +8,10 @@ import PIL
 import pyautogui
 import pytesseract  # type: ignore
 from loguru import logger
+import platform
 
-pytesseract.pytesseract.tesseract_cmd = "C:\\Program Files\\Tesseract-OCR\\tesseract.exe"
+if platform.system() == "Windows":
+    pytesseract.pytesseract.tesseract_cmd = "C:\\Program Files\\Tesseract-OCR\\tesseract.exe"
 
 # Tesseract functions
 ########################################################
