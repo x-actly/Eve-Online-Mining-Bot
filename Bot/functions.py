@@ -297,10 +297,12 @@ def get_process_pid_by_name(process_name: str) -> str:
                 return str(proc.info['pid'])
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
             pass
-    raise Exception(process_name + " was not found")
+    raise Exception("process " + process_name + " was not found")
 
-def read_eve_process_memory(pid: str = get_process_pid_by_name("exefile.exe")) -> dict:
+def read_eve_process_memory(pid: str | None  = None) -> dict:
     global root_address, current_pid
+
+    pid = pid or get_process_pid_by_name("exefile.exe")
 
     # Define the path to your .exe file and the arguments
     exe_path = 'read-memory-64-bit.exe'
@@ -330,3 +332,73 @@ def read_eve_process_memory(pid: str = get_process_pid_by_name("exefile.exe")) -
         return data
     else:
         raise Exception(f"Error running the executable: {result.stderr}")
+
+def write_to_file(str: str) -> None:
+    f = open("demofile3.json", "w")
+    f.write(str)
+    f.close()
+
+def find_element_by_type(json_obj, object_type_name):
+    """
+    Recursively searches through the JSON object to find the first element with the specified pythonObjectTypeName.
+
+    Parameters:
+    json_obj (dict or list): The JSON object to search through.
+    object_type_name (str): The value of 'pythonObjectTypeName' to search for.
+
+    Returns:
+    dict or None: The JSON object corresponding to the specified pythonObjectTypeName or None if not found.
+    """
+    if isinstance(json_obj, dict):
+        # Check if the current dictionary has the specified pythonObjectTypeName
+        if json_obj.get('pythonObjectTypeName') == object_type_name:
+            return json_obj
+        
+        # Recursively search through each value in the dictionary
+        for key, value in json_obj.items():
+            result = find_element_by_type(value, object_type_name)
+            if result is not None:
+                return result
+
+    elif isinstance(json_obj, list):
+        # Recursively search through each item in the list
+        for item in json_obj:
+            result = find_element_by_type(item, object_type_name)
+            if result is not None:
+                return result
+    
+    # If no matching element is found, return None
+    return None
+
+def adjust_display_positions(json_obj, parent_display=None):
+    if parent_display is None:
+        parent_display = {'_displayX': 0, '_displayY': 0}
+
+    if isinstance(json_obj, dict):
+        # Check if the current dictionary has display position attributes
+        if 'dictEntriesOfInterest' in json_obj:
+            for attr in ['_displayX', '_displayY']:
+                if attr in json_obj['dictEntriesOfInterest']:
+                    if isinstance(json_obj['dictEntriesOfInterest'][attr], dict):
+                        if 'int_low32' in json_obj['dictEntriesOfInterest'][attr]:
+                            json_obj['dictEntriesOfInterest'][attr]['int_low32'] = json_obj['dictEntriesOfInterest'][attr]['int_low32'] + parent_display[attr]
+                    else:
+                        json_obj['dictEntriesOfInterest'][attr] += parent_display[attr]
+
+        current_display = {
+            '_displayX': json_obj.get('dictEntriesOfInterest', {}).get('_displayX', {'int_low32': 0}).get('int_low32', 0)
+            if isinstance(json_obj.get('dictEntriesOfInterest', {}).get('_displayX', 0), dict) 
+            else json_obj.get('dictEntriesOfInterest', {}).get('_displayX', 0),
+
+            '_displayY': json_obj.get('dictEntriesOfInterest', {}).get('_displayY', {'int_low32': 0}).get('int_low32', 0)
+            if isinstance(json_obj.get('dictEntriesOfInterest', {}).get('_displayY', 0), dict) 
+            else json_obj.get('dictEntriesOfInterest', {}).get('_displayY', 0)
+        }
+
+        if 'children' in json_obj and isinstance(json_obj['children'], list):
+            for child in json_obj['children']:
+                adjust_display_positions(child, current_display)
+
+    elif isinstance(json_obj, list):
+        for item in json_obj:
+            adjust_display_positions(item, parent_display)
