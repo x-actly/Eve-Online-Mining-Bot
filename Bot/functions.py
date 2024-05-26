@@ -1,8 +1,11 @@
+import json
 import random
+import subprocess
 import time
 from tkinter import Label
 from typing import Callable, List
 
+import psutil
 import pyautogui
 from loguru import logger
 
@@ -273,3 +276,57 @@ def sleep_and_log(seconds: float) -> None:
     seconds = seconds + random.uniform(0, 1)
     logger.trace("sleeping {} seconds", seconds)
     time.sleep(seconds)
+
+# Sanderling, eve memory reading
+############################################################
+
+root_address: str = None
+current_pid: str = None
+
+def get_process_pid_by_name(process_name: str) -> str:
+    """
+    Retrieve a proccess pid by process name
+
+    :param process_name: The name of the process to search for.
+    :return: The pid or none
+    """
+    for proc in psutil.process_iter(['pid', 'name']):
+        try:
+            # Check if the process name matches
+            if proc.info['name'] == process_name:
+                return str(proc.info['pid'])
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+            pass
+    raise Exception(process_name + " was not found")
+
+def read_eve_process_memory(pid: str = get_process_pid_by_name("exefile.exe")) -> dict:
+    global root_address, current_pid
+
+    # Define the path to your .exe file and the arguments
+    exe_path = 'read-memory-64-bit.exe'
+    arguments = ['read-memory-eve-online', '--pid', pid]
+
+    # Check if the PID has changed and reset root_address if it has
+    if pid != current_pid:
+        root_address = None
+        current_pid = pid
+    
+    # Add --root-address only if root_address is defined
+    if root_address:
+        arguments += ['--root-address', root_address]
+
+    # Run the .exe file with arguments and capture the output
+    result = subprocess.run([exe_path] + arguments, capture_output=True, text=True)
+
+    # Check if the command was successful
+    if result.returncode == 0:
+        output = result.stdout
+        data = json.loads(output)
+        
+        # Update root_address with pythonObjectAddress from the JSON response
+        if 'pythonObjectAddress' in data:
+            root_address = data['pythonObjectAddress']
+        
+        return data
+    else:
+        raise Exception(f"Error running the executable: {result.stderr}")
