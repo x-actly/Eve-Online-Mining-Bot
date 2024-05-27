@@ -1,4 +1,5 @@
 import copy
+import ctypes
 import json
 import random
 import subprocess
@@ -284,6 +285,11 @@ def sleep_and_log(seconds: float) -> None:
 root_address: str = None
 current_pid: str = None
 
+def get_pid_by_hwnd(hwnd):
+    pid = ctypes.c_ulong()
+    ctypes.windll.user32.GetWindowThreadProcessId(hwnd, ctypes.byref(pid))
+    return pid.value
+
 def get_process_pid_by_name(process_name: str) -> str:
     """
     Retrieve a process PID by process name.
@@ -519,9 +525,9 @@ def find_bookmarks(json_obj):
 
     return bookmarks
 
-def calculate_center_position(json_obj):
+def get_center_position(json_obj):
     """
-    Calculate the center position of a given object.
+    Get the center position of a given object.
 
     WARNING: This function should only be used for leaf nodes.
 
@@ -547,7 +553,4 @@ def calculate_center_position(json_obj):
 
     display_width = min(display_width, 100)
 
-    data['_centerX'] = display_x + (display_width / 2)
-    data['_centerY'] = display_y + (display_height / 2)
-
-    return json_obj
+    return display_x + (display_width / 2), display_y + (display_height / 2)
