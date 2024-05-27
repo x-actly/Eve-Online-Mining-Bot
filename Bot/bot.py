@@ -637,7 +637,8 @@ def repeat_function(cargo_loading_time: float) -> None:
         activate_eve_window()
         fe.drone_in()
         fe.sleep_and_log(SMALL_SLEEP)
-        fe.auto_dock_to_station(config.get_home_coo())
+        home_x, home_y = fe.get_center_position(fe.find_bookmarks(mem)[0])
+        fe.auto_dock_to_station([home_x, home_y])
         # sleep long enough to be in station when program wakes up
         fe.sleep_and_log(LONG_SLEEP)
         # docking will take some time, need to refocus window
