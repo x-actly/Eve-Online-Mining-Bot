@@ -459,3 +459,34 @@ def find_bookmarks(json_obj):
             bookmarks.append(eve_label_medium)
 
     return bookmarks
+
+def calculate_center_position(json_obj):
+    """
+    Calculate the center position of a given object.
+
+    WARNING: This function should only be used for leaf nodes.
+
+    Parameters:
+    json_obj (dict): The JSON object to calculate the center position for.
+
+    Returns:
+    dict: The JSON object with the center position added.
+    """
+    json_obj = copy.deepcopy(json_obj)
+
+    data = json_obj.get('dictEntriesOfInterest', json_obj)
+
+    display_width = min(data.get('_displayWidth', 0), 100)
+    display_height = data.get('_displayHeight', 0)
+    display_x = data.get('_displayX', 0)
+    display_y = data.get('_displayY', 0)
+
+    if isinstance(display_width, dict):
+        display_width = display_width.get('int_low32', 0)
+    if isinstance(display_height, dict):
+        display_height = display_height.get('int_low32', 0)
+
+    data['_centerX'] = display_x + (display_width / 2)
+    data['_centerY'] = display_y + (display_height / 2)
+
+    return json_obj
