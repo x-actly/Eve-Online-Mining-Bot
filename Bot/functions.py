@@ -286,11 +286,18 @@ current_pid: str = None
 
 def get_process_pid_by_name(process_name: str) -> str:
     """
-    Retrieve a proccess pid by process name
+    Retrieve a process PID by process name.
 
-    :param process_name: The name of the process to search for.
-    :return: The pid or none
+    Parameters:
+    process_name (str): The name of the process to search for.
+
+    Returns:
+    str: The PID of the process.
+
+    Raises:
+    Exception: If the process is not found.
     """
+
     for proc in psutil.process_iter(['pid', 'name']):
         try:
             # Check if the process name matches
@@ -301,6 +308,20 @@ def get_process_pid_by_name(process_name: str) -> str:
     raise Exception("process " + process_name + " was not found")
 
 def read_eve_process_memory(pid: str | None  = None) -> dict:
+    """
+    Read the memory of the EVE Online process.
+
+    Parameters:
+    pid (str, optional): The PID of the process. If not provided, the function will attempt to find the PID of "exefile.exe".
+
+    Returns:
+    dict: A dictionary representing the memory of the EVE Online process.
+
+    Global Variables:
+    root_address (str): The root address of the EVE Online process memory.
+    current_pid (str): The current PID that the function is working with.
+    """
+    
     global root_address, current_pid
 
     pid = pid or get_process_pid_by_name("exefile.exe")
@@ -334,10 +355,16 @@ def read_eve_process_memory(pid: str | None  = None) -> dict:
     else:
         raise Exception(f"Error running the executable: {result.stderr}")
 
-def write_to_file(str: str) -> None:
-    f = open("demofile3.json", "w")
-    f.write(str)
-    f.close()
+def write_to_file(file: str, content: str) -> None:
+    """
+    Write a string to a file.
+
+    Parameters:
+    file (str): The path to the file.
+    content (str): The string to write to the file.
+    """
+    with open(file, "w") as f:
+        f.write(content)
 
 def find_element_by_property(json_obj, property_name, property_value):
     """
@@ -403,6 +430,18 @@ def find_elements_by_property(json_obj, property_name, property_value):
     return results
 
 def adjust_display_positions(json_obj, parent_display=None, is_top_level=True):
+    """
+    Adjust the display positions of a given JSON object.
+
+    Parameters:
+    json_obj (dict or list): The JSON object to adjust the display positions for.
+    parent_display (dict, optional): The display positions of the parent object.
+    is_top_level (bool, optional): Whether the JSON object is at the top level.
+
+    Returns:
+    dict or list: The JSON object with adjusted display positions.
+    """
+
     if is_top_level:
         json_obj = copy.deepcopy(json_obj)
 
@@ -442,12 +481,32 @@ def adjust_display_positions(json_obj, parent_display=None, is_top_level=True):
         return json_obj
 
 def find_undock_button(json_obj):
+    """
+    Find the undock button in a given JSON object.
+
+    Parameters:
+    json_obj (dict): The JSON object to find the undock button in.
+
+    Returns:
+    dict: The JSON object representing the undock button.
+    """
+
     # Find the LobbyWnd object
     lobby_window = find_element_by_property(json_obj, 'pythonObjectTypeName', 'LobbyWnd')
     # Find the first button with the text 'Undock'
     return find_element_by_property(lobby_window, '_setText', 'Undock')
 
 def find_bookmarks(json_obj):
+    """
+    Find all bookmarks in a given JSON object.
+
+    Parameters:
+    json_obj (dict): The JSON object to find the bookmarks in.
+
+    Returns:
+    list: A list of JSON objects representing the bookmarks.
+    """
+
     # Find all PlaceEntry objects
     place_entries = find_elements_by_property(json_obj, 'pythonObjectTypeName', 'PlaceEntry')
 
