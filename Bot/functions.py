@@ -1,3 +1,4 @@
+import copy
 import json
 import random
 import subprocess
@@ -370,7 +371,10 @@ def find_element_by_type(json_obj, object_type_name):
     # If no matching element is found, return None
     return None
 
-def adjust_display_positions(json_obj, parent_display=None):
+def adjust_display_positions(json_obj, parent_display=None, is_top_level=True):
+    if is_top_level:
+        json_obj = copy.deepcopy(json_obj)
+
     if parent_display is None:
         parent_display = {'_displayX': 0, '_displayY': 0}
 
@@ -397,8 +401,11 @@ def adjust_display_positions(json_obj, parent_display=None):
 
         if 'children' in json_obj and isinstance(json_obj['children'], list):
             for child in json_obj['children']:
-                adjust_display_positions(child, current_display)
+                adjust_display_positions(child, current_display, is_top_level=False)
 
     elif isinstance(json_obj, list):
         for item in json_obj:
-            adjust_display_positions(item, parent_display)
+            adjust_display_positions(item, parent_display, is_top_level=False)
+
+    if is_top_level:
+        return json_obj
