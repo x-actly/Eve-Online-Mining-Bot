@@ -339,37 +339,68 @@ def write_to_file(str: str) -> None:
     f.write(str)
     f.close()
 
-def find_element_by_type(json_obj, object_type_name):
+def find_element_by_property(json_obj, property_name, property_value):
     """
-    Recursively searches through the JSON object to find the first element with the specified pythonObjectTypeName.
+    Recursively searches through the JSON object to find the first element with the specified property.
 
     Parameters:
     json_obj (dict or list): The JSON object to search through.
-    object_type_name (str): The value of 'pythonObjectTypeName' to search for.
+    property_name (str): The name of the property to search for.
+    property_value (str): The value of the property to search for.
 
     Returns:
-    dict or None: The JSON object corresponding to the specified pythonObjectTypeName or None if not found.
+    dict or None: The JSON object containing the specified property or None if not found.
     """
     if isinstance(json_obj, dict):
-        # Check if the current dictionary has the specified pythonObjectTypeName
-        if json_obj.get('pythonObjectTypeName') == object_type_name:
+        # Check if the current dictionary has the specified property
+        if json_obj.get(property_name) == property_value:
             return json_obj
         
         # Recursively search through each value in the dictionary
         for key, value in json_obj.items():
-            result = find_element_by_type(value, object_type_name)
+            result = find_element_by_property(value, property_name, property_value)
             if result is not None:
                 return result
 
     elif isinstance(json_obj, list):
         # Recursively search through each item in the list
         for item in json_obj:
-            result = find_element_by_type(item, object_type_name)
+            result = find_element_by_property(item, property_name, property_value)
             if result is not None:
                 return result
     
     # If no matching element is found, return None
     return None
+
+def find_elements_by_property(json_obj, property_name, property_value):
+    """
+    Recursively searches through the JSON object to find all elements with the specified property.
+
+    Parameters:
+    json_obj (dict or list): The JSON object to search through.
+    property_name (str): The name of the property to search for.
+    property_value (str): The value of the property to search for.
+
+    Returns:
+    list: A list of JSON objects containing the specified property.
+    """
+    results = []
+
+    if isinstance(json_obj, dict):
+        # Check if the current dictionary has the specified property
+        if json_obj.get(property_name) == property_value:
+            results.append(json_obj)
+        
+        # Recursively search through each value in the dictionary
+        for key, value in json_obj.items():
+            results.extend(find_elements_by_property(value, property_name, property_value))
+
+    elif isinstance(json_obj, list):
+        # Recursively search through each item in the list
+        for item in json_obj:
+            results.extend(find_elements_by_property(item, property_name, property_value))
+
+    return results
 
 def adjust_display_positions(json_obj, parent_display=None, is_top_level=True):
     if is_top_level:
@@ -409,3 +440,22 @@ def adjust_display_positions(json_obj, parent_display=None, is_top_level=True):
 
     if is_top_level:
         return json_obj
+
+def find_undock_button(json_obj):
+    # Find the LobbyWnd object
+    lobby_window = find_element_by_property(json_obj, 'pythonObjectTypeName', 'LobbyWnd')
+    # Find the first button with the text 'Undock'
+    return find_element_by_property(lobby_window, '_setText', 'Undock')
+
+def find_bookmarks(json_obj):
+    # Find all PlaceEntry objects
+    place_entries = find_elements_by_property(json_obj, 'pythonObjectTypeName', 'PlaceEntry')
+
+    bookmarks = []
+    # For each PlaceEntry, find the first EveLabelMedium
+    for place_entry in place_entries:
+        eve_label_medium = find_element_by_property(place_entry, 'pythonObjectTypeName', 'EveLabelMedium')
+        if eve_label_medium is not None:
+            bookmarks.append(eve_label_medium)
+
+    return bookmarks
