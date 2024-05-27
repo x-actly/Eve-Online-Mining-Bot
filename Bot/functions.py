@@ -476,7 +476,7 @@ def calculate_center_position(json_obj):
 
     data = json_obj.get('dictEntriesOfInterest', json_obj)
 
-    display_width = min(data.get('_displayWidth', 0), 100)
+    display_width = data.get('_displayWidth', 0)
     display_height = data.get('_displayHeight', 0)
     display_x = data.get('_displayX', 0)
     display_y = data.get('_displayY', 0)
@@ -485,6 +485,8 @@ def calculate_center_position(json_obj):
         display_width = display_width.get('int_low32', 0)
     if isinstance(display_height, dict):
         display_height = display_height.get('int_low32', 0)
+
+    display_width = min(display_width, 100)
 
     data['_centerX'] = display_x + (display_width / 2)
     data['_centerY'] = display_y + (display_height / 2)
