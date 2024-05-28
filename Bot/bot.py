@@ -618,8 +618,12 @@ def repeat_function(cargo_loading_time: float) -> None:
         activate_eve_window()
         rm_x, rm_y = config.get_mouse_reset_coo()
         fe.drone_out(x=rm_x, y=rm_y)
-        tx1, ty1 = config.get_target_one_coo()
-        tx2, ty2 = config.get_target_two_coo()
+        # read memory again to get the new positions
+        mem = fe.adjust_display_positions(fe.read_eve_process_memory(str(window_pid)))
+        asteroids = fe.find_asteroids(mem)
+        # TODO fail if less than two asteroids close enough
+        tx1, ty1 = asteroids[0][2]
+        tx2, ty2 = asteroids[1][2]
         fe.mining_behaviour(
             tx1=tx1,
             ty1=ty1,

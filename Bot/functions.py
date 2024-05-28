@@ -525,6 +525,101 @@ def find_bookmarks(json_obj):
 
     return bookmarks
 
+def parse_number_truncating_after_optional_decimal_separator(number_display_text):
+    """
+    Parse a number string, truncating after an optional decimal separator.
+
+    Parameters:
+    number_display_text (str): The number string to parse.
+
+    Returns:
+    int: The parsed number.
+    """
+
+    expected_separators = [",", ".", "’", " ", "\u00A0", "\u202F"]
+
+    # Split the number display text by each separator
+    groups_texts = [number_display_text.strip()]
+    for separator in expected_separators:
+        groups_texts = [text.split(separator) for text in groups_texts]
+        groups_texts = [item for sublist in groups_texts for item in sublist]
+
+    # Check if the last group is a fraction
+    last_group_is_fraction = len(groups_texts[-1]) < 3 if groups_texts else False
+
+    # Join the groups into a single string, excluding the last group if it's a fraction
+    integer_text = ''.join(groups_texts[:-1] if last_group_is_fraction else groups_texts)
+
+    # Parse the integer text
+    try:
+        return int(integer_text)
+    except ValueError:
+        raise ValueError("Failed to parse to integer: '{}'".format(integer_text))
+
+def parse_distance_in_meters(distance_text):
+    """
+    Parse a distance string and convert it to meters.
+
+    Parameters:
+    distance_text (str): The distance string to parse.
+
+    Returns:
+    int: The parsed distance in meters.
+    """
+
+    # Split the distance text into number and unit
+    parts = distance_text.split()
+    if len(parts) != 2:
+        raise ValueError("Expecting at least one whitespace character separating number and unit.")
+
+    # Parse the number
+    try:
+        number = parse_number_truncating_after_optional_decimal_separator(parts[0])
+    except ValueError:
+        raise ValueError("Failed to parse number.")
+
+    # Parse the unit and convert the number to meters
+    unit = parts[1].lower()
+    if unit == 'm':
+        return int(number)
+    elif unit == 'km':
+        return int(number * 1000)
+    else:
+        raise ValueError("Failed to parse distance unit text of '{}'".format(unit))
+
+
+def find_asteroids(json_obj):
+    """
+    Find all asteroids in a given JSON object and sort them by their y position.
+
+    Parameters:
+    json_obj (dict): The JSON object to find the asteroids in.
+
+    Returns:
+    list: A list of tuples, where each tuple contains the distance, name, and position of an asteroid.
+    """
+
+    asteroid_entries = find_elements_by_property(json_obj, 'pythonObjectTypeName', 'OverviewScrollEntry')
+
+    asteroids = []
+    for entry in asteroid_entries:
+        children = entry.get('children', [])
+        if len(children) >= 2:
+            name = children[0].get('dictEntriesOfInterest', {}).get('_text', '')
+            distance_text = children[1].get('dictEntriesOfInterest', {}).get('_text', '')
+            position = get_center_position(children[0])
+            try:
+                distance = parse_distance_in_meters(distance_text)
+                asteroids.append((distance, name, position))
+            except ValueError as e:
+                print("Failed to parse asteroid: " + str(e))
+                pass  # Ignore entries with invalid distance text
+
+    # Sort the asteroids by the y position
+    asteroids = sorted(asteroids, key=lambda asteroid: asteroid[2][1])
+
+    return asteroids
+
 def get_center_position(json_obj):
     """
     Get the center position of a given object.
