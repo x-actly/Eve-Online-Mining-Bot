@@ -608,6 +608,7 @@ def repeat_function(cargo_loading_time: float) -> None:
         loaded_in_str = fe.get_remaining_time(cargo_loading_time)
         logger.info(f"The mining cargo is filled in about {loaded_in_str}")
         time.sleep(1)
+        mem = fe.adjust_display_positions(fe.read_eve_process_memory(str(window_pid)))
         undock_x, undock_y = fe.get_center_position(fe.find_undock_button(mem))
         fe.undock(x=undock_x, y=undock_y)
         fe.sleep_and_log(SMALL_SLEEP)
