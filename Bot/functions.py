@@ -1,8 +1,13 @@
+import copy
+import ctypes
+import json
 import random
+import subprocess
 import time
 from tkinter import Label
 from typing import Callable, List
 
+import psutil
 import pyautogui
 from loguru import logger
 
@@ -273,3 +278,374 @@ def sleep_and_log(seconds: float) -> None:
     seconds = seconds + random.uniform(0, 1)
     logger.trace("sleeping {} seconds", seconds)
     time.sleep(seconds)
+
+# Sanderling, eve memory reading
+############################################################
+
+root_address: str = None
+current_pid: str = None
+
+def get_pid_by_hwnd(hwnd):
+    pid = ctypes.c_ulong()
+    ctypes.windll.user32.GetWindowThreadProcessId(hwnd, ctypes.byref(pid))
+    return pid.value
+
+def get_process_pid_by_name(process_name: str) -> str:
+    """
+    Retrieve a process PID by process name.
+
+    Parameters:
+    process_name (str): The name of the process to search for.
+
+    Returns:
+    str: The PID of the process.
+
+    Raises:
+    Exception: If the process is not found.
+    """
+
+    for proc in psutil.process_iter(['pid', 'name']):
+        try:
+            # Check if the process name matches
+            if proc.info['name'] == process_name:
+                return str(proc.info['pid'])
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+            pass
+    raise Exception("process " + process_name + " was not found")
+
+def read_eve_process_memory(pid: str | None  = None) -> dict:
+    """
+    Read the memory of the EVE Online process.
+
+    Parameters:
+    pid (str, optional): The PID of the process. If not provided, the function will attempt to find the PID of "exefile.exe".
+
+    Returns:
+    dict: A dictionary representing the memory of the EVE Online process.
+
+    Global Variables:
+    root_address (str): The root address of the EVE Online process memory.
+    current_pid (str): The current PID that the function is working with.
+    """
+    
+    global root_address, current_pid
+
+    pid = pid or get_process_pid_by_name("exefile.exe")
+
+    # Define the path to your .exe file and the arguments
+    exe_path = 'read-memory-64-bit.exe'
+    arguments = ['read-memory-eve-online', '--pid', pid]
+
+    # Check if the PID has changed and reset root_address if it has
+    if pid != current_pid:
+        root_address = None
+        current_pid = pid
+    
+    # Add --root-address only if root_address is defined
+    if root_address:
+        arguments += ['--root-address', root_address]
+
+    # Run the .exe file with arguments and capture the output
+    result = subprocess.run([exe_path] + arguments, capture_output=True, text=True)
+
+    # Check if the command was successful
+    if result.returncode == 0:
+        output = result.stdout
+        data = json.loads(output)
+        
+        # Update root_address with pythonObjectAddress from the JSON response
+        if 'pythonObjectAddress' in data:
+            root_address = data['pythonObjectAddress']
+        
+        return data
+    else:
+        raise Exception(f"Error running the executable: {result.stderr}")
+
+def write_to_file(file: str, content: str) -> None:
+    """
+    Write a string to a file.
+
+    Parameters:
+    file (str): The path to the file.
+    content (str): The string to write to the file.
+    """
+    with open(file, "w") as f:
+        f.write(content)
+
+def find_element_by_property(json_obj, property_name, property_value):
+    """
+    Recursively searches through the JSON object to find the first element with the specified property.
+
+    Parameters:
+    json_obj (dict or list): The JSON object to search through.
+    property_name (str): The name of the property to search for.
+    property_value (str): The value of the property to search for.
+
+    Returns:
+    dict or None: The JSON object containing the specified property or None if not found.
+    """
+    if isinstance(json_obj, dict):
+        # Check if the current dictionary has the specified property
+        if json_obj.get(property_name) == property_value:
+            return json_obj
+        
+        # Recursively search through each value in the dictionary
+        for key, value in json_obj.items():
+            result = find_element_by_property(value, property_name, property_value)
+            if result is not None:
+                return result
+
+    elif isinstance(json_obj, list):
+        # Recursively search through each item in the list
+        for item in json_obj:
+            result = find_element_by_property(item, property_name, property_value)
+            if result is not None:
+                return result
+    
+    # If no matching element is found, return None
+    return None
+
+def find_elements_by_property(json_obj, property_name, property_value):
+    """
+    Recursively searches through the JSON object to find all elements with the specified property.
+
+    Parameters:
+    json_obj (dict or list): The JSON object to search through.
+    property_name (str): The name of the property to search for.
+    property_value (str): The value of the property to search for.
+
+    Returns:
+    list: A list of JSON objects containing the specified property.
+    """
+    results = []
+
+    if isinstance(json_obj, dict):
+        # Check if the current dictionary has the specified property
+        if json_obj.get(property_name) == property_value:
+            results.append(json_obj)
+        
+        # Recursively search through each value in the dictionary
+        for key, value in json_obj.items():
+            results.extend(find_elements_by_property(value, property_name, property_value))
+
+    elif isinstance(json_obj, list):
+        # Recursively search through each item in the list
+        for item in json_obj:
+            results.extend(find_elements_by_property(item, property_name, property_value))
+
+    return results
+
+def adjust_display_positions(json_obj, parent_display=None, is_top_level=True):
+    """
+    Adjust the display positions of a given JSON object.
+
+    Parameters:
+    json_obj (dict or list): The JSON object to adjust the display positions for.
+    parent_display (dict, optional): The display positions of the parent object.
+    is_top_level (bool, optional): Whether the JSON object is at the top level.
+
+    Returns:
+    dict or list: The JSON object with adjusted display positions.
+    """
+
+    if is_top_level:
+        json_obj = copy.deepcopy(json_obj)
+
+    if parent_display is None:
+        parent_display = {'_displayX': 0, '_displayY': 0}
+
+    if isinstance(json_obj, dict):
+        # Check if the current dictionary has display position attributes
+        if 'dictEntriesOfInterest' in json_obj:
+            for attr in ['_displayX', '_displayY']:
+                if attr in json_obj['dictEntriesOfInterest']:
+                    if isinstance(json_obj['dictEntriesOfInterest'][attr], dict):
+                        if 'int_low32' in json_obj['dictEntriesOfInterest'][attr]:
+                            json_obj['dictEntriesOfInterest'][attr]['int_low32'] = json_obj['dictEntriesOfInterest'][attr]['int_low32'] + parent_display[attr]
+                    else:
+                        json_obj['dictEntriesOfInterest'][attr] += parent_display[attr]
+
+        current_display = {
+            '_displayX': json_obj.get('dictEntriesOfInterest', {}).get('_displayX', {'int_low32': 0}).get('int_low32', 0)
+            if isinstance(json_obj.get('dictEntriesOfInterest', {}).get('_displayX', 0), dict) 
+            else json_obj.get('dictEntriesOfInterest', {}).get('_displayX', 0),
+
+            '_displayY': json_obj.get('dictEntriesOfInterest', {}).get('_displayY', {'int_low32': 0}).get('int_low32', 0)
+            if isinstance(json_obj.get('dictEntriesOfInterest', {}).get('_displayY', 0), dict) 
+            else json_obj.get('dictEntriesOfInterest', {}).get('_displayY', 0)
+        }
+
+        if 'children' in json_obj and isinstance(json_obj['children'], list):
+            for child in json_obj['children']:
+                adjust_display_positions(child, current_display, is_top_level=False)
+
+    elif isinstance(json_obj, list):
+        for item in json_obj:
+            adjust_display_positions(item, parent_display, is_top_level=False)
+
+    if is_top_level:
+        return json_obj
+
+def find_undock_button(json_obj):
+    """
+    Find the undock button in a given JSON object.
+
+    Parameters:
+    json_obj (dict): The JSON object to find the undock button in.
+
+    Returns:
+    dict: The JSON object representing the undock button.
+    """
+
+    # Find the LobbyWnd object
+    lobby_window = find_element_by_property(json_obj, 'pythonObjectTypeName', 'LobbyWnd')
+    # Find the first button with the text 'Undock'
+    return find_element_by_property(lobby_window, '_setText', 'Undock')
+
+def find_bookmarks(json_obj):
+    """
+    Find all bookmarks in a given JSON object.
+
+    Parameters:
+    json_obj (dict): The JSON object to find the bookmarks in.
+
+    Returns:
+    list: A list of JSON objects representing the bookmarks.
+    """
+
+    # Find all PlaceEntry objects
+    place_entries = find_elements_by_property(json_obj, 'pythonObjectTypeName', 'PlaceEntry')
+
+    bookmarks = []
+    # For each PlaceEntry, find the first EveLabelMedium
+    for place_entry in place_entries:
+        eve_label_medium = find_element_by_property(place_entry, 'pythonObjectTypeName', 'EveLabelMedium')
+        if eve_label_medium is not None:
+            bookmarks.append(eve_label_medium)
+
+    return bookmarks
+
+def parse_number_truncating_after_optional_decimal_separator(number_display_text):
+    """
+    Parse a number string, truncating after an optional decimal separator.
+
+    Parameters:
+    number_display_text (str): The number string to parse.
+
+    Returns:
+    int: The parsed number.
+    """
+
+    expected_separators = [",", ".", "’", " ", "\u00A0", "\u202F"]
+
+    # Split the number display text by each separator
+    groups_texts = [number_display_text.strip()]
+    for separator in expected_separators:
+        groups_texts = [text.split(separator) for text in groups_texts]
+        groups_texts = [item for sublist in groups_texts for item in sublist]
+
+    # Check if the last group is a fraction
+    last_group_is_fraction = len(groups_texts[-1]) < 3 if groups_texts else False
+
+    # Join the groups into a single string, excluding the last group if it's a fraction
+    integer_text = ''.join(groups_texts[:-1] if last_group_is_fraction else groups_texts)
+
+    # Parse the integer text
+    try:
+        return int(integer_text)
+    except ValueError:
+        raise ValueError("Failed to parse to integer: '{}'".format(integer_text))
+
+def parse_distance_in_meters(distance_text):
+    """
+    Parse a distance string and convert it to meters.
+
+    Parameters:
+    distance_text (str): The distance string to parse.
+
+    Returns:
+    int: The parsed distance in meters.
+    """
+
+    # Split the distance text into number and unit
+    parts = distance_text.split()
+    if len(parts) != 2:
+        raise ValueError("Expecting at least one whitespace character separating number and unit.")
+
+    # Parse the number
+    try:
+        number = parse_number_truncating_after_optional_decimal_separator(parts[0])
+    except ValueError:
+        raise ValueError("Failed to parse number.")
+
+    # Parse the unit and convert the number to meters
+    unit = parts[1].lower()
+    if unit == 'm':
+        return int(number)
+    elif unit == 'km':
+        return int(number * 1000)
+    else:
+        raise ValueError("Failed to parse distance unit text of '{}'".format(unit))
+
+
+def find_asteroids(json_obj):
+    """
+    Find all asteroids in a given JSON object and sort them by their y position.
+
+    Parameters:
+    json_obj (dict): The JSON object to find the asteroids in.
+
+    Returns:
+    list: A list of tuples, where each tuple contains the distance, name, and position of an asteroid.
+    """
+
+    asteroid_entries = find_elements_by_property(json_obj, 'pythonObjectTypeName', 'OverviewScrollEntry')
+
+    asteroids = []
+    for entry in asteroid_entries:
+        children = entry.get('children', [])
+        if len(children) >= 2:
+            name = children[0].get('dictEntriesOfInterest', {}).get('_text', '')
+            distance_text = children[1].get('dictEntriesOfInterest', {}).get('_text', '')
+            position = get_center_position(children[0])
+            try:
+                distance = parse_distance_in_meters(distance_text)
+                asteroids.append((distance, name, position))
+            except ValueError as e:
+                print("Failed to parse asteroid: " + str(e))
+                pass  # Ignore entries with invalid distance text
+
+    # Sort the asteroids by the y position
+    asteroids = sorted(asteroids, key=lambda asteroid: asteroid[2][1])
+
+    return asteroids
+
+def get_center_position(json_obj):
+    """
+    Get the center position of a given object.
+
+    WARNING: This function should only be used for leaf nodes.
+
+    Parameters:
+    json_obj (dict): The JSON object to calculate the center position for.
+
+    Returns:
+    dict: The JSON object with the center position added.
+    """
+    json_obj = copy.deepcopy(json_obj)
+
+    data = json_obj.get('dictEntriesOfInterest', json_obj)
+
+    display_width = data.get('_displayWidth', 0)
+    display_height = data.get('_displayHeight', 0)
+    display_x = data.get('_displayX', 0)
+    display_y = data.get('_displayY', 0)
+
+    if isinstance(display_width, dict):
+        display_width = display_width.get('int_low32', 0)
+    if isinstance(display_height, dict):
+        display_height = display_height.get('int_low32', 0)
+
+    display_width = min(display_width, 100)
+
+    return display_x + (display_width / 2), display_y + (display_height / 2)

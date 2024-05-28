@@ -1,5 +1,6 @@
 import os
 import platform
+import random
 import re
 import sys
 import threading
@@ -591,30 +592,39 @@ def save_properties() -> None:
     config.save()
     logger.info("Configuration updated")
 
-
 def repeat_function(cargo_loading_time: float) -> None:
     disable_fields()
     actual_mining_runs = 0
     mining_runs = config.get_mining_runs()
     update_mining_runs(actual_mining_runs, mining_runs)
+    logger.info(f"Loading eve memory...")
+    window_pid = fe.get_pid_by_hwnd(selected_eve_window._hWnd) if selected_eve_window else None
+    logger.info(f"Selected window pid: {window_pid}")
+    mem = fe.adjust_display_positions(fe.read_eve_process_memory(str(window_pid)))
+    logger.info(f"Eve memory loaded! Starting mining...")
     while not stop_flag and actual_mining_runs < mining_runs:
         activate_eve_window()
         fe.set_next_reset(cargo_loading_time, fe.CARGO_LOAD_TIME)
         loaded_in_str = fe.get_remaining_time(cargo_loading_time)
         logger.info(f"The mining cargo is filled in about {loaded_in_str}")
         time.sleep(1)
-        undock_x, undock_y = config.get_undock_coo()
+        mem = fe.adjust_display_positions(fe.read_eve_process_memory(str(window_pid)))
+        undock_x, undock_y = fe.get_center_position(fe.find_undock_button(mem))
         fe.undock(x=undock_x, y=undock_y)
         fe.sleep_and_log(SMALL_SLEEP)
         fe.set_hardener_online(config.get_hardener_keys())
-        item = fe.get_random_coord(config.get_mining_coo())
-        fe.click_top_left_circle_menu(item[0], item[1])
+        bookmark_x, bookmark_y = fe.get_center_position(random.choice(fe.find_bookmarks(mem)[1:]))
+        fe.click_top_left_circle_menu(bookmark_x, bookmark_y)
         fe.sleep_and_log(warping_time)
         activate_eve_window()
         rm_x, rm_y = config.get_mouse_reset_coo()
         fe.drone_out(x=rm_x, y=rm_y)
-        tx1, ty1 = config.get_target_one_coo()
-        tx2, ty2 = config.get_target_two_coo()
+        # read memory again to get the new positions
+        mem = fe.adjust_display_positions(fe.read_eve_process_memory(str(window_pid)))
+        asteroids = fe.find_asteroids(mem)
+        # TODO fail if less than two asteroids close enough
+        tx1, ty1 = asteroids[0][2]
+        tx2, ty2 = asteroids[1][2]
         fe.mining_behaviour(
             tx1=tx1,
             ty1=ty1,
@@ -632,7 +642,8 @@ def repeat_function(cargo_loading_time: float) -> None:
         activate_eve_window()
         fe.drone_in()
         fe.sleep_and_log(SMALL_SLEEP)
-        fe.auto_dock_to_station(config.get_home_coo())
+        home_x, home_y = fe.get_center_position(fe.find_bookmarks(mem)[0])
+        fe.auto_dock_to_station([home_x, home_y])
         # sleep long enough to be in station when program wakes up
         fe.sleep_and_log(LONG_SLEEP)
         # docking will take some time, need to refocus window

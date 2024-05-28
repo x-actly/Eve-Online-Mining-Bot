@@ -5,6 +5,24 @@ The Mining Bot Alpha Owl-Edition is a Python program developed to automate minin
 [![Video auf YouTube](https://img.youtube.com/vi/-qzjmKXXsqU/maxresdefault.jpg)](https://www.youtube.com/watch?v=-qzjmKXXsqU)
 [youtube link]
 
+## Sanderling exe
+
+Build standalone exe file for sanderling memory reading:
+
+`dotnet publish -c Release -r win-x64 --self-contained /p:PublishSingleFile=true`
+
+Run python interactive with functions.py
+
+`python -i .\Bot\functions.py`
+
+Run read_eve_process_memory function:
+
+`>>> read_eve_process_memory()["pythonObjectAddress"]`
+
+will take aprox 1 min
+
+Next should be faster, shy of a couple of seconds, beause root_address has been cached.
+
 ## Features
 
 - Automated mining in EVE Online
